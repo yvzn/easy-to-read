@@ -1,0 +1,15 @@
+{
+	"name": "api",
+	"version": "1.0.0",
+	"description": "Easy-to-read API",
+	"scripts": {
+		"start": "func start"
+	},
+	"dependencies": {
+		"@azure/functions": "^4.0.0"
+	},
+	"devDependencies": {},
+	"main": "src/{index.js,functions/*.js}",
+	"author": "Yvan Razafindramanana",
+	"license": "MIT"
+}

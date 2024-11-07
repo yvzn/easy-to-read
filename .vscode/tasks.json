@@ -1,0 +1,49 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "func",
+			"label": "func: host start",
+			"command": "host start",
+			"problemMatcher": "$func-node-watch",
+			"isBackground": true,
+			"dependsOn": "npm install (functions)",
+			"options": {
+				"cwd": "${workspaceFolder}/api"
+			}
+		},
+		{
+			"type": "shell",
+			"label": "npm install (functions)",
+			"command": "npm install",
+			"options": {
+				"cwd": "${workspaceFolder}/api"
+			}
+		},
+		{
+			"type": "shell",
+			"label": "npm prune (functions)",
+			"command": "npm prune --production",
+			"problemMatcher": [],
+			"options": {
+				"cwd": "${workspaceFolder}/api"
+			}
+		},
+		{
+			"type": "shell",
+			"label": "npm install (db)",
+			"command": "npm install",
+			"options": {
+				"cwd": "${workspaceFolder}/db"
+			}
+		},
+		{
+			"type": "npm",
+			"script": "start",
+			"path": "db",
+			"problemMatcher": [],
+			"dependsOn": "npm install (db)",
+			"label": "db: start"
+		}
+	]
+}

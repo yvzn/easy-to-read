@@ -1,0 +1,11 @@
+{
+	"name": "db",
+	"version": "1.0.0",
+	"private": "true",
+	"scripts": {
+		"start": "azurite --location ./azurite --debug ./azurite/debug.log"
+	},
+	"dependencies": {
+		"azurite": "^3.23.0"
+	}
+}
