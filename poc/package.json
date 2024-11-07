@@ -1,0 +1,10 @@
+{
+	"type": "module",
+	"main": "sample.js",
+	"scripts": {
+		"start": "node sample.js"
+	},
+	"dependencies": {
+		"openai": "latest"
+	}
+}
