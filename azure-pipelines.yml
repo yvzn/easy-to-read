@@ -16,6 +16,7 @@ jobs:
 - job: CI
   steps:
   - bash: |
+      cd api
       if [ -f extensions.csproj ]
       then
           dotnet build extensions.csproj --output ./bin
@@ -26,13 +27,13 @@ jobs:
   - task: ArchiveFiles@2
     displayName: "Archive files"
     inputs:
-      rootFolderOrFile: "$(System.DefaultWorkingDirectory)"
+      rootFolderOrFile: "$(System.DefaultWorkingDirectory)/api"
       includeRootFolder: false
-      archiveFile: "$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip"
+      archiveFile: "$(System.ArtifactStagingDirectory)/build$(Build.BuildId).zip"
   - task: PublishBuildArtifacts@1
     inputs:
-      PathtoPublish: '$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip'
-      artifactName: 'drop'
+      PathtoPublish: '$(System.ArtifactStagingDirectory)/build$(Build.BuildId).zip'
+      artifactName: 'api'
 
 - deployment: CD
   dependsOn: CI
@@ -46,5 +47,5 @@ jobs:
           inputs:
             azureSubscription: '$(azureSubscription)'
             appType: functionAppLinux 
-            appName: $(appName)
-            package: $(System.ArtifactsDirectory)/**/*.zip
+            appName: $(functionAppName)
+            package: $(Pipeline.Workspace)/**/*.zip
