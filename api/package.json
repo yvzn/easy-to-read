@@ -6,9 +6,9 @@
 		"start": "func start"
 	},
 	"dependencies": {
-		"@azure/functions": "^4.0.0"
+		"@azure/functions": "^4.0.0",
+		"openai": "^4.73.0"
 	},
-	"devDependencies": {},
 	"main": "src/{index.js,functions/*.js}",
 	"author": "Yvan Razafindramanana",
 	"license": "MIT"
