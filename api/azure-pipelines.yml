@@ -15,8 +15,20 @@ pool:
 jobs:
 - job: CI
   steps:
+  - task: DownloadSecureFile@1
+    name: userPromptTxt
+    displayName: 'Download user-prompt.txt'
+    inputs:
+      secureFile: 'user-prompt.txt'
+  - task: DownloadSecureFile@1
+    name: systemPromptTxt
+    displayName: 'Download system-prompt.txt'
+    inputs:
+      secureFile: 'system-prompt.txt'
   - bash: |
       cd api
+      cp $(userPromptTxt.secureFilePath) ./src/resources/
+      cp $(systemPromptTxt.secureFilePath) ./src/resources/
       if [ -f extensions.csproj ]
       then
           dotnet build extensions.csproj --output ./bin
