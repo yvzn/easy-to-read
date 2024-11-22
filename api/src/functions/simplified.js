@@ -1,10 +1,7 @@
 const { app } = require('@azure/functions');
 const OpenAI = require("openai");
 const { Readable } = require('node:stream');
-
-const token = process.env["GITHUB_TOKEN"];
-const endpoint = "https://models.inference.ai.azure.com";
-const modelName = "gpt-4o-mini";
+const fs = require('node:fs/promises');
 
 app.http('simplified', {
 	methods: ['POST'],
@@ -13,7 +10,9 @@ app.http('simplified', {
 		context.info(`Http function processed request for url "${request.url}"`);
 
 		try {
-			const chunks = await ask();
+			const input = await request.text();
+
+			const chunks = await getChatResponse(input);
 
 			return {
 				body: Readable.from(chunks),
@@ -30,13 +29,21 @@ app.http('simplified', {
 	}
 });
 
-async function* ask() {
+const token = process.env["GITHUB_TOKEN"];
+const endpoint = "https://models.inference.ai.azure.com";
+const modelName = "gpt-4o-mini";
+
+async function* getChatResponse(userInput) {
 	const client = new OpenAI({ baseURL: endpoint, apiKey: token });
+
+	const systemPrompt = await readResource("system-prompt.txt");
+	let userPrompt = await readResource("user-prompt.txt");
+	userPrompt = userPrompt.replace("{0}", userInput);
 
 	const stream = await client.chat.completions.create({
 		messages: [
-			{ role: "system", content: "You are a helpful assistant." },
-			{ role: "user", content: "Give me 5 good reasons why I should exercise every day." },
+			{ role: "system", content: systemPrompt },
+			{ role: "user", content: userPrompt },
 		],
 		temperature: 1.0,
 		top_p: 1.0,
@@ -51,3 +58,8 @@ async function* ask() {
 	}
 }
 
+async function readResource(fileName) {
+	const directory = './src/resources';
+	const data = await fs.readFile(`${directory}/${fileName}`, { encoding: "utf-8" });
+	return data;
+}
