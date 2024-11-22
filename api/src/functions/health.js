@@ -6,6 +6,6 @@ app.http('health', {
     handler: async (request, context) => {
         context.log(`Http function processed request for url "${request.url}"`);
 
-        return { body: `Healhy` };
+        return { body: `Healthy` };
     }
 });
