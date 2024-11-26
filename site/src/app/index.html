@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Homepage - Easy Read Me</title>
+</head>
+
+<body>
+	<header>
+		<h1><a href="/">Easy Read Me</a></h1>
+		<p>Simplify the words</p>
+	</header>
+	<main>
+		<form action="https://easytoread.azurewebsites.net/api/simplified" method="post" enctype="text/plain">
+			<label for="text">Enter your text:</label>
+			<textarea id="text" name="text" rows="10" cols="60"></textarea>
+			<button type="submit">Simplify</button>
+		</form>
+	</main>
+	<style>
+		* {
+			font-family: Avenir, Montserrat, Corbel, 'URW Gothic', source-sans-pro, sans-serif;
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			color: #382906;
+		}
+
+		header {
+			background-color: #FEFAE0;
+			padding: 28px;
+		}
+
+		h1 a {
+			color: #3C4323;
+			text-underline-offset: 4px;
+			text-decoration-color: #D4A373;
+			text-decoration-thickness: 1px;
+		}
+
+		main {
+			padding: 28px;
+			margin: auto;
+		}
+
+		form {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 7px;
+		}
+
+		textarea {
+			padding: 7px;
+			border-radius: 10px;
+			border: 1px solid #3C4323;
+		}
+
+		button {
+			vertical-align: bottom;
+			background-color: #D4A373;
+			border-radius: 10px;
+			border: none;
+			color: #FEFAE0;
+			padding: 10px 28px 14px 28px;
+			text-decoration: underline;
+			text-underline-offset: 4px;
+			font-size: inherit;
+			outline-offset: 2px;
+		}
+	</style>
+</body>
