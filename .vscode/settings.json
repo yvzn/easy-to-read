@@ -1,11 +1,19 @@
 {
-    "azureFunctions.deploySubpath": "api",
-    "azureFunctions.postDeployTask": "npm install (functions)",
-    "azureFunctions.projectLanguage": "JavaScript",
-    "azureFunctions.projectRuntime": "~4",
-    "debug.internalConsoleOptions": "neverOpen",
-    "azureFunctions.projectLanguageModel": 4,
+	"azureFunctions.deploySubpath": "api",
+	"azureFunctions.postDeployTask": "npm install (functions)",
+	"azureFunctions.projectLanguage": "JavaScript",
+	"azureFunctions.projectRuntime": "~4",
+	"debug.internalConsoleOptions": "neverOpen",
+	"azureFunctions.projectLanguageModel": 4,
 	"azureFunctions.preDeployTask": "npm prune (functions)",
 	"azureFunctions.hostStartTimeout": 120,
-	"azureFunctions.pickProcessTimeout": 120
+	"azureFunctions.pickProcessTimeout": 120,
+	"html.suggest.html5": true,
+	"emmet.includeLanguages": {
+		"njk": "html",
+		"nunjucks": "html"
+	},
+	"files.associations": {
+		"*.njk": "html"
+	}
 }
