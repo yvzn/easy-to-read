@@ -1,5 +1,6 @@
-What is the capital of {0} ?
-Answer with the following details
-- a famous building or landmark
-- the name of a celebrity born in this city
-- a trivia or fun fact
+Here is the text to rewrite:
+
+<original-text>
+{0}
+<
+</original-text>
