@@ -53,7 +53,7 @@ jobs:
         - task: CopyFilesOverSSH@0
           inputs:
             sshEndpoint: '$(sshEndpoint)'
-            sourceFolder: '$(Pipeline.Workspace)/wip'
+            sourceFolder: '$(Pipeline.Workspace)/wip/en'
             contents: '**'
             targetFolder: '$(sshTargetFolder)'
             readyTimeout: '20000'
