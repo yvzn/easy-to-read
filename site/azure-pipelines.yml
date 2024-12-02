@@ -1,0 +1,60 @@
+variables:
+- group: "production"
+
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - site
+
+pool:
+  vmImage: ubuntu-latest
+
+jobs:
+- job: CI
+  steps:
+  - task: DownloadSecureFile@1
+    name: dotEnv
+    displayName: 'Download .env'
+    inputs:
+      secureFile: '.env'
+  - bash: |
+      cd site
+      cp $(dotEnv.secureFilePath) .
+      npm install 
+      npm run build --if-present
+  - task: ArchiveFiles@2
+    displayName: "Archive files"
+    inputs:
+      rootFolderOrFile: "$(System.DefaultWorkingDirectory)/site/_site"
+      includeRootFolder: false
+      archiveFile: "$(System.ArtifactStagingDirectory)/build$(Build.BuildId).zip"
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(System.ArtifactStagingDirectory)/build$(Build.BuildId).zip'
+      artifactName: 'site'
+
+- deployment: CD
+  dependsOn: CI
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  environment: 'Azure'
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - task: ExtractFiles@1
+          inputs:
+            archiveFilePatterns: '$(Pipeline.Workspace)/site/*.zip'
+            destinationFolder: '$(Pipeline.Workspace)/wip'
+            cleanDestinationFolder: true
+            overwriteExistingFiles: true
+        - task: CopyFilesOverSSH@0
+          inputs:
+            sshEndpoint: '$(sshEndpoint)'
+            sourceFolder: '$(Pipeline.Workspace)/wip'
+            contents: '**'
+            targetFolder: '$(sshTargetFolder)'
+            readyTimeout: '20000'
+            overwrite: true
