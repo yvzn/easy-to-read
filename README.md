@@ -1,6 +1,11 @@
-# easy-to-read
+# EasyRead.me
 
-Make information easy to read and understand
+Simplify the words.
+
+Generate an easy-to-read version of any given text.
+Make information easy to read and understand for everyone.
+
+[Go to easyread.me](https://easyread.me/) to try it out.
 
 ## Resources
 
