@@ -16,7 +16,7 @@ app.http('simplified', {
 			const userInput = requestParams.get("t");
 			const debug = requestParams.get("d") === "true";
 
-			const responseStream = toHtml(simplify(userInput, debug));
+			const responseStream = simplify(userInput, debug);
 
 			return {
 				body: Readable.from(responseStream),
@@ -34,30 +34,31 @@ app.http('simplified', {
 	}
 });
 
-const htmlTemplatePromise = readResource("template.html");
 
-async function* toHtml(source) {
-	const htmlTemplate = await htmlTemplatePromise;
-	const [htmlHeader, htmlFooter] = htmlTemplate.split("{0}");
-
+async function* simplify(text, debug) {
+	const [htmlHeader, htmlFooter] = await readHtmlTemplate();
 	yield htmlHeader;
 
-	for await (const chunk of source) {
-		yield chunk.replace('<', '&lt;').replace('>', '&gt;');
+	const responseStream = await getModelResponse(text);
+	for await (let chunk of responseStream) {
+		chunk = cleanModelOutput(chunk);
+
+		yield chunk;
+		if (debug) {
+			yield "\n";
+		}
 	}
 
 	yield htmlFooter;
 }
 
-async function* simplify(text, debug) {
-	const responseStream = getModelResponse(text);
+const htmlTemplatePromise = readResource("template.html");
 
-	for await (const chunk of responseStream) {
-		yield chunk || '';
-		if (debug) {
-			yield "\n";
-		}
-	}
+async function readHtmlTemplate() {
+	const template = await htmlTemplatePromise;
+	const parts = template.split("-----");
+
+	return parts;
 }
 
 const token = process.env["GITHUB_TOKEN"];
@@ -67,7 +68,7 @@ const modelName = "gpt-4o-mini";
 const systemPromptPromise = readResource("system-prompt.txt");
 const userPromptPromise = readResource("user-prompt.txt");
 
-async function* getModelResponse(userInput) {
+async function getModelResponse(userInput) {
 	const client = new OpenAI({ baseURL: endpoint, apiKey: token });
 
 	const systemPrompt = await systemPromptPromise;
@@ -86,9 +87,12 @@ async function* getModelResponse(userInput) {
 		stream: true
 	});
 
-	for await (const part of stream) {
-		yield part.choices[0]?.delta?.content || '';
-	}
+	return stream;
+}
+
+function cleanModelOutput(chunk) {
+	const sanitized = chunk.choices[0]?.delta?.content || '';
+	return sanitized;
 }
 
 async function readResource(fileName) {
