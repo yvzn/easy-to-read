@@ -2,5 +2,4 @@ Here is the text to rewrite:
 
 <original-text>
 {0}
-<
 </original-text>
