@@ -81,8 +81,7 @@ async function getModelResponse(userInput) {
 			{ role: "user", content: userPrompt },
 		],
 		temperature: 1.0,
-		top_p: 1.0,
-		max_tokens: 1000,
+		max_tokens: 8000,
 		model: modelName,
 		stream: true
 	});

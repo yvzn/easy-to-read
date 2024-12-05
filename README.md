@@ -1,9 +1,10 @@
 # EasyRead.me
 
-Simplify the words.
+Make the words easy to understand.
 
-Generate an easy-to-read version of any given text.
-Make information easy to read and understand for everyone.
+Create a simple version of any text.
+
+Make information clear and easy for everyone.
 
 [Go to easyread.me](https://easyread.me/) to try it out.
 
