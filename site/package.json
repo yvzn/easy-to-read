@@ -1,17 +1,19 @@
 {
-	"name": "site",
-	"version": "1.0.0",
-	"description": "Easy-to-read website",
-	"scripts": {
-		"start": "dotenvx run -- eleventy --serve",
-		"build": "dotenvx run -- eleventy"
-	},
-	"private": true,
-	"author": "Yvan Razafindramanana",
-	"license": "MIT",
-	"type": "module",
-	"dependencies": {
-		"@11ty/eleventy": "^3.0.0",
-		"@dotenvx/dotenvx": "^1.25.1"
-	}
+  "name": "site",
+  "version": "1.0.0",
+  "description": "Easy-to-read website",
+  "scripts": {
+    "clean": "rimraf _site",
+    "start": "dotenvx run -- eleventy --serve",
+    "build": "dotenvx run -- eleventy"
+  },
+  "private": true,
+  "author": "Yvan Razafindramanana",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "@11ty/eleventy": "^3.0.0",
+    "@dotenvx/dotenvx": "^1.29.0",
+    "rimraf": "^5.0.10"
+  }
 }

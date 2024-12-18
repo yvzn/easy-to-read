@@ -1,0 +1,19 @@
+/* Accessibility-specific styles */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  text-decoration: none;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  z-index: 1000;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 2px solid var(--color-secondary);
+  outline-offset: 2px;
+}
