@@ -1,3 +1,6 @@
 export default function (eleventyConfig) {
-  eleventyConfig.addWatchTarget('./css/');
+  eleventyConfig.addWatchTarget('./css/')
+  eleventyConfig.addWatchTarget('./js/')
+  eleventyConfig.addPassthroughCopy('./img/')
+  eleventyConfig.addWatchTarget('./img/')
 }

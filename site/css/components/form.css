@@ -11,14 +11,10 @@
   margin-bottom: var(--spacing-sm);
 }
 
-.input-wrapper {
-  position: relative;
-}
-
 .text-input {
   width: 100%;
   padding: var(--spacing-md);
-  padding-bottom: calc(var(--spacing-md) + 3rem);
+  margin-bottom: var(--spacing-sm);
   border: var(--input-border);
   border-radius: var(--radius-md);
   resize: vertical;
@@ -64,12 +60,4 @@
 .simplify-btn:active {
   box-shadow: none;
   transform: translateY(2px);
-}
-
-@media (max-width: 768px) {
-  .simplify-btn {
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    width: calc(100% - var(--spacing-sm) * 2);
-  }
 }

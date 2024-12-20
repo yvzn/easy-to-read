@@ -53,4 +53,5 @@
   color: var(--color-white);
   opacity: 0.8;
   margin: 0;
+  max-width: 100%;
 }

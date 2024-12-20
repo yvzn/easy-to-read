@@ -7,12 +7,16 @@
     {% include "partials/head.njk" %}
   </head>
   <body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
     {% include "partials/header.njk" %}
 
-    <main>
-      {{ content | safe }}
-    </main>
+<a id="main-content" name="main-content"></a>
+
+    {{ content | safe }}
 
     {% include "partials/footer.njk" %}
+
+    <script src="/bundle.js"></script>
   </body>
 </html>

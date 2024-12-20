@@ -4,7 +4,7 @@
   background-color: var(--color-white);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
-  text-align: center;
+  text-align: left;
   border: 1px solid var(--color-accent);
   transition: transform 0.2s ease;
 }

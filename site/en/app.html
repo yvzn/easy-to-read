@@ -4,27 +4,31 @@ title: EasyRead.me - Text Simplifier
 description: EasyRead.me - Make any text easy to understand
 ---
 
-<!-- 
-    <form action="{{environment.simplifiedTextUrl}}" method="post">
-    -->
-
 <main class="app-main">
   <div class="container">
     <div class="chat-interface">
       <div class="input-group">
-        <label for="userText" class="input-label">Enter your text</label>
-        <div class="input-wrapper">
-          <textarea
-            id="userText"
-            class="text-input"
-            rows="6"
-            placeholder="Paste your text here..."
-            aria-label="Text to simplify"
-          ></textarea>
-          <button class="simplify-btn" aria-label="Simplify text">
-            Simplify
-          </button>
-        </div>
+        <form action="{{environment.simplifiedTextUrl}}" method="post">
+          <label for="userText" class="input-label">Enter your text</label>
+          <div class="input-wrapper">
+            <textarea
+              id="userText"
+              name="t"
+              class="text-input"
+              rows="6"
+              placeholder="Paste your text here..."
+              aria-label="Text to simplify"
+            ></textarea>
+            <button
+              type="submit"
+              class="simplify-btn"
+              id="simplify-btn"
+              aria-label="Simplify text"
+            >
+              Simplify
+            </button>
+          </div>
+        </form>
       </div>
       <p class="disclaimer">
         This application uses artificial intelligence to generate content.
