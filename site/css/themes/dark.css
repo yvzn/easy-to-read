@@ -1,0 +1,33 @@
+/* Dark theme variables */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Colors */
+    --color-background: #1A1A1A;
+    --color-background-alt: #2A2A2A;
+    --color-white: #2D2D2D;
+    
+    /* Main color for interactive elements - lighter in dark mode */
+    --color-primary: #8491B2;
+    --color-primary-dark: #6E7DA2;
+    --color-primary-light: #9BA5C4;
+    
+    /* CTA color - adjusted for dark mode */
+    --color-secondary: #7A9B9E;
+    --color-secondary-dark: #6B8A8D;
+    --color-secondary-light: #8AACAF;
+    
+    /* Accent color - brighter in dark mode */
+    --color-accent: #E5AD89;
+    --color-accent-dark: #DB996C;
+    --color-accent-light: #EFC1A6;
+    
+    /* Gray scale - inverted for dark mode */
+    --color-gray-50: #4A433D;
+    --color-gray-100: #6B635C;
+    --color-gray-200: #8A827A;
+    --color-gray-300: #A69E97;
+    --color-gray-600: #D1C9C0;
+    --color-gray-700: #E5DED5;
+    --color-gray-800: #F5EFE8;
+  }
+}

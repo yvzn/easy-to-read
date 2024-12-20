@@ -1,0 +1,31 @@
+/* Light theme variables */
+:root {
+  /* Colors */
+  --color-background: #FCF8F3;
+  --color-background-alt: #F5EFE8;
+  --color-white: #FFFFFF;
+  
+  /* Main color for interactive elements */
+  --color-primary: #6E7DA2;
+  --color-primary-dark: #5D6B8B;
+  --color-primary-light: #8491B2;
+  
+  /* CTA color */
+  --color-secondary: #AEDADD;
+  --color-secondary-dark: #9DC5C4;
+  --color-secondary-light: #C4E5E7;
+  
+  /* Accent color */
+  --color-accent: #DB996C;
+  --color-accent-dark: #C98B61;
+  --color-accent-light: #E5AD89;
+  
+  /* Gray scale */
+  --color-gray-50: #FCF8F3;
+  --color-gray-100: #F5EFE8;
+  --color-gray-200: #E5DED5;
+  --color-gray-300: #D1C9C0;
+  --color-gray-600: #8A827A;
+  --color-gray-700: #6B635C;
+  --color-gray-800: #4A433D;
+}

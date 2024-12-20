@@ -1,0 +1,22 @@
+/* Base styles with theme-aware colors */
+body {
+  background-color: var(--color-background);
+  color: var(--color-gray-800);
+}
+
+/* Theme-aware text selection */
+::selection {
+  background-color: var(--color-primary);
+  color: var(--color-gray-50);
+}
+
+/* Smooth theme transitions */
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Theme-aware focus outline */
+:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}

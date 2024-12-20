@@ -35,6 +35,21 @@
   line-height: 1.8;
 }
 
+.content-article a {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  transition: color 0.2s ease;
+}
+
+.content-article a:hover {
+  color: var(--color-primary-dark);
+}
+
+.content-article a:visited {
+  color: var(--color-primary-light);
+}
+
 .content-article ul {
   list-style-type: disc;
   margin-left: var(--spacing-xl);

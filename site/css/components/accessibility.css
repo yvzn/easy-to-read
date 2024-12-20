@@ -7,7 +7,7 @@
   background-color: var(--color-primary);
   color: var(--color-white);
   text-decoration: none;
-  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  border-radius: 0 0 var(--radius-md) 0;
   z-index: 1000;
   transition: top 0.2s ease;
 }
