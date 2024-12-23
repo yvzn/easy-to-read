@@ -19,8 +19,8 @@ jobs:
   - powershell: |
       Set-Location site
       $dotEnv = Get-Content -Path .env.sample
-      $dotEnv = $dotEnv.Replace('API_URL=.*', '$(apiUrl)')
-      $dotEnv = $dotEnv.Replace('API_KEY=.*', '$(apiKey)')
+      $dotEnv = $dotEnv -replace 'API_URL=.*', '$(apiUrl)'
+      $dotEnv = $dotEnv -replace 'API_KEY=.*', '$(apiKey)'
       Set-Content -Path .env -Value $dotEnv
       npm install
       npm run build --if-present
@@ -53,7 +53,7 @@ jobs:
         - powershell: |
             Set-Location $(Pipeline.Workspace)/wip
             $dotHtaccess = Get-Content -Path .htaccess.sample
-            $dotHtaccess = $dotHtaccess.Replace('DirectoryIndex .*', 'DirectoryIndex $(directoryIndex)')
+            $dotHtaccess = $dotHtaccess -replace 'DirectoryIndex .*', 'DirectoryIndex $(directoryIndex)'
             Set-Content -Path .htaccess -Value $dotHtaccess
           displayName: "Prepare files"
         - task: CopyFilesOverSSH@0
