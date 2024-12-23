@@ -19,8 +19,8 @@ jobs:
   - powershell: |
       Set-Location site
       $dotEnv = Get-Content -Path .env.sample
-      $dotEnv = $dotEnv -replace 'API_URL=.*', '$(apiUrl)'
-      $dotEnv = $dotEnv -replace 'API_KEY=.*', '$(apiKey)'
+      $dotEnv = $dotEnv -replace 'API_URL=.*', 'API_URL=$(apiUrl)'
+      $dotEnv = $dotEnv -replace 'API_KEY=.*', 'API_KEY=$(apiKey)'
       Set-Content -Path .env -Value $dotEnv
       npm install
       npm run build --if-present
