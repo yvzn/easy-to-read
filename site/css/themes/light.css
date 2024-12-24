@@ -3,20 +3,19 @@
   /* Colors */
   --color-background: #FCF8F3;
   --color-background-alt: #F5EFE8;
-  --color-white: #FFFFFF;
   
   /* Main color for interactive elements */
-  --color-primary: #6E7DA2;
-  --color-primary-dark: #5D6B8B;
-  --color-primary-light: #8491B2;
+  --color-primary: hsl(223, 22%, 51%);
+  --color-primary-dark: hsl(222, 20%, 37%);
+  --color-primary-light: hsl(223, 22%, 51%);
   
   /* CTA color */
   --color-secondary: #AEDADD;
   --color-secondary-dark: #9DC5C4;
   --color-secondary-light: #C4E5E7;
   
-  /* Accent color */
-  --color-accent: #DB996C;
+  /* Accent color for non-interactive elements */
+  --color-accent: hsl(24, 61%, 43%);
   --color-accent-dark: #C98B61;
   --color-accent-light: #E5AD89;
   
@@ -28,4 +27,5 @@
   --color-gray-600: #8A827A;
   --color-gray-700: #6B635C;
   --color-gray-800: #4A433D;
+  --color-white: #FFFFFF;
 }

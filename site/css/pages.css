@@ -36,14 +36,14 @@
 }
 
 .content-article a {
-  color: var(--color-primary);
+  color: var(--color-primary-dark);
   text-decoration: underline;
   text-underline-offset: 0.2em;
   transition: color 0.2s ease;
 }
 
 .content-article a:hover {
-  color: var(--color-primary-dark);
+  color: var(--color-primary);
 }
 
 .content-article a:visited {

@@ -28,14 +28,14 @@
 }
 
 .app-main a {
-  color: var(--color-primary);
+  color: var(--color-primary-dark);
   text-decoration: underline;
   text-underline-offset: 0.2em;
   transition: color 0.2s ease;
 }
 
 .app-main a:hover {
-  color: var(--color-primary-dark);
+  color: var(--color-primary);
 }
 
 .app-main a:visited {
