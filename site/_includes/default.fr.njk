@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="{{lang}}">
+  <head>
+    {% include "partials/head.njk" %}
+  </head>
+  <body>
+    {% include "partials/fr/header.njk" %}
+
+    {{ content | safe }}
+
+    {% include "partials/fr/footer.njk" %}
+
+    <script src="/bundle.js"></script>
+  </body>
+</html>

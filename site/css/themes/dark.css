@@ -6,10 +6,10 @@
     --color-background-alt: #2A2A2A;
     --color-white: #2D2D2D;
     
-    /* Main color for interactive elements - lighter in dark mode */
-    --color-primary: #8491B2;
-    --color-primary-dark: #6E7DA2;
-    --color-primary-light: #9BA5C4;
+    /* Main color for interactive elements - darker in dark mode */
+    --color-primary: #4A5A85;
+    --color-primary-dark: #394666;
+    --color-primary-light: #5B6E9C;
     
     /* CTA color - adjusted for dark mode */
     --color-secondary: #7A9B9E;
@@ -28,6 +28,30 @@
     --color-gray-300: #A69E97;
     --color-gray-600: #D1C9C0;
     --color-gray-700: #E5DED5;
-    --color-gray-800: #F5EFE8;
+    --color-gray-800: #FFFFFF;
+  }
+
+  /* Dark mode specific overrides for better contrast */
+  .btn-primary,
+  .btn-outline:hover,
+  .simplify-btn {
+    color: #FFFFFF;
+  }
+
+  .footer {
+    background-color: var(--color-primary-dark);
+  }
+
+  .footer-col a,
+  .footer-col p,
+  .footer-col h4,
+  .footer-bottom p {
+    color: #FFFFFF;
+    opacity: 0.95;
+  }
+
+  .footer-col a:hover {
+    color: var(--color-secondary-light);
+    opacity: 1;
   }
 }
