@@ -1,0 +1,66 @@
+variables:
+- group: "production"
+- group: "production-fr"
+
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - site
+
+pool:
+  vmImage: ubuntu-latest
+
+jobs:
+- job: CI
+  steps:
+  - powershell: |
+      Set-Location site
+      $dotEnv = Get-Content -Path .env.sample
+      $dotEnv = $dotEnv -replace 'API_URL=.*', 'API_URL=$(apiUrl)'
+      $dotEnv = $dotEnv -replace 'API_KEY=.*', 'API_KEY=$(apiKey)'
+      Set-Content -Path .env -Value $dotEnv
+      npm install
+      npm run build --if-present
+    displayName: "Install and build"
+  - task: ArchiveFiles@2
+    displayName: "Archive files"
+    inputs:
+      rootFolderOrFile: "$(System.DefaultWorkingDirectory)/site/_site"
+      includeRootFolder: false
+      archiveFile: "$(System.ArtifactStagingDirectory)/build$(Build.BuildId).zip"
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(System.ArtifactStagingDirectory)/build$(Build.BuildId).zip'
+      artifactName: 'site'
+
+- deployment: CD
+  dependsOn: CI
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  environment: 'Azure'
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - task: ExtractFiles@1
+          inputs:
+            archiveFilePatterns: '$(Pipeline.Workspace)/site/*.zip'
+            destinationFolder: '$(Pipeline.Workspace)/wip'
+            cleanDestinationFolder: true
+            overwriteExistingFiles: true
+        - powershell: |
+            Set-Location $(Pipeline.Workspace)/wip
+            $dotHtaccess = Get-Content -Path .htaccess.sample
+            $dotHtaccess = $dotHtaccess -replace 'DirectoryIndex .*', 'DirectoryIndex $(directoryIndex)'
+            Set-Content -Path .htaccess -Value $dotHtaccess
+          displayName: "Prepare files"
+        - task: CopyFilesOverSSH@0
+          inputs:
+            sshEndpoint: '$(sshEndpoint)'
+            sourceFolder: '$(Pipeline.Workspace)/wip'
+            contents: '**'
+            targetFolder: '$(sshTargetFolder)'
+            readyTimeout: '20000'
+            overwrite: true
