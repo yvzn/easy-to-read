@@ -28,7 +28,6 @@
 .footer-col p {
   color: var(--color-white);
   margin-bottom: var(--spacing-sm);
-  opacity: 0.9;
 }
 
 .footer-col a {
@@ -43,6 +42,12 @@
   color: var(--color-secondary-light);
 }
 
+.footer-col img {
+  width: 123px;
+  aspect-ratio: 1;
+  opacity: 0.8;
+}
+
 .footer-bottom {
   padding-top: var(--spacing-lg);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -51,7 +56,18 @@
 
 .footer-bottom p {
   color: var(--color-white);
-  opacity: 0.8;
   margin: 0;
   max-width: 100%;
+}
+
+.footer-bottom a {
+  color: var(--color-secondary);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  transition: color 0.2s ease;
+  padding: 0.25rem 0;
+}
+
+.footer-bottom a:hover {
+  color: var(--color-secondary-light);
 }

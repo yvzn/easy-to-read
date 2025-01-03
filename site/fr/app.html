@@ -1,0 +1,40 @@
+---
+layout: default.fr.njk
+title: Rendez votre texte facile à lire
+description: Découvrez le simplificateur de texte propulsé par l'IA qui rend le contenu lisible pour tous. Simplifiez vos textes sans effort et améliorez l'accessibilité avec notre outil innovant.
+---
+
+<main class="app-main">
+  <div class="container">
+    <div class="chat-interface">
+      <div class="input-group">
+        <form action="{{environment.simplifiedTextUrl}}" method="post">
+          <label for="userText" class="input-label">Entrez votre texte</label>
+          <div class="input-wrapper">
+            <textarea
+              id="userText"
+              name="t"
+              class="text-input"
+              rows="6"
+              placeholder="Votre texte ici..."
+              aria-label="Texte à simplifier"
+            ></textarea>
+            <button
+              type="submit"
+              class="simplify-btn"
+              id="simplify-btn"
+              aria-label="Simplifier le texte"
+            >
+              Simplifier
+            </button>
+          </div>
+        </form>
+      </div>
+      <p class="disclaimer">
+        Cette application utilise l'intelligence artificielle pour créer du contenu automatisé. <br />
+        Les résultats peuvent varier et doivent être vérifiés. <br />
+        Évitez d'entrer des <a href="/fr/content/privacy">informations personnelles ou confidentielles</a>.
+      </p>
+    </div>
+  </div>
+</main>

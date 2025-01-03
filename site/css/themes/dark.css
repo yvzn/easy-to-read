@@ -45,13 +45,13 @@
   .footer-col a,
   .footer-col p,
   .footer-col h4,
-  .footer-bottom p {
+  .footer-bottom p,
+  .footer-bottom a {
     color: #FFFFFF;
-    opacity: 0.95;
   }
 
-  .footer-col a:hover {
+  .footer-col a:hover,
+  .footer-bottom a:hover {
     color: var(--color-secondary-light);
-    opacity: 1;
   }
 }
