@@ -54,7 +54,6 @@ a#main-content {
 
 .feature-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: var(--spacing-lg);
   margin-top: var(--spacing-xl);
 }
