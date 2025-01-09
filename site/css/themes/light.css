@@ -1,31 +1,32 @@
 /* Light theme variables */
 :root {
-  /* Colors */
-  --color-background: #FCF8F3;
-  --color-background-alt: #F5EFE8;
+  /* Core surfaces */
+  --color-surface-main: var(--color-white);
+  --color-surface-muted: var(--color-cream-100);
+  --color-background: var(--color-cream-50);
+  --color-background-alt: var(--color-cream-100);
+  --color-surface-alt: var(--color-slate-700);
+
+  /* Interactive elements */
+  --color-primary: var(--color-slate-500);
+  --color-primary-dark: var(--color-slate-700);
+  --color-primary-light: var(--color-slate-500);
   
-  /* Main color for interactive elements */
-  --color-primary: hsl(223, 22%, 51%);
-  --color-primary-dark: hsl(222, 20%, 37%);
-  --color-primary-light: hsl(223, 22%, 51%);
+  /* Call-to-action */
+  --color-secondary: var(--color-teal-300);
+  --color-secondary-dark: var(--color-teal-500);
+  --color-secondary-light: var(--color-teal-700);
   
-  /* CTA color */
-  --color-secondary: #AEDADD;
-  --color-secondary-dark: #9DC5C4;
-  --color-secondary-light: #C4E5E7;
+  /* Branding & highlights */
+  --color-accent: var(--color-terra-500);
+  --color-accent-dark: var(--color-terra-700);
+  --color-accent-light: var(--color-terra-300);
   
-  /* Accent color for non-interactive elements */
-  --color-accent: hsl(24, 61%, 43%);
-  --color-accent-dark: #C98B61;
-  --color-accent-light: #E5AD89;
-  
-  /* Gray scale */
-  --color-gray-50: #FCF8F3;
-  --color-gray-100: #F5EFE8;
-  --color-gray-200: #E5DED5;
-  --color-gray-300: #D1C9C0;
-  --color-gray-600: #8A827A;
-  --color-gray-700: #6B635C;
-  --color-gray-800: #4A433D;
-  --color-white: #FFFFFF;
+  /* Text & borders */
+  --color-text-primary: var(--color-brown-800);
+  --color-text-secondary: var(--color-brown-700);
+  --color-text-muted: var(--color-brown-600);
+  --color-text-alt: var(--color-white);
+  --color-border: var(--color-cream-200);
+  --color-border-muted: var(--color-cream-300);
 }

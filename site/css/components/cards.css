@@ -1,7 +1,7 @@
 /* Card styles */
 .feature-card {
   padding: var(--spacing-lg);
-  background-color: var(--color-white);
+  background-color: var(--color-surface-main);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   text-align: left;

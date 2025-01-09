@@ -1,0 +1,51 @@
+/* Base colors */
+:root {
+  /* Neutrals */
+  --color-white: #ffffff;
+  --color-cream-50: #fcf8f3;
+  --color-cream-100: #f5efe8;
+  --color-cream-200: #e5ded5;
+  --color-cream-300: #d1c9c0;
+  --color-brown-600: #8a827a;
+  --color-brown-700: #6b635c;
+  --color-brown-800: #4a433d;
+
+  /* Brand colors */
+  --color-slate-500: hsl(223, 22%, 51%);
+  --color-slate-700: hsl(222, 20%, 37%);
+
+  /* Accent colors */
+  --color-teal-300: #aedadd;
+  --color-teal-500: #9dc5c4;
+  --color-teal-700: #c4e5e7;
+
+  /* Highlight colors */
+  --color-terra-500: hsl(24, 61%, 43%);
+  --color-terra-700: #c98b61;
+  --color-terra-300: #e5ad89;
+
+  /* Dark theme colors */
+  /** Dark theme primary colors */
+  --clr-primary-a0: #6e7da2;
+  --clr-primary-a10: #7e8bac;
+  --clr-primary-a20: #8d98b6;
+  --clr-primary-a30: #9da6c0;
+  --clr-primary-a40: #adb5cb;
+  --clr-primary-a50: #bdc3d5;
+
+  /** Dark theme surface colors */
+  --clr-surface-a0: #100904;
+  --clr-surface-a10: #262220;
+  --clr-surface-a20: #3d3937;
+  --clr-surface-a30: #565250;
+  --clr-surface-a40: #6f6c6b;
+  --clr-surface-a50: #8a8886;
+
+  /** Dark theme tonal surface colors */
+  --clr-surface-tonal-a0: #191617;
+  --clr-surface-tonal-a10: #2e2b2c;
+  --clr-surface-tonal-a20: #444243;
+  --clr-surface-tonal-a30: #5c5a5b;
+  --clr-surface-tonal-a40: #757374;
+  --clr-surface-tonal-a50: #8f8d8e;
+}

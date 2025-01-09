@@ -19,7 +19,7 @@
 
 .btn-primary {
   background-color: var(--color-primary);
-  color: var(--color-white);
+  color: var(--color-surface-main);
   border: 2px solid var(--color-primary-dark);
   box-shadow: 0 2px 0 var(--color-primary-dark);
 }
@@ -39,7 +39,7 @@
 
 .btn-outline:hover {
   background-color: var(--color-primary);
-  color: var(--color-white);
+  color: var(--color-surface-main);
 }
 
 .btn-large {

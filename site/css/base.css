@@ -1,13 +1,13 @@
 /* Base styles with theme-aware colors */
 body {
   background-color: var(--color-background);
-  color: var(--color-gray-800);
+  color: var(--color-text-primary);
 }
 
 /* Theme-aware text selection */
 ::selection {
   background-color: var(--color-primary);
-  color: var(--color-gray-50);
+  color: var(--color-surface-main);
 }
 
 /* Smooth theme transitions */
@@ -18,5 +18,5 @@ body {
 /* Theme-aware focus outline */
 :focus {
   outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+  outline-offset: 4px;
 }

@@ -7,7 +7,7 @@
   display: block;
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--color-gray-800);
+  color: var(--color-text-primary);
   margin-bottom: var(--spacing-sm);
 }
 
@@ -21,8 +21,8 @@
   min-height: 150px;
   font-size: 1.125rem;
   line-height: 1.6;
-  color: var(--color-gray-800);
-  background-color: var(--color-white);
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-main);
   box-shadow: var(--input-shadow);
   transition: all 0.2s ease;
 }
@@ -34,14 +34,14 @@
 }
 
 .text-input::placeholder {
-  color: var(--color-gray-600);
+  color: var(--color-text-muted);
 }
 
 .simplify-btn {
   white-space: nowrap;
   z-index: 1;
   background-color: var(--color-primary);
-  color: var(--color-white);
+  color: var(--color-surface-main);
   border: 2px solid var(--color-primary-dark);
   box-shadow: 0 2px 0 var(--color-primary-dark);
   padding: 0.75rem 1.5rem;

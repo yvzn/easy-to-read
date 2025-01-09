@@ -1,57 +1,64 @@
 /* Dark theme variables */
 @media (prefers-color-scheme: dark) {
   :root {
-    /* Colors */
-    --color-background: #1A1A1A;
-    --color-background-alt: #2A2A2A;
-    --color-white: #2D2D2D;
-    
-    /* Main color for interactive elements - darker in dark mode */
-    --color-primary: #4A5A85;
-    --color-primary-dark: #394666;
-    --color-primary-light: #5B6E9C;
-    
-    /* CTA color - adjusted for dark mode */
-    --color-secondary: #7A9B9E;
-    --color-secondary-dark: #6B8A8D;
-    --color-secondary-light: #8AACAF;
-    
-    /* Accent color - brighter in dark mode */
-    --color-accent: #E5AD89;
-    --color-accent-dark: #DB996C;
-    --color-accent-light: #EFC1A6;
-    
-    /* Gray scale - inverted for dark mode */
-    --color-gray-50: #4A433D;
-    --color-gray-100: #6B635C;
-    --color-gray-200: #8A827A;
-    --color-gray-300: #A69E97;
-    --color-gray-600: #D1C9C0;
-    --color-gray-700: #E5DED5;
-    --color-gray-800: #FFFFFF;
+    /* Core surfaces */
+    --color-background: var(--clr-surface-a0);
+    --color-background-alt: var(--clr-surface-a10);
+    --color-surface-main: var(--clr-surface-a20);
+    --color-surface-muted: var(--clr-surface-a30);
+    --color-surface-alt: var(--clr-surface-a30);
+
+    /* Interactive elements */
+    --color-primary: var(--clr-primary-a40);
+    --color-primary-dark: var(--clr-primary-a20);
+    --color-primary-light: var(--clr-primary-a50);
+
+    /* Call-to-action */
+    --color-secondary: var(--clr-primary-a40);
+    --color-secondary-dark: var(--clr-primary-a20);
+    --color-secondary-light: var(--clr-primary-a50);
+
+    /* Branding & highlights */
+    --color-accent: var(--clr-primary-a40);
+    --color-accent-dark: var(--clr-primary-a20);
+    --color-accent-light: var(--clr-primary-a50);
+
+    /* Text & borders */
+    --color-text-primary: var(--color-cream-200);
+    --color-text-secondary: var(--color-cream-300);
+    --color-text-muted: var(--color-cream-200);
+    --color-text-alt: var(--color-cream-200);
+    --color-border: var(--clr-surface-a30);
+    --color-border-muted: var(--clr-surface-a20);
   }
 
-  /* Dark mode specific overrides for better contrast */
   .btn-primary,
-  .btn-outline:hover,
-  .simplify-btn {
-    color: #FFFFFF;
+  .simplify-btn,
+  .skip-link {
+    color: var(--clr-surface-a0);
   }
 
-  .footer {
-    background-color: var(--color-primary-dark);
+  .feature-card {
+    border-color: var(--clr-surface-a30);
+  }
+  
+  .text-input {
+    background-color: var(--clr-surface-a20);
+    border-color: var(--clr-surface-a40);
   }
 
-  .footer-col a,
-  .footer-col p,
-  .footer-col h4,
-  .footer-bottom p,
-  .footer-bottom a {
-    color: #FFFFFF;
+  :focus, .skip-link:focus {
+    outline-color: var(--color-text-primary);
   }
 
-  .footer-col a:hover,
-  .footer-bottom a:hover {
-    color: var(--color-secondary-light);
+  .nav-links a:not([class]),
+  .footer-col a {
+    color: var(--color-primary-light);
   }
+
+  .nav-links a:not([class]):hover,
+  .footer-col a:hover  {
+    color: var(--color-primary);
+  }
+
 }
