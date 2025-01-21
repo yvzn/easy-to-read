@@ -24,10 +24,9 @@ app.http('simplified', {
 				};
 			}
 
-			const responseStream = simplify(userInput, context.invocationId, debug);
+			const responseStream = simplify(userInput, debug);
 
 			return {
-				status: 200,
 				body: Readable.from(responseStream),
 				headers: { "Content-Type": "text/html;charset=utf-8" },
 			}
@@ -44,18 +43,16 @@ app.http('simplified', {
 });
 
 
-async function* simplify(text, sessionId, isDebugMode) {
+async function* simplify(text, debug) {
 	const [htmlHeader, htmlFooter] = await readHtmlTemplate();
 	yield htmlHeader;
-
-	yield $`<id>${sessionId}</id>`;
 
 	const responseStream = await getModelResponse(text);
 	for await (let chunk of responseStream) {
 		chunk = cleanModelOutput(chunk);
 
 		yield chunk;
-		if (isDebugMode) {
+		if (debug) {
 			yield "\n";
 		}
 	}
