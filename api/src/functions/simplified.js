@@ -16,9 +16,18 @@ app.http('simplified', {
 			const userInput = requestParams.get("t");
 			const debug = requestParams.get("d") === "true";
 
-			const responseStream = simplify(userInput, debug);
+			if (!userInput) {
+				return {
+					status: 400,
+					headers: { "Content-Type": "text/plain;charset=utf-8" },
+					body: "Empty content.",
+				};
+			}
+
+			const responseStream = simplify(userInput, context.invocationId, debug);
 
 			return {
+				status: 200,
 				body: Readable.from(responseStream),
 				headers: { "Content-Type": "text/html;charset=utf-8" },
 			}
@@ -35,16 +44,18 @@ app.http('simplified', {
 });
 
 
-async function* simplify(text, debug) {
+async function* simplify(text, sessionId, isDebugMode) {
 	const [htmlHeader, htmlFooter] = await readHtmlTemplate();
 	yield htmlHeader;
+
+	yield $`<id>${sessionId}</id>`;
 
 	const responseStream = await getModelResponse(text);
 	for await (let chunk of responseStream) {
 		chunk = cleanModelOutput(chunk);
 
 		yield chunk;
-		if (debug) {
+		if (isDebugMode) {
 			yield "\n";
 		}
 	}
