@@ -8,9 +8,12 @@ Make information clear and easy for everyone.
 
 [Go to easyread.me](https://easyread.me/) to try it out.
 
+[Continuer sur facilealire.fr](https://facilealire.fr/) pour essayer.
+
 ## Resources
 
 - [European standards for making information easy to read and understand](https://www.inclusion-europe.eu/easy-to-read-standards-guidelines/)
+- [Neurodiversity Design System](https://neurodiversity.design/)
 
 ## Requirements
 

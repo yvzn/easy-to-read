@@ -41,3 +41,9 @@
 .app-main a:visited {
   color: var(--color-primary-light);
 }
+
+@media (max-width: 48rem) {
+	.chat-interface {
+		padding: var(--spacing-lg);
+	}
+}

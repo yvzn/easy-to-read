@@ -1,7 +1,7 @@
 (function () {
-  var smallCta = document.getElementById('cta-small');
-  var largeCta = document.getElementById('cta-large');
-  var simplifyButton = document.getElementById('simplify-btn');
+  const smallCta = document.getElementById('cta-small');
+  const largeCta = document.getElementById('cta-large');
+  const simplifyButton = document.getElementById('simplify-btn');
 
   if (simplifyButton || largeCta) {
     smallCta.style.display = 'none';
@@ -12,7 +12,7 @@
   }
 
   function toggleSmallCta() {
-    var observer = new IntersectionObserver(
+    const observer = new IntersectionObserver(
       function (entries) {
         if (entries[0].isIntersecting) {
           smallCta.style.display = 'none';

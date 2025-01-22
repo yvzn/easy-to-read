@@ -43,7 +43,31 @@
 			"path": "db",
 			"problemMatcher": [],
 			"dependsOn": "npm install (db)",
-			"label": "db: start"
+			"label": "start (db)"
+		},
+		{
+			"type": "shell",
+			"label": "npm install (site)",
+			"command": "npm install",
+			"options": {
+				"cwd": "${workspaceFolder}/site"
+			}
+		},
+		{
+			"type": "npm",
+			"script": "start",
+			"path": "site",
+			"problemMatcher": [],
+			"dependsOn": "clean (site)",
+			"label": "start (site)"
+		},
+		{
+			"type": "npm",
+			"script": "clean",
+			"path": "site",
+			"problemMatcher": [],
+			"dependsOn": "npm install (site)",
+			"label": "clean (site)"
 		}
 	]
 }

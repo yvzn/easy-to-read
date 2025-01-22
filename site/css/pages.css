@@ -61,3 +61,9 @@
   margin-bottom: var(--spacing-sm);
   line-height: 1.6;
 }
+
+@media (max-width: 48rem) {
+	.content-article {
+		padding: var(--spacing-lg);
+	}
+}
