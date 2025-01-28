@@ -24,6 +24,7 @@
 	const simplificationResult = {
 		rawOutput: '',
 		requestId: -1,
+		complete: false,
 	}
 
 	form.element.addEventListener('submit', submitTextForSimplification);
@@ -34,6 +35,7 @@
 		e.preventDefault();
 		simplificationResult.rawOutput = '';
 		simplificationResult.requestId = crypto.randomUUID();
+		simplificationResult.complete = false;
 
 		showOriginalText();
 		showSimplifiedVersion();
@@ -56,6 +58,8 @@
 
 		reader.read().then(function processText({ done, value }) {
 			if (done) {
+				simplificationResult.complete = true;
+				updateProgressBar();
 				sendMonitoringData();
 				return;
 			}
@@ -103,14 +107,17 @@
 		formatted = formatted.replace(/[ \t]+\n/g, '\n');
 		formatted = formatted.replace(/\n[ \t]+/g, '\n');
 		formatted = formatted.replace(/\.([^\n"])/g, (_match, p1) => `.\n${p1}`)
-		formatted = formatted.replace(/(#+)(.*)/g, (_, p1, p2) => `<h${p1.length+3}>${p2.trim()}</h${p1.length+3}>`);
 		formatted = formatted.trim();
 		return formatted;
 	}
 
 	function updateProgressBar() {
-		if (simplificationResult.rawOutput.includes('/version-2')) {
+		if (simplificationResult.complete) {
 			progressBar.container.style.visibility = 'hidden';
+			return progressBar.element.value = 100;
+		}
+
+		if (simplificationResult.rawOutput.includes('/version-2')) {
 			return progressBar.element.value = 90;
 		}
 
@@ -136,7 +143,7 @@
 
 		simplifiedVersion.container.style.display = 'block';
 		simplifiedVersion.element.textContent = '';
-		
+
 		progressBar.container.style.visibility = 'visible';
 		progressBar.element.value = 10;
 

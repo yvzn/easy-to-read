@@ -23,7 +23,17 @@
 	white-space: pre-wrap;
 }
 
-.chat-interface progress {
+#progress-bar {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-xs);
+}
+
+#progress-bar svg circle {
+	fill: var(--color-primary);
+}
+
+#progress-bar progress {
 	accent-color: var(--color-primary);
 }
 
