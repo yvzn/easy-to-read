@@ -65,6 +65,7 @@
 			if (done) {
 				simplificationResult.complete = true;
 				updateProgressBar();
+				showOriginalText();
 				sendMonitoringData();
 				return;
 			}
@@ -92,8 +93,20 @@
 	}
 
 	function sendMonitoringData() {
-		// TODO
-		console.log(JSON.stringify(simplificationResult.rawOutput));
+		const resource = '{{environment.interactionUrl}}';
+		const options = {
+			method: 'POST',
+			body: new URLSearchParams({
+				t: JSON.stringify(form.element.t.value),
+				o: JSON.stringify(simplifiedVersion.element.textContent || simplificationResult.rawOutput),
+				i: simplificationResult.requestId,
+			}),
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded'
+			}
+		};
+
+		fetchWithTimeout(resource, options).catch(console.error);
 	}
 
 	function updateSimplifiedVersion() {
@@ -158,13 +171,15 @@
 		progressBar.container.style.visibility = 'visible';
 		progressBar.element.value = 10;
 
-		const userInput = form.element.t.value;
-		originalText.container.style.display = 'block';
-		originalText.element.textContent = userInput;
-
 		errorMessage.container.style.display = 'none';
 
 		history.pushState({}, undefined, '#simplified');
+	}
+
+	function showOriginalText() {
+		const userInput = form.element.t.value;
+		originalText.container.style.display = 'block';
+		originalText.element.textContent = userInput;
 	}
 
 	function showForm() {
