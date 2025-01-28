@@ -1,29 +1,24 @@
 /* Dark theme variables */
 @media (prefers-color-scheme: dark) {
   :root {
-    /* Core surfaces */
     --color-background: var(--clr-surface-a0);
     --color-background-alt: var(--clr-surface-a10);
     --color-surface-main: var(--clr-surface-a20);
     --color-surface-muted: var(--clr-surface-a30);
     --color-surface-alt: var(--clr-surface-a30);
 
-    /* Interactive elements */
     --color-primary: var(--clr-primary-a40);
     --color-primary-dark: var(--clr-primary-a20);
     --color-primary-light: var(--clr-primary-a50);
 
-    /* Call-to-action */
     --color-secondary: var(--clr-primary-a40);
     --color-secondary-dark: var(--clr-primary-a20);
     --color-secondary-light: var(--clr-primary-a50);
 
-    /* Branding & highlights */
 	--color-accent: var(--color-terra-300);
 	--color-accent-dark: var(--color-terra-500);
 	--color-accent-light: var(--color-terra-300);
 
-    /* Text & borders */
     --color-text-primary: var(--color-cream-100);
     --color-text-secondary: var(--color-cream-200);
     --color-text-muted: var(--color-cream-100);

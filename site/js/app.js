@@ -20,6 +20,11 @@
 		editLink: document.getElementById('original-text').querySelector('.edit-link'),
 	};
 
+	const errorMessage = {
+		container: document.getElementById('error-message'),
+		retryButton: document.getElementById('error-message').querySelector('.retry-btn'),
+	}
+
 	const textDecoder = new TextDecoder('utf-8');
 	const simplificationResult = {
 		rawOutput: '',
@@ -29,6 +34,7 @@
 
 	form.element.addEventListener('submit', submitTextForSimplification);
 	originalText.editLink.addEventListener('click', () => history.back());
+	errorMessage.retryButton.addEventListener('click', () => history.back());
 	addEventListener('popstate', showForm);
 
 	function submitTextForSimplification(e) {
@@ -37,7 +43,6 @@
 		simplificationResult.requestId = crypto.randomUUID();
 		simplificationResult.complete = false;
 
-		showOriginalText();
 		showSimplifiedVersion();
 
 		const resource = form.element.action;
@@ -77,8 +82,13 @@
 	}
 
 	function handleResponseError(error) {
-		// TODO
 		console.error(error);
+
+		errorMessage.container.style.display = 'block';
+		simplifiedVersion.container.style.display = 'none';
+		originalText.container.style.display = 'none';
+
+		history.pushState({}, undefined, '#error');
 	}
 
 	function sendMonitoringData() {
@@ -107,6 +117,7 @@
 		formatted = formatted.replace(/[ \t]+\n/g, '\n');
 		formatted = formatted.replace(/\n[ \t]+/g, '\n');
 		formatted = formatted.replace(/\.([^\n"])/g, (_match, p1) => `.\n${p1}`)
+		formatted = formatted.replace(/\n[ \t]+/g, '\n');
 		formatted = formatted.trim();
 		return formatted;
 	}
@@ -151,10 +162,9 @@
 		originalText.container.style.display = 'block';
 		originalText.element.textContent = userInput;
 
-		history.pushState({}, undefined, '#simplified');
-	}
+		errorMessage.container.style.display = 'none';
 
-	function showOriginalText() {
+		history.pushState({}, undefined, '#simplified');
 	}
 
 	function showForm() {
@@ -164,5 +174,7 @@
 		simplifiedVersion.container.style.display = 'none';
 
 		originalText.container.style.display = 'none';
+
+		errorMessage.container.style.display = 'none';
 	}
 })();

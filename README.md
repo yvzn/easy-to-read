@@ -22,3 +22,7 @@ Azure Function Core Tools
 ```bash
 npm i -g azure-functions-core-tools@4 --unsafe-perm true
 ```
+
+## Licences
+
+[SVG Spinners](https://github.com/n3r4zzurr0/svg-spinners) - MIT (c) Utkarsh Verma

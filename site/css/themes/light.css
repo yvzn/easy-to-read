@@ -1,28 +1,23 @@
 /* Light theme variables */
 :root {
-  /* Core surfaces */
   --color-surface-main: var(--color-white);
   --color-surface-muted: var(--color-cream-100);
   --color-background: var(--color-cream-50);
   --color-background-alt: var(--color-cream-100);
   --color-surface-alt: var(--color-slate-700);
 
-  /* Interactive elements */
   --color-primary: var(--color-slate-500);
   --color-primary-dark: var(--color-slate-700);
   --color-primary-light: var(--color-slate-500);
-  
-  /* Call-to-action */
+
   --color-secondary: var(--color-teal-300);
   --color-secondary-dark: var(--color-teal-500);
   --color-secondary-light: var(--color-teal-700);
-  
-  /* Branding & highlights */
+
   --color-accent: var(--color-terra-500);
   --color-accent-dark: var(--color-terra-700);
   --color-accent-light: var(--color-terra-300);
-  
-  /* Text & borders */
+
   --color-text-primary: var(--color-brown-800);
   --color-text-secondary: var(--color-brown-700);
   --color-text-muted: var(--color-brown-600);
