@@ -6,36 +6,40 @@ smallCta: no
 ---
 
 <main class="app-main">
-  <div class="container">
-    <div class="chat-interface">
-      <div class="input-group">
-        <form action="{{environment.simplifiedTextUrl}}" method="post">
-          <label for="userText" class="input-label">Entrez votre texte</label>
-          <div class="input-wrapper">
-            <textarea
-              id="userText"
-              name="t"
-              class="text-input"
-              rows="6"
-              placeholder="Votre texte ici..."
-              aria-label="Texte à simplifier"
-            ></textarea>
-            <button
-              type="submit"
-              class="simplify-btn"
-              id="simplify-btn"
-              aria-label="Simplifier le texte"
-            >
-              Simplifier
-            </button>
-          </div>
-        </form>
-      </div>
-      <p class="disclaimer">
-        Cette application utilise l'intelligence artificielle pour créer du contenu automatisé. <br />
-        Les résultats peuvent varier et doivent être vérifiés. <br />
-        Évitez d'entrer des <a href="/fr/content/confidentialite">informations personnelles ou confidentielles</a>.
-      </p>
-    </div>
-  </div>
+	<div class="container">
+		<div class="chat-interface">
+			<div class="input-group" id="simplify-form">
+				<form action="{{environment.simplifiedTextUrl}}" method="post">
+					<label for="userText" class="input-label">Entrez votre texte&puncsp;:</label>
+					<div class="input-wrapper">
+						<textarea id="userText" name="t" class="text-input" rows="6" required="required"
+							placeholder="Votre texte ici..." aria-label="Texte à simplifier"></textarea>
+						<button type="submit" class="simplify-btn" id="simplify-btn" aria-label="Simplifier le texte">
+							Simplifier
+						</button>
+					</div>
+				</form>
+			</div>
+			<div class="chat-output d-none" id="simplified-version">
+				<h3>Version simplifiée&puncsp;:</h3>
+				<label id="progress-bar">
+					Analyse de votre texte&puncsp;: <progress value="0" max="100"></progress>
+				</label>
+				<div class="formatted-output"></div>
+			</div>
+			<div class="chat-output d-none" id="original-text">
+				<h3>Texte d'origine&puncsp;:</h3>
+				<details>
+					<div class="formatted-output"></div>
+				</details>
+				<a href="#" class="btn btn-outline edit-link">&Eacute;diter votre texte</a>
+			</div>
+			<p class="disclaimer">
+				Cette application utilise l'intelligence artificielle pour créer du contenu automatisé. <br />
+				Les résultats peuvent varier et doivent être vérifiés. <br />
+				Évitez d'entrer des <a href="/fr/content/confidentialite">informations personnelles ou
+					confidentielles</a>.
+			</p>
+		</div>
+	</div>
 </main>

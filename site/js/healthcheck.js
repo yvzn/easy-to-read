@@ -6,6 +6,6 @@
   }
 
   function healthCheck(){
-    fetch('{{environment.healthCheckUrl}}');
+    fetchWithTimeout('{{environment.healthCheckUrl}}');
   }
 })();

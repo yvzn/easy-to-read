@@ -6,36 +6,39 @@ smallCta: no
 ---
 
 <main class="app-main">
-  <div class="container">
-    <div class="chat-interface">
-      <div class="input-group">
-        <form action="{{environment.simplifiedTextUrl}}" method="post">
-          <label for="userText" class="input-label">Enter your text</label>
-          <div class="input-wrapper">
-            <textarea
-              id="userText"
-              name="t"
-              class="text-input"
-              rows="6"
-              placeholder="Your text here..."
-              aria-label="Text to simplify"
-            ></textarea>
-            <button
-              type="submit"
-              class="simplify-btn"
-              id="simplify-btn"
-              aria-label="Simplify text"
-            >
-              Simplify
-            </button>
-          </div>
-        </form>
-      </div>
-      <p class="disclaimer">
-        This application uses artificial intelligence to create automated content. <br />
-        Results can vary and should be checked for correctness. <br />
-        Please avoid entering <a href="/en/content/privacy">personal or confidential information</a>.
-      </p>
-    </div>
-  </div>
+	<div class="container">
+		<div class="chat-interface">
+			<div class="input-group" id="simplify-form">
+				<form action="{{environment.simplifiedTextUrl}}" method="post">
+					<label for="userText" class="input-label">Enter your text:</label>
+					<div class="input-wrapper">
+						<textarea id="userText" name="t" class="text-input" rows="6" required="required"
+							placeholder="Your content here..." aria-label="Text to simplify"></textarea>
+						<button type="submit" class="simplify-btn" id="simplify-btn" aria-label="Simplify text">
+							Simplify
+						</button>
+					</div>
+				</form>
+			</div>
+			<div class="chat-output d-none" id="simplified-version">
+				<h3>Simplified version:</h3>
+				<label id="progress-bar">
+					Processing your text: <progress value="0" max="100"></progress>
+				</label>
+				<div class="formatted-output"></div>
+			</div>
+			<div class="chat-output d-none" id="original-text">
+				<h3>Original text:</h3>
+				<details>
+					<div class="formatted-output"></div>
+				</details>
+				<a href="#" class="btn btn-outline edit-link">Edit your text</a>
+			</div>
+			<p class="disclaimer">
+				This application uses artificial intelligence to create automated content. <br />
+				Results can vary and should be checked for correctness. <br />
+				Please avoid entering <a href="/en/content/privacy">personal or confidential information</a>.
+			</p>
+		</div>
+	</div>
 </main>

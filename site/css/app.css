@@ -14,6 +14,19 @@
   box-shadow: var(--shadow-md);
 }
 
+.chat-output {
+  margin-bottom: var(--spacing-xl);
+}
+
+.chat-output .formatted-output {
+	font-family: var(--font-family);
+	white-space: pre-wrap;
+}
+
+.chat-interface progress {
+	accent-color: var(--color-primary);
+}
+
 .disclaimer {
   text-align: left;
   font-size: 1rem;
@@ -27,19 +40,23 @@
   line-height: 1.6;
 }
 
-.app-main a {
+.app-main .disclaimer a {
   color: var(--color-primary-dark);
   text-decoration: underline;
   text-underline-offset: 0.2em;
   transition: color 0.2s ease;
 }
 
-.app-main a:hover {
+.app-main .disclaimer a:hover {
   color: var(--color-primary);
 }
 
-.app-main a:visited {
+.app-main .disclaimer a:visited {
   color: var(--color-primary-light);
+}
+
+.app-main details {
+	margin-bottom: var(--spacing-lg);
 }
 
 @media (max-width: 48rem) {
