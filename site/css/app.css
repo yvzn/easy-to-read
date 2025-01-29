@@ -1,4 +1,5 @@
-/* App-specific styles */
+/* Chat interface ***********************************************/
+
 .app-main {
   min-height: calc(100vh - 180px);
   padding: var(--spacing-2xl) 0;
@@ -24,6 +25,8 @@
 	min-height: 150px;
 }
 
+/* Progress bar ***********************************************/
+
 #progress-bar {
 	display: flex;
 	align-items: center;
@@ -37,6 +40,20 @@
 #progress-bar progress {
 	accent-color: var(--color-primary);
 }
+
+/* Feedback form ***********************************************/
+
+.feedback-btn {
+	text-underline-offset: 0.4em;
+}
+
+/* Original text ***********************************************/
+
+.app-main details {
+	margin-bottom: var(--spacing-lg);
+}
+
+/* Disclaimer ***********************************************/
 
 .disclaimer {
   text-align: left;
@@ -66,9 +83,7 @@
   color: var(--color-primary-light);
 }
 
-.app-main details {
-	margin-bottom: var(--spacing-lg);
-}
+/* Small screens ***********************************************/
 
 @media (max-width: 48rem) {
 	.chat-interface {

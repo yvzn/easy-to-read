@@ -24,10 +24,41 @@ smallCta: no
 				<h3>Simplified version:</h3>
 				<label id="progress-bar">
 					Processing your text:
-					<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><style>.spinner_S1WN{animation:spinner_MGfb .8s linear infinite;animation-delay:-.8s}.spinner_Km9P{animation-delay:-.65s}.spinner_JApP{animation-delay:-.5s}@keyframes spinner_MGfb{93.75%,100%{opacity:.2}}</style><circle class="spinner_S1WN" cx="4" cy="12" r="3"/><circle class="spinner_S1WN spinner_Km9P" cx="12" cy="12" r="3"/><circle class="spinner_S1WN spinner_JApP" cx="20" cy="12" r="3"/></svg>
+					<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+						<style>
+							.spinner_S1WN {
+								animation: spinner_MGfb .8s linear infinite;
+								animation-delay: -.8s
+							}
+
+							.spinner_Km9P {
+								animation-delay: -.65s
+							}
+
+							.spinner_JApP {
+								animation-delay: -.5s
+							}
+
+							@keyframes spinner_MGfb {
+
+								93.75%,
+								100% {
+									opacity: .2
+								}
+							}
+						</style>
+						<circle class="spinner_S1WN" cx="4" cy="12" r="3" />
+						<circle class="spinner_S1WN spinner_Km9P" cx="12" cy="12" r="3" />
+						<circle class="spinner_S1WN spinner_JApP" cx="20" cy="12" r="3" />
+					</svg>
 					<progress value="0" max="100"></progress>
 				</label>
 				<div class="formatted-output"></div>
+			</div>
+			<div class="chat-output d-none" id="user-feedback">
+				<h3>Are you happy with the new version?</h3>
+				<button type="button" class="btn btn-outline feedback-btn" data-feedback-score="-1">👎</button>
+				<button type="button" class="btn btn-outline feedback-btn" data-feedback-score="1">👍</button>
 			</div>
 			<div class="chat-output d-none" id="original-text">
 				<h3>Original text:</h3>
@@ -37,8 +68,8 @@ smallCta: no
 				<a href="#" class="btn btn-outline edit-link">Edit your text</a>
 			</div>
 			<div class="chat-output d-none" id="error-message">
-				<p>❌ There was a problem.<br />
-					The text simplifier could not handle your request.</p>
+				<h4>❌ There was a problem.</h4>
+				<p>The text simplifier could not handle your request.</p>
 				<button class="btn btn-outline retry-btn" type="button">Retry</button>
 			</div>
 			<p class="disclaimer">
