@@ -14,17 +14,17 @@ smallCta: no
 					<div class="input-wrapper">
 						<textarea id="userText" name="t" class="text-input" rows="6" required="required"
 							placeholder="Your content here..." aria-label="Text to simplify"></textarea>
-						<button type="submit" class="simplify-btn" id="simplify-btn" aria-label="Simplify text">
-							Simplify
+						<button type="submit" class="simplify-btn" id="simplify-btn">
+							Simplify &rarr;
 						</button>
 					</div>
 				</form>
 			</div>
 			<div class="chat-output d-none" id="simplified-version">
 				<h3>Simplified version:</h3>
-				<label id="progress-bar">
+				<label for="progress" id="progress-bar">
 					Processing your text:
-					<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+					<svg width="36" height="36" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 						<style>
 							.spinner_S1WN {
 								animation: spinner_MGfb .8s linear infinite;
@@ -51,17 +51,17 @@ smallCta: no
 						<circle class="spinner_S1WN spinner_Km9P" cx="12" cy="12" r="3" />
 						<circle class="spinner_S1WN spinner_JApP" cx="20" cy="12" r="3" />
 					</svg>
-					<progress value="0" max="100"></progress>
+					<progress id="progress" value="0" max="100"></progress>
 				</label>
 				<div class="formatted-output"></div>
 			</div>
 			<div class="chat-output d-none" id="user-feedback">
-				<h3>Are you happy with the new version?</h3>
-				<button type="button" class="btn btn-outline feedback-btn" data-feedback-score="-1">👎</button>
-				<button type="button" class="btn btn-outline feedback-btn" data-feedback-score="1">👍</button>
+				<h4>Are you happy with the new version?</h4>
+				<button type="button" class="btn btn-outline feedback-btn" data-feedback-score="1">👍 Yes</button>
+				<button type="button" class="btn btn-outline feedback-btn" data-feedback-score="-1">👎 No</button>
 			</div>
 			<div class="chat-output d-none" id="original-text">
-				<h3>Original text:</h3>
+				<h4>Original text:</h4>
 				<details>
 					<div class="formatted-output"></div>
 				</details>
@@ -80,3 +80,36 @@ smallCta: no
 		</div>
 	</div>
 </main>
+
+<dialog id="feedback-dialog" class="feedback-dialog">
+	<form id="feedback-form" method="dialog">
+		<input type="hidden" name="i" />
+		<h3>Your feedback makes easyread.me better</h3>
+		<div class="feedback-question">
+			<p>Are you happy with the new text version?</p>
+			<label for="feedback-score-yes">
+				<input type="radio" id="feedback-score-yes" name="s" value="1">
+				👍 Yes
+			</label>
+			<label for="feedback-score-no">
+				<input type="radio" id="feedback-score-no" name="s" value="-1">
+				👎 No
+			</label>
+		</div>
+		<div class="feedback-question">
+			<label for="feedback-comment">Additional comments:</label>
+			<textarea id="feedback-comment" name="c" class="text-input" rows="4"
+				placeholder="Your comments here..."></textarea>
+		</div>
+		<div class="feedback-status">
+			<p>Your feedback has not been sent yet.</p>
+			<p class="d-none">❌ There was a problem sending your feedback.</p>
+			<p class="d-none">✅ Thank you for your feedback!</p>
+		</div>
+		<div class="feedback-buttons">
+			<button type="button" id="feedback-close-btn" class="btn btn-outline">Close</button>
+			<button type="submit" id="feedback-send-btn" class="btn btn-primary">Send your feedback &rarr;</button>
+			<button type="submit" id="feedback-retry-btn" class="btn btn-primary d-none">Retry</button>
+		</div>
+	</form>
+</dialog>

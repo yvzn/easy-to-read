@@ -1,4 +1,7 @@
 (function () {
+
+	/* Text simplifier form ********************************************************/
+
 	const form = {
 		container: document.getElementById('simplify-form'),
 		element: document.getElementById('simplify-form').querySelector('form')
@@ -23,6 +26,10 @@
 	const errorMessage = {
 		container: document.getElementById('error-message'),
 		retryButton: document.getElementById('error-message').querySelector('.retry-btn'),
+	}
+
+	const userFeedback = {
+		container: document.getElementById('user-feedback'),
 	}
 
 	const textDecoder = new TextDecoder('utf-8');
@@ -59,12 +66,17 @@
 	}
 
 	function handleResponseStream(response) {
+		if (!response.ok) {
+			return handleResponseError(response.statusText);
+		}
+
 		const reader = response.body.getReader();
 
 		reader.read().then(function processText({ done, value }) {
 			if (done) {
 				simplificationResult.complete = true;
 				updateProgressBar();
+				showFeedbackOpeningButtons();
 				showOriginalText();
 				sendMonitoringData();
 				return;
@@ -191,5 +203,97 @@
 		originalText.container.style.display = 'none';
 
 		errorMessage.container.style.display = 'none';
+
+		userFeedback.container.style.display = 'none';
+	}
+
+	/* Feedback dialog ********************************************************/
+
+	const feedbackDialog = {
+		container: document.getElementById('feedback-dialog'),
+		openingButtons: document.querySelectorAll('.feedback-btn'),
+		form: document.getElementById('feedback-form'),
+		questions: document.getElementById('feedback-dialog').querySelectorAll('.feedback-question'),
+		closeButton: document.getElementById('feedback-close-btn'),
+		sendButton: document.getElementById('feedback-send-btn'),
+		retryButton: document.getElementById('feedback-retry-btn'),
+	};
+
+	const feedbackStatus = {
+		default: document.getElementById('feedback-dialog').querySelector('.feedback-status p:nth-child(1)'),
+		error: document.getElementById('feedback-dialog').querySelector('.feedback-status p:nth-child(2)'),
+		success: document.getElementById('feedback-dialog').querySelector('.feedback-status p:nth-child(3)'),
+	}
+
+	function showFeedbackOpeningButtons() {
+		if ('showModal' in feedbackDialog.container) {
+			userFeedback.container.style.display = 'block';
+		}
+	}
+
+	feedbackDialog.openingButtons.forEach(button => button.addEventListener('click', showFeedbackDialog));
+	feedbackDialog.closeButton.addEventListener('click', hideFeedbackDialog);
+
+	function showFeedbackDialog(e) {
+		feedbackDialog.form.s.value = e.currentTarget.dataset.feedbackScore;
+		feedbackDialog.form.i.value = simplificationResult.requestId;
+		feedbackDialog.form.c.value = '';
+		showFeedbackStatus('default');
+		feedbackDialog.questions.forEach(question => question.style.display = 'block');
+		feedbackDialog.sendButton.style.display = 'inline-block';
+		feedbackDialog.retryButton.style.display = 'none';
+		feedbackDialog.container.showModal();
+	}
+
+	function showFeedbackStatus(status) {
+		for (const key in feedbackStatus) {
+			if (key === status) continue;
+			feedbackStatus[key].style.display = 'none';
+		}
+
+		if (status === undefined) return;
+
+		feedbackStatus[status].style.display = 'block';
+	}
+
+	function hideFeedbackDialog() {
+		feedbackDialog.container.close('dismissed');
+	}
+
+	feedbackDialog.form.addEventListener('submit', submitFeedback);
+
+	function submitFeedback(e) {
+		e.preventDefault();
+		const resource = '{{environment.feedbackUrl}}';
+		const options = {
+			method: 'POST',
+			body: new URLSearchParams(new FormData(feedbackDialog.form)),
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded'
+			}
+		};
+
+		showFeedbackStatus(undefined);
+		fetchWithTimeout(resource, options)
+			.then(handleFeedbackResponse, handleFeedbackError);
+	}
+
+	function handleFeedbackResponse(response) {
+		if (!response.ok) {
+			return handleFeedbackResponse(response.statusText);
+		}
+
+		showFeedbackStatus('success');
+		feedbackDialog.questions.forEach(question => question.style.display = 'none');
+		feedbackDialog.sendButton.style.display = 'none';
+		feedbackDialog.retryButton.style.display = 'none';
+	}
+
+	function handleFeedbackError(error) {
+		console.error(error);
+
+		showFeedbackStatus('error');
+		feedbackDialog.sendButton.style.display = 'none';
+		feedbackDialog.retryButton.style.display = 'inline-block';
 	}
 })();

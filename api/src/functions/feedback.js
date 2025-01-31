@@ -17,6 +17,7 @@ app.http('feedback', {
 			const requestParams = new URLSearchParams(requestBody);
 
 			const feedbackScore = requestParams.get("s");
+			const comment = requestParams.get("c");
 			const interactionId = requestParams.get("i");
 
 			if (!feedbackScore || !interactionId) {
@@ -33,6 +34,7 @@ app.http('feedback', {
 				RowKey: context.invocationId,
 				InteractionId: interactionId,
 				Score: feedbackScore,
+				Comment: comment,
 			});
 			context.extraOutputs.set(tableOutput, rows);
 

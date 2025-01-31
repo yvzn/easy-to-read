@@ -94,7 +94,7 @@
 
 .btn-large {
   padding: 1rem 2rem;
-  font-size: 1.125rem;
+  font-size: var(--larger-font-size);
 }
 
 .cta-buttons {

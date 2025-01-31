@@ -14,20 +14,51 @@ smallCta: no
 					<div class="input-wrapper">
 						<textarea id="userText" name="t" class="text-input" rows="6" required="required"
 							placeholder="Votre texte ici..." aria-label="Texte à simplifier"></textarea>
-						<button type="submit" class="simplify-btn" id="simplify-btn" aria-label="Simplifier le texte">
-							Simplifier
+						<button type="submit" class="simplify-btn" id="simplify-btn">
+							Simplifier &rarr;
 						</button>
 					</div>
 				</form>
 			</div>
 			<div class="chat-output d-none" id="simplified-version">
 				<h3>Version simplifiée&puncsp;:</h3>
-				<label id="progress-bar">
+				<label for="progress" id="progress-bar">
 					Analyse de votre texte&puncsp;:
-					<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><style>.spinner_S1WN{animation:spinner_MGfb .8s linear infinite;animation-delay:-.8s}.spinner_Km9P{animation-delay:-.65s}.spinner_JApP{animation-delay:-.5s}@keyframes spinner_MGfb{93.75%,100%{opacity:.2}}</style><circle class="spinner_S1WN" cx="4" cy="12" r="3"/><circle class="spinner_S1WN spinner_Km9P" cx="12" cy="12" r="3"/><circle class="spinner_S1WN spinner_JApP" cx="20" cy="12" r="3"/></svg>
-					<progress value="0" max="100"></progress>
+					<svg width="36" height="36" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+						<style>
+							.spinner_S1WN {
+								animation: spinner_MGfb .8s linear infinite;
+								animation-delay: -.8s
+							}
+
+							.spinner_Km9P {
+								animation-delay: -.65s
+							}
+
+							.spinner_JApP {
+								animation-delay: -.5s
+							}
+
+							@keyframes spinner_MGfb {
+
+								93.75%,
+								100% {
+									opacity: .2
+								}
+							}
+						</style>
+						<circle class="spinner_S1WN" cx="4" cy="12" r="3" />
+						<circle class="spinner_S1WN spinner_Km9P" cx="12" cy="12" r="3" />
+						<circle class="spinner_S1WN spinner_JApP" cx="20" cy="12" r="3" />
+					</svg>
+					<progress id="progress" value="0" max="100"></progress>
 				</label>
 				<div class="formatted-output"></div>
+			</div>
+			<div class="chat-output d-none" id="user-feedback">
+				<h4>Êtes vous satisfait de la nouvelle version&puncsp;?</h4>
+				<button type="button" class="btn btn-outline feedback-btn" data-feedback-score="1">👍 Oui</button>
+				<button type="button" class="btn btn-outline feedback-btn" data-feedback-score="-1">👎 Non</button>
 			</div>
 			<div class="chat-output d-none" id="original-text">
 				<h3>Texte d'origine&puncsp;:</h3>
@@ -37,8 +68,8 @@ smallCta: no
 				<a href="#" class="btn btn-outline edit-link">&Eacute;diter votre texte</a>
 			</div>
 			<div class="chat-output d-none" id="error-message">
-				<p>❌ Il y a eu un problème.<br />
-					Votre demande ne peut pas être traitée.</p>
+				<h4>❌ Il y a eu un problème.</h4>
+				<p>Votre demande ne peut pas être traitée.</p>
 				<button class="btn btn-outline retry-btn" type="button">Réessayer</button>
 			</div>
 			<p class="disclaimer">
@@ -50,3 +81,36 @@ smallCta: no
 		</div>
 	</div>
 </main>
+
+<dialog id="feedback-dialog" class="feedback-dialog">
+	<form id="feedback-form" method="dialog">
+		<input type="hidden" name="i" />
+		<h3>Vos commentaires améliorent facile à lire</h3>
+		<div class="feedback-question">
+			<p>Êtes vous satisfait de la nouvelle version&puncsp;?</p>
+			<label for="feedback-score-yes">
+				<input type="radio" id="feedback-score-yes" name="s" value="1">
+				👍 Oui
+			</label>
+			<label for="feedback-score-no">
+				<input type="radio" id="feedback-score-no" name="s" value="-1">
+				👎 Non
+			</label>
+		</div>
+		<div class="feedback-question">
+			<label for="feedback-comment">Commentaires:</label>
+			<textarea id="feedback-comment" name="c" class="text-input" rows="4"
+				placeholder="Votre commentaire ici..."></textarea>
+		</div>
+		<div class="feedback-status">
+			<p>Vos commentaires n'ont pas encore été envoyés.</p>
+			<p class="d-none">❌ Il y a eu un problème lors de l'envoi de vos commentaires.</p>
+			<p class="d-none">✅ Merci pour vos commentaires !</p>
+		</div>
+		<div class="feedback-buttons">
+			<button type="button" id="feedback-close-btn" class="btn btn-outline">Fermer</button>
+			<button type="submit" id="feedback-send-btn" class="btn btn-primary">Envoyer vos commentaires &rarr;</button>
+			<button type="submit" id="feedback-retry-btn" class="btn btn-primary d-none">Réessayer</button>
+		</div>
+	</form>
+</dialog>

@@ -46,7 +46,7 @@ h4 {
 p {
   margin-bottom: var(--spacing-md);
   color: var(--color-text-primary);
-  font-size: 1.125rem;
+  font-size: var(--larger-font-size);
   max-width: 70ch;
 }
 

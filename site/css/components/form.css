@@ -18,13 +18,12 @@
   border: var(--input-border);
   border-radius: var(--radius-md);
   resize: vertical;
-  min-height: 150px;
-  font-size: 1.125rem;
+  font-size: var(--larger-font-size);
   line-height: 1.6;
   color: var(--color-text-primary);
   background-color: var(--color-surface-main);
   box-shadow: var(--input-shadow);
-  transition: all 0.2s ease;
+  transition: box-shadow, border-color 0.2s ease;
 }
 
 .text-input:focus {
@@ -45,7 +44,6 @@
   border: 2px solid var(--color-primary-dark);
   box-shadow: 0 2px 0 var(--color-primary-dark);
   padding: 0.75rem 1.5rem;
-  font-size: 1rem;
   font-weight: 500;
   border-radius: var(--radius-md);
   cursor: pointer;
