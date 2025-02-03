@@ -1,48 +1,49 @@
 (function () {
+	/* Guards *********************************************************************/
+	if (!document.getElementById('simplify-form'))
+		return;
+
+	if (!typeof HTMLDialogElement === 'function')
+		document.getElementById('feedback-dialog').style.display = 'none';
 
 	/* Text simplifier form ********************************************************/
 
-	const form = {
-		container: document.getElementById('simplify-form'),
-		element: document.getElementById('simplify-form').querySelector('form')
-	};
-
-	const simplifiedVersion = {
-		container: document.getElementById('simplified-version'),
-		element: document.getElementById('simplified-version').querySelector('.formatted-output'),
-	};
-
-	const progressBar = {
-		container: document.getElementById('progress-bar'),
-		element: document.getElementById('progress-bar').querySelector('progress'),
-	}
-
-	const originalText = {
-		container: document.getElementById('original-text'),
-		element: document.getElementById('original-text').querySelector('.formatted-output'),
-		editLink: document.getElementById('original-text').querySelector('.edit-link'),
-	};
-
-	const errorMessage = {
-		container: document.getElementById('error-message'),
-		retryButton: document.getElementById('error-message').querySelector('.retry-btn'),
-	}
-
-	const userFeedback = {
-		container: document.getElementById('user-feedback'),
-	}
-
-	const textDecoder = new TextDecoder('utf-8');
-	const simplificationResult = {
-		rawOutput: '',
-		requestId: -1,
-		complete: false,
-	}
+	const { form, originalText, errorMessage, simplifiedVersion, progressBar, userFeedback } = createPageObjects();
 
 	form.element.addEventListener('submit', submitTextForSimplification);
 	originalText.editLink.addEventListener('click', () => history.back());
 	errorMessage.retryButton.addEventListener('click', () => history.back());
 	addEventListener('popstate', showForm);
+
+	function createPageObjects() {
+		return {
+			form: {
+				container: document.getElementById('simplify-form'),
+				element: document.getElementById('simplify-form').querySelector('form')
+			}, originalText: {
+				container: document.getElementById('original-text'),
+				element: document.getElementById('original-text').querySelector('.formatted-output'),
+				editLink: document.getElementById('original-text').querySelector('.edit-link'),
+			}, errorMessage: {
+				container: document.getElementById('error-message'),
+				retryButton: document.getElementById('error-message').querySelector('.retry-btn'),
+			}, simplifiedVersion: {
+				container: document.getElementById('simplified-version'),
+				element: document.getElementById('simplified-version').querySelector('.formatted-output'),
+			}, progressBar: {
+				container: document.getElementById('progress-bar'),
+				element: document.getElementById('progress-bar').querySelector('progress'),
+			}, userFeedback: {
+				container: document.getElementById('user-feedback'),
+			}
+		};
+	}
+
+	const simplificationResult = {
+		rawOutput: '',
+		requestId: -1,
+		complete: false,
+	}
 
 	function submitTextForSimplification(e) {
 		e.preventDefault();
@@ -64,6 +65,8 @@
 		fetchWithTimeout(resource, options)
 			.then(handleResponseStream, handleResponseError);
 	}
+
+	const textDecoder = new TextDecoder('utf-8');
 
 	function handleResponseStream(response) {
 		if (!response.ok) {
