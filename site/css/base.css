@@ -1,22 +1,24 @@
 /* Base styles with theme-aware colors */
 body {
-  background-color: var(--color-background);
-  color: var(--color-text-primary);
+	background-color: #fcf8f3;
+	background-color: var(--color-background);
+	color: #4a433d;
+	color: var(--color-text-primary);
 }
 
 /* Theme-aware text selection */
 ::selection {
-  background-color: var(--color-primary);
-  color: var(--color-surface-main);
+	background-color: var(--color-primary);
+	color: var(--color-surface-main);
 }
 
 /* Smooth theme transitions */
 body {
-  transition: background-color 0.3s ease, color 0.3s ease;
+	transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Theme-aware focus outline */
 :focus {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 4px;
+	outline: 2px solid var(--color-primary);
+	outline-offset: 4px;
 }

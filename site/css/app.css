@@ -20,7 +20,6 @@
 }
 
 .chat-output .formatted-output {
-	font-family: var(--font-family);
 	white-space: pre-wrap;
 	min-height: 150px;
 }
