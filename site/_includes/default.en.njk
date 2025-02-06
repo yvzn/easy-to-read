@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html lang="{{lang}}">
-  <head>
-    {% include "partials/head.njk" %}
-  </head>
-  <body>
-    {% include "partials/en/header.njk" %}
 
-    {{ content | safe }}
+<head>
+	{% include "partials/head.njk" %}
+	{% include "partials/en/favicon.njk" %}
+</head>
 
-    {% include "partials/en/footer.njk" %}
+<body>
+	{% include "partials/en/header.njk" %}
 
-    <script src="/bundle.js"></script>
-  </body>
+	{{ content | safe }}
+
+	{% include "partials/en/footer.njk" %}
+
+	<script src="/bundle.js"></script>
+</body>
+
 </html>
