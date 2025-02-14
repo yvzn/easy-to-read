@@ -13,10 +13,11 @@ smallCta: no
 					<label for="userText" class="input-label">Enter your text:</label>
 					<div class="input-wrapper">
 						<textarea id="userText" name="t" class="text-input" rows="6" required="required"
-							placeholder="Your content here..." aria-label="Text to simplify"></textarea>
+							placeholder="Your content here..." aria-label="Text to simplify" maxlength="8000"></textarea>
 						<button type="submit" class="simplify-btn" id="simplify-btn">
 							Simplify&puncsp;&rarr;
 						</button>
+						<p id="char-counter" aria-hidden="true">0&puncsp;/&puncsp;8000 characters</p>
 					</div>
 				</form>
 			</div>
@@ -96,7 +97,7 @@ smallCta: no
 			</label>
 			<label for="feedback-score-no">
 				<input type="radio" id="feedback-score-no" name="s" value="-1">
-				👎 No
+				 👎 No
 			</label>
 		</div>
 		<div class="feedback-question">

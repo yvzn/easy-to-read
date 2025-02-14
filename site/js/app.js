@@ -11,6 +11,7 @@
 	const { form, originalText, errorMessage, simplifiedVersion, progressBar, userFeedback } = createPageObjects();
 
 	form.element.addEventListener('submit', submitTextForSimplification);
+	form.element.t.addEventListener('input', updateCharCounter);
 	originalText.editLink.addEventListener('click', () => history.back());
 	errorMessage.retryButton.addEventListener('click', () => history.back());
 	addEventListener('popstate', showForm);
@@ -19,7 +20,8 @@
 		return {
 			form: {
 				container: document.getElementById('simplify-form'),
-				element: document.getElementById('simplify-form').querySelector('form')
+				element: document.getElementById('simplify-form').querySelector('form'),
+				charCounter: document.getElementById('char-counter')
 			}, originalText: {
 				container: document.getElementById('original-text'),
 				element: document.getElementById('original-text').querySelector('.formatted-output'),
@@ -208,6 +210,19 @@
 		errorMessage.container.style.display = 'none';
 
 		userFeedback.container.style.display = 'none';
+	}
+
+	function updateCharCounter() {
+		const currentCharacterCount = form.element.t.value.length;
+		const initialTextContent = form.charCounter.textContent;
+		const pos = initialTextContent.indexOf('/');
+		const updatedTextContent = `${currentCharacterCount}\u2008${initialTextContent.slice(pos)}`;
+		form.charCounter.textContent = updatedTextContent;
+		if (currentCharacterCount < 100) {
+			form.charCounter.classList.remove('max');
+		} else {
+			form.charCounter.classList.add('max');
+		}
 	}
 
 	/* Feedback dialog ********************************************************/
