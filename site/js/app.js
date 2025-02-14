@@ -113,7 +113,7 @@
 			method: 'POST',
 			body: new URLSearchParams({
 				t: JSON.stringify(form.element.t.value),
-				o: JSON.stringify(simplifiedVersion.element.textContent || simplificationResult.rawOutput),
+				o: JSON.stringify(simplificationResult.rawOutput),
 				i: simplificationResult.requestId,
 			}),
 			headers: {
