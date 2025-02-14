@@ -20,11 +20,12 @@ smallCta: no
 					</div>
 				</form>
 			</div>
+			<div aria-live="assertive">
 			<div class="chat-output d-none" id="simplified-version">
 				<h3>Simplified version:</h3>
 				<label for="progress" id="progress-bar">
 					Processing your text:
-					<svg width="36" height="36" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+					<svg width="36" height="36" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 						<style>
 							.spinner_S1WN {
 								animation: spinner_MGfb .8s linear infinite;
@@ -72,6 +73,7 @@ smallCta: no
 				<p>The text simplifier could not handle your request.</p>
 				<button class="btn btn-outline retry-btn" type="button">Retry</button>
 			</div>
+			</div>
 			<p class="disclaimer">
 				This application uses artificial intelligence to create automated content. <br />
 				Results can vary and should be checked for correctness. <br />
@@ -81,6 +83,7 @@ smallCta: no
 	</div>
 </main>
 
+<!--[if !IE]> -->
 <dialog id="feedback-dialog" class="feedback-dialog">
 	<form id="feedback-form" method="dialog">
 		<input type="hidden" name="i" />
@@ -113,3 +116,5 @@ smallCta: no
 		</div>
 	</form>
 </dialog>
+<!-- <![endif]-->
+
