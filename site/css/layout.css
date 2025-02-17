@@ -27,12 +27,16 @@ a#main-content {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	gap: var(--spacing-xl);
-	align-items: center;
+	align-items: end;
 }
 
 .hero-content {
 	text-align: left;
 	max-width: 540px;
+}
+
+.hero-container .cta-buttons {
+	margin-bottom: var(--spacing-xl);
 }
 
 .hero-image {
@@ -69,6 +73,10 @@ a#main-content {
 
 	.hero-content {
 		max-width: 100%;
+	}
+
+	.hero-container .cta-buttons {
+		margin-bottom: 0;
 	}
 
 	.hero-image {

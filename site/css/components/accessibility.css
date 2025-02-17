@@ -11,10 +11,25 @@
   border-radius: 0 0 var(--radius-md) 0;
   z-index: 1000;
   transition: top 0.2s ease;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }
 
 .skip-link:focus {
   top: 0;
   outline: 2px solid var(--color-secondary);
   outline-offset: 2px;
+  width: auto;
+  height: auto;
+}
+
+.sr-only:not(:focus):not(:active) {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
 }

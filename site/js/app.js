@@ -76,10 +76,12 @@
 		}
 
 		const reader = response.body.getReader();
+		const isScreenReaderActive = form.element.sr.checked === true;
 
 		reader.read().then(function processText({ done, value }) {
 			if (done) {
 				simplificationResult.complete = true;
+				if (isScreenReaderActive) updateSimplifiedVersion();
 				updateProgressBar();
 				showFeedbackOpeningButtons();
 				showOriginalText();
@@ -90,7 +92,7 @@
 			let text = textDecoder.decode(value);
 			simplificationResult.rawOutput = simplificationResult.rawOutput + text;
 
-			if (simplificationResult.rawOutput.includes('version-2')) {
+			if (simplificationResult.rawOutput.includes('version-2') && !isScreenReaderActive) {
 				updateSimplifiedVersion();
 			}
 
@@ -218,7 +220,7 @@
 		const pos = initialTextContent.indexOf('/');
 		const updatedTextContent = `${currentCharacterCount}\u2008${initialTextContent.slice(pos)}`;
 		form.charCounter.textContent = updatedTextContent;
-		if (currentCharacterCount < 100) {
+		if (currentCharacterCount < 8000) {
 			form.charCounter.classList.remove('max');
 		} else {
 			form.charCounter.classList.add('max');
@@ -229,6 +231,7 @@
 
 	const feedbackDialog = {
 		container: document.getElementById('feedback-dialog'),
+		title: document.getElementById('feedback-dialog').querySelector('h3'),
 		openingButtons: document.querySelectorAll('.feedback-btn'),
 		form: document.getElementById('feedback-form'),
 		questions: document.getElementById('feedback-dialog').querySelectorAll('.feedback-question'),
@@ -261,6 +264,7 @@
 		feedbackDialog.sendButton.style.display = 'inline-block';
 		feedbackDialog.retryButton.style.display = 'none';
 		feedbackDialog.container.showModal();
+		feedbackDialog.title.focus();
 	}
 
 	function showFeedbackStatus(status) {

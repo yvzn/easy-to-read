@@ -14,6 +14,10 @@ smallCta: no
 					<div class="input-wrapper">
 						<textarea id="userText" name="t" class="text-input" rows="6" required="required"
 							placeholder="Votre texte ici..." aria-label="Texte à simplifier" maxlength="8000"></textarea>
+						<label for="screenReaderActive" class="sr-only">
+							<input type="checkbox" id="screenReaderActive" name="sr" value="1">
+							Veuillez cocher si vous utilisez un lecteur d'écran, afin d'éviter les répétitions indésirables.
+						</label>
 						<button type="submit" class="simplify-btn" id="simplify-btn">
 							Simplifier&puncsp;&rarr;
 						</button>
@@ -21,7 +25,7 @@ smallCta: no
 					</div>
 				</form>
 			</div>
-			<div aria-live="assertive">
+			<div aria-live="polite">
 			<div class="chat-output d-none" id="simplified-version">
 				<h3>Version simplifiée&puncsp;:</h3>
 				<label for="progress" id="progress-bar">
@@ -89,7 +93,7 @@ smallCta: no
 <dialog id="feedback-dialog" class="feedback-dialog">
 	<form id="feedback-form" method="dialog">
 		<input type="hidden" name="i" />
-		<h3>Vos commentaires améliorent facile à lire</h3>
+		<h3 tabindex="-1">Vos commentaires améliorent facile à lire</h3>
 		<div class="feedback-question">
 			<p>Êtes vous satisfait de la nouvelle version&puncsp;?</p>
 			<label for="feedback-score-yes">

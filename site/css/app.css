@@ -59,6 +59,7 @@
 	border-radius: var(--radius-lg);
 	box-shadow: var(--shadow-md);
 	z-index: 1000;
+	width: 60vw;
 }
 
 .feedback-dialog::backdrop {
@@ -97,6 +98,7 @@
 .feedback-buttons {
 	display: flex;
 	justify-content: space-between;
+	gap: var(--spacing-md);
 }
 
 /* Character counter ***********************************************/
