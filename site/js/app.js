@@ -117,7 +117,7 @@
 			method: 'POST',
 			body: new URLSearchParams({
 				t: JSON.stringify(form.element.t.value),
-				o: JSON.stringify(simplificationResult.rawOutput),
+				o: JSON.stringify(extractMainContent(simplificationResult.rawOutput)),
 				i: simplificationResult.requestId,
 			}),
 			headers: {
@@ -126,6 +126,13 @@
 		};
 
 		fetchWithTimeout(resource, options).catch(console.error);
+	}
+
+	function extractMainContent(text) {
+		let mainTagStart = text.indexOf('<main>');
+		let mainTagEnd = text.indexOf('</main>', mainTagStart);
+		if (mainTagStart < 0 || mainTagEnd < 0) return text;
+		return text.substring(mainTagStart + '<main>'.length, mainTagEnd);
 	}
 
 	function updateSimplifiedVersion() {
