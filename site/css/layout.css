@@ -53,6 +53,7 @@ a#main-content {
 .features {
 	padding: var(--spacing-2xl) 0;
 	background-color: var(--color-background-alt);
+	scroll-margin-top: var(--spacing-2xl);
 }
 
 .feature-grid {
@@ -61,8 +62,55 @@ a#main-content {
 	margin-top: var(--spacing-xl);
 }
 
-.d-none, .btn.d-none {
+.d-none,
+.btn.d-none {
 	display: none;
+}
+
+.examples {
+	padding: var(--spacing-2xl) 0;
+	background-color: var(--color-background);
+	scroll-margin-top: var(--spacing-2xl);
+}
+
+.example-grid {
+	display: grid;
+	gap: var(--spacing-xl);
+	margin-top: var(--spacing-xl);
+}
+
+.example-card {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--spacing-lg);
+	padding: var(--spacing-lg);
+	background-color: var(--color-surface-main);
+	border-radius: var(--border-radius);
+	box-shadow: var(--shadow-sm);
+}
+
+.example-column {
+	padding: var(--spacing-md);
+}
+
+.example-column h4 {
+	margin-bottom: var(--spacing-sm);
+	color: var(--color-text-muted);
+}
+
+.example-card a {
+	color: var(--color-primary-dark);
+	text-decoration: underline;
+	text-underline-offset: 0.2em;
+	transition: color 0.2s ease;
+}
+
+.example-card a:hover {
+	color: var(--color-primary);
+}
+
+.example-card a:visited {
+	color: var(--color-primary-light);
 }
 
 @media (max-width: 48rem) {
@@ -89,5 +137,9 @@ a#main-content {
 
 	h2 {
 		font-size: 2rem;
+	}
+
+	.example-card {
+		grid-template-columns: 1fr;
 	}
 }
