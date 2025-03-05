@@ -14,6 +14,7 @@ app.http('simplified', {
 			const requestParams = new URLSearchParams(requestBody);
 
 			const userInput = requestParams.get("t");
+			const language = requestParams.get("l");
 			const debug = requestParams.get("d") === "true";
 
 			if (!userInput) {
@@ -24,7 +25,7 @@ app.http('simplified', {
 				};
 			}
 
-			const responseStream = simplify(userInput, debug);
+			const responseStream = simplify(userInput, language, debug);
 
 			return {
 				body: Readable.from(responseStream),
@@ -43,11 +44,13 @@ app.http('simplified', {
 });
 
 
-async function* simplify(text, debug) {
+async function* simplify(text, language, debug) {
 	const [htmlHeader, htmlFooter] = await readHtmlTemplate();
 	yield htmlHeader;
 
-	const responseStream = await getModelResponse(text);
+	const translationInstructions = buildTranslationInstructions(language);
+
+	const responseStream = await getModelResponse(text, translationInstructions);
 	for await (let chunk of responseStream) {
 		chunk = cleanModelOutput(chunk);
 
@@ -76,10 +79,12 @@ const modelName = "gpt-4o-mini";
 const systemPromptPromise = readResource("system-prompt.txt");
 const userPromptPromise = readResource("user-prompt.txt");
 
-async function getModelResponse(userInput) {
+async function getModelResponse(userInput, translationInstructions) {
 	const client = new OpenAI({ baseURL: endpoint, apiKey: token });
 
-	const systemPrompt = await systemPromptPromise;
+	let systemPrompt = await systemPromptPromise;
+	systemPrompt = systemPrompt.replace("{0}", translationInstructions);
+
 	let userPrompt = await userPromptPromise;
 	userPrompt = userPrompt.replace("{0}", userInput);
 
@@ -95,6 +100,21 @@ async function getModelResponse(userInput) {
 	});
 
 	return stream;
+}
+
+function buildTranslationInstructions(language) {
+	switch (language) {
+		case 'es':
+			return 'The new versions should be translated into Spanish.';
+		case 'fr':
+			return 'The new versions should be translated into French.';
+		case 'de':
+			return 'The new versions should be translated into German.';
+		case 'en':
+			return 'The new versions should be translated into English.';
+		default:
+			return 'The new versions should be in the same language.';
+	}
 }
 
 function cleanModelOutput(chunk) {
