@@ -1,4 +1,5 @@
 import GetGoogleFonts from 'get-google-fonts';
+import Image from '@11ty/eleventy-img';
 import { readFile } from 'fs/promises';
 
 export default async function (eleventyConfig) {
@@ -17,6 +18,15 @@ export default async function (eleventyConfig) {
 		params.set("v", Date.now());
 		return `${urlPart}?${params}`;
 	});
+
+	// https://github.com/11ty/eleventy/discussions/2382
+	eleventyConfig.addShortcode('svgIcon', async (src) => {
+		let metadata = await Image(src, {
+			formats: ['svg'],
+			dryRun: true,
+		});
+		return metadata.svg[0].buffer.toString()
+	})
 }
 
 async function setDevServerOptions(eleventyConfig) {
@@ -50,7 +60,7 @@ async function getGoogleFonts(eleventyConfig) {
 				verbose: true,
 			});
 	}
-	catch(e) {
+	catch (e) {
 		console.warn(e);
 	}
 

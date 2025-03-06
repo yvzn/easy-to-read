@@ -142,6 +142,7 @@
 
 		const endTag = '</version-2>';
 		let endTagPosition = simplificationResult.rawOutput.indexOf(endTag);
+		if (endTagPosition < 0) endTagPosition = simplificationResult.rawOutput.indexOf('</main>');
 		if (endTagPosition < 0) endTagPosition = undefined;
 
 		let simplifiedVersionText = simplificationResult.rawOutput.substring(startTagPosition + startTag.length, endTagPosition);

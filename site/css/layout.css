@@ -110,16 +110,19 @@ a#main-content {
 }
 
 .example-divider-arrow {
-	width: 32px;
-	height: 32px;
-	background-color: var(--color-background-alt);
-	border-radius: 50%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: var(--color-text-primary);
-	position: relative;
 	margin: 0 var(--spacing-sm);
+}
+
+.example-divider-arrow svg {
+	color: currentColor;
+}
+
+.example-divider-arrow svg circle{
+	fill: var(--color-background-alt);
+}
+
+.example-divider-arrow-down {
+	display: none;
 }
 
 .example-column h4 {
@@ -172,6 +175,10 @@ a#main-content {
 		grid-template-columns: 1fr;
 	}
 
+	.example-column {
+		padding: 0;
+	}
+
 	.example-divider::before {
 		width: 100%;
 		height: 1px;
@@ -179,7 +186,11 @@ a#main-content {
 		transform: translateY(-50%);
 	}
 
-	.example-divider-arrow {
-		transform: rotate(90deg);
+	.example-divider-arrow-down {
+		display: block;
+	}
+
+	.example-divider-arrow-right {
+		display: none;
 	}
 }
