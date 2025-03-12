@@ -111,6 +111,7 @@ a#main-content {
 
 .example-divider-arrow {
 	margin: 0 var(--spacing-sm);
+	z-index: 1;
 }
 
 .example-divider-arrow svg {
