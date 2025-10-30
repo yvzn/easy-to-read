@@ -16,6 +16,7 @@
 
 .content-article h1 {
 	color: var(--color-accent);
+	font-size: 2rem;
 	margin-bottom: var(--spacing-xl);
 }
 
@@ -25,7 +26,7 @@
 
 .content-article h2 {
 	color: var(--color-text-primary);
-	font-size: 1.75rem;
+	font-size: 1.5rem;
 	margin-bottom: var(--spacing-md);
 }
 
@@ -62,9 +63,11 @@
 	line-height: 1.6;
 }
 
+/* Small screens ***********************************************/
+
 @media (max-width: 48rem) {
 	.page-content {
-		padding: var(--spacing-xl) 0;
+		padding: var(--spacing-lg) 0 var(--spacing-xl) 0;
 	}
 
 	.content-article {

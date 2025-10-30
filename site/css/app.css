@@ -171,8 +171,12 @@
 /* Small screens ***********************************************/
 
 @media (max-width: 48rem) {
+	.app-main {
+		padding: var(--spacing-lg) 0 var(--spacing-xl) 0;
+	}
+
 	.chat-interface {
-		padding: var(--spacing-lg);
+		padding: var(--spacing-md);
 	}
 
 	.feedback-dialog {
