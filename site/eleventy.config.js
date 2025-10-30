@@ -3,11 +3,12 @@ import Image from '@11ty/eleventy-img';
 import { readFile } from 'fs/promises';
 
 export default async function (eleventyConfig) {
-	eleventyConfig.addWatchTarget('./css/')
-	eleventyConfig.addWatchTarget('./js/')
-	eleventyConfig.addPassthroughCopy('./img/')
-	eleventyConfig.addWatchTarget('./img/')
-	eleventyConfig.addPassthroughCopy('.htaccess.sample')
+	eleventyConfig.addWatchTarget('./css/');
+	eleventyConfig.addWatchTarget('./js/');
+	eleventyConfig.addPassthroughCopy('./img/');
+	eleventyConfig.addWatchTarget('./img/');
+	eleventyConfig.addPassthroughCopy('./.htaccess.sample');
+	eleventyConfig.addPassthroughCopy('./robots.txt');
 
 	await eleventyConfig.addPlugin(setDevServerOptions);
 	await eleventyConfig.addPlugin(getGoogleFonts);
