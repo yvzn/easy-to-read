@@ -45,6 +45,7 @@
 		rawOutput: '',
 		requestId: -1,
 		complete: false,
+		startTime: performance.now(),
 	}
 
 	function submitTextForSimplification(e) {
@@ -52,6 +53,7 @@
 		simplificationResult.rawOutput = '';
 		simplificationResult.requestId = crypto.randomUUID();
 		simplificationResult.complete = false;
+		simplificationResult.startTime = performance.now();
 
 		showSimplifiedVersion();
 
@@ -86,6 +88,7 @@
 				showFeedbackOpeningButtons();
 				showOriginalText();
 				sendMonitoringData();
+				sendCarbonFootprintData();
 				return;
 			}
 
@@ -123,6 +126,34 @@
 				t: JSON.stringify(form.element.t.value),
 				o: JSON.stringify(extractMainContent(simplificationResult.rawOutput)),
 				i: simplificationResult.requestId,
+				h: window.location.href,
+			}),
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded'
+			}
+		};
+
+		fetchWithTimeout(resource, options).catch(console.error);
+	}
+
+	function sendCarbonFootprintData() {
+		const resource = '{{environment.carbonFootprintUrl}}';
+		const userInputLength = form.element.t.value.length;
+		const userInputWordCount = form.element.t.value.trim().split(/\s+/).length;
+		const simplifiedOutputLength = extractMainContent(simplificationResult.rawOutput).length;
+		const simplifiedOutputWordCount = extractMainContent(simplificationResult.rawOutput).trim().split(/\s+/).length;
+		const duration = performance.now() - simplificationResult.startTime;
+		const interactionId = simplificationResult.requestId;
+
+		const options = {
+			method: 'POST',
+			body: new URLSearchParams({
+				ul: userInputLength,
+				uw: userInputWordCount,
+				sl: simplifiedOutputLength,
+				sw: simplifiedOutputWordCount,
+				d: duration,
+				i: interactionId,
 			}),
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded'

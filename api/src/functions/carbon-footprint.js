@@ -1,11 +1,11 @@
-const { app, output } = require('@azure/functions');
+const { app, output, input } = require('@azure/functions');
 
 const tableOutput = output.table({
-	tableName: 'Interactions',
+	tableName: 'CarbonFootprint',
 	connection: 'INTERACTIONS_STORAGE_CONNECTION_STRING',
 });
 
-app.http('interaction', {
+app.http('carbon-footprint', {
 	methods: ['POST'],
 	authLevel: 'function',
 	extraOutputs: [tableOutput],
@@ -16,12 +16,14 @@ app.http('interaction', {
 			const requestBody = await request.text();
 			const requestParams = new URLSearchParams(requestBody);
 
-			const input = requestParams.get("t");
-			const output = requestParams.get("o");
+			const userInputLength = requestParams.get("ul");
+			const userInputWordCount = requestParams.get("uw");
+			const simplifiedOutputLength = requestParams.get("sl");
+			const simplifiedOutputWordCount = requestParams.get("sw");
+			const duration = requestParams.get("d");
 			const interactionId = requestParams.get("i");
-			const href = requestParams.get("h");
 
-			if (!input || !output || !interactionId) {
+			if ([userInputLength, userInputWordCount, simplifiedOutputLength, simplifiedOutputWordCount, duration, interactionId].some(param => !param)) {
 				return {
 					status: 400,
 					headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -31,12 +33,14 @@ app.http('interaction', {
 
 			const rows = [];
 			rows.push({
-				PartitionKey: 'Interactions',
+				PartitionKey: 'Carbon',
 				RowKey: context.invocationId,
 				InteractionId: interactionId,
-				Input: input,
-				Output: output,
-				Href: href,
+				UserInputLength: userInputLength,
+				UserInputWordCount: userInputWordCount,
+				SimplifiedOutputLength: simplifiedOutputLength,
+				SimplifiedOutputWordCount: simplifiedOutputWordCount,
+				Duration: duration,
 			});
 			context.extraOutputs.set(tableOutput, rows);
 

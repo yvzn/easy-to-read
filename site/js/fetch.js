@@ -5,10 +5,10 @@ async function fetchWithTimeout(resource, options = {}) {
 	const timeoutID = setTimeout(() => controller.abort(`${fetchWithTimeout.name} aborded after ${timeout}ms`), timeout);
 
 	const response = await fetch(resource, {
-	  ...options,
-	  signal: controller.signal
+		...options,
+		signal: controller.signal
 	});
 	clearTimeout(timeoutID);
 
 	return response;
-  }
+}

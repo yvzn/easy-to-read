@@ -4,5 +4,6 @@ export default function () {
 		simplifiedTextUrl: process.env.SIMPLIFIED_TEXT_URL,
 		interactionUrl: process.env.INTERACTION_URL,
 		feedbackUrl: process.env.FEEDBACK_URL,
+		carbonFootprintUrl: process.env.CARBON_FOOTPRINT_URL,
 	};
 }
