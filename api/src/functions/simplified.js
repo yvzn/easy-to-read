@@ -25,7 +25,7 @@ app.http('simplified', {
 				};
 			}
 
-			const responseStream = simplify(userInput, language, debug);
+			const responseStream = simplify(userInput, language, debug, context);
 
 			return {
 				body: Readable.from(responseStream),
@@ -44,23 +44,30 @@ app.http('simplified', {
 });
 
 
-async function* simplify(text, language, debug) {
-	const [htmlHeader, htmlFooter] = await readHtmlTemplate();
-	yield htmlHeader;
+async function* simplify(text, language, debug, context) {
+	try {
+		const [htmlHeader, htmlFooter] = await readHtmlTemplate();
+		yield htmlHeader;
 
-	const translationInstructions = buildTranslationInstructions(language);
+		const translationInstructions = buildTranslationInstructions(language);
 
-	const responseStream = await getModelResponse(text, translationInstructions);
-	for await (let chunk of responseStream) {
-		chunk = cleanModelOutput(chunk);
+		const responseStream = await getModelResponse(text, translationInstructions);
+		for await (let chunk of responseStream) {
+			chunk = cleanModelOutput(chunk);
 
-		yield chunk;
-		if (debug) {
-			yield "\n";
+			yield chunk;
+			if (debug) {
+				yield "\n";
+			}
 		}
-	}
 
-	yield htmlFooter;
+		yield htmlFooter;
+	}
+	catch (error) {
+		context.error(error);
+
+		yield '<api-error>Service has failed to process the request. Please try again later.</api-error>';
+	}
 }
 
 const htmlTemplatePromise = readResource("template.html");

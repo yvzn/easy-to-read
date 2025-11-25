@@ -96,6 +96,10 @@
 				updateSimplifiedVersion();
 			}
 
+			if (simplificationResult.rawOutput.includes('</api-error>')) {
+				handleResponseError(simplificationResult.rawOutput);
+			}
+
 			updateProgressBar();
 			requestAnimationFrame(() => reader.read().then(processText));
 		});
@@ -108,7 +112,7 @@
 		simplifiedVersion.container.style.display = 'none';
 		originalText.container.style.display = 'none';
 
-		history.pushState({}, undefined, '#error');
+		history.pushState({}, undefined, '#error-message');
 	}
 
 	function sendMonitoringData() {
@@ -166,6 +170,11 @@
 		if (simplificationResult.complete) {
 			progressBar.container.style.visibility = 'hidden';
 			return progressBar.element.value = 100;
+		}
+
+		if (simplificationResult.rawOutput.includes('</api-error>')) {
+			progressBar.container.style.visibility = 'hidden';
+			return progressBar.element.value = 0;
 		}
 
 		if (simplificationResult.rawOutput.includes('/version-2')) {
