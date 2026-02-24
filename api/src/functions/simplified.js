@@ -1,4 +1,4 @@
-const { app } = require('@azure/functions');
+const { app, HttpResponse } = require('@azure/functions');
 const OpenAI = require("openai");
 const { Readable } = require('node:stream');
 const fs = require('node:fs/promises');
@@ -27,10 +27,12 @@ app.http('simplified', {
 
 			const responseStream = simplify(userInput, language, debug, context);
 
-			return {
-				body: Readable.from(responseStream),
-				headers: { "Content-Type": "text/html;charset=utf-8" },
-			}
+			const response = new HttpResponse({
+				body: responseStream,
+			});
+			response.headers.set("Content-Type", "text/html;charset=utf-8");
+
+			return response;
 		} catch (error) {
 			context.error(error);
 
@@ -51,7 +53,7 @@ async function* simplify(text, language, debug, context) {
 
 		const translationInstructions = buildTranslationInstructions(language);
 
-		const responseStream = await getModelResponse(text, translationInstructions);
+		const responseStream = await getRawModelResponse(text, translationInstructions);
 		for await (let chunk of responseStream) {
 			chunk = cleanModelOutput(chunk);
 
@@ -101,7 +103,7 @@ async function getModelResponse(userInput, translationInstructions) {
 			{ role: "user", content: userPrompt },
 		],
 		temperature: 1.0,
-		max_tokens: 8000,
+		max_tokens: 12000,
 		model: modelName,
 		stream: true
 	});
@@ -124,7 +126,7 @@ async function getRawModelResponse(userInput, translationInstructions) {
 			{ role: "user", content: userPrompt },
 		],
 		temperature: 1.0,
-		max_tokens: 8000,
+		max_tokens: 12000,
 		model: modelName,
 	});
 
