@@ -63,7 +63,8 @@
 			body: new URLSearchParams(new FormData(form.element)),
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded'
-			}
+			},
+			timeout: 120_000, // 2 minutes
 		};
 
 		fetchWithTimeout(resource, options)

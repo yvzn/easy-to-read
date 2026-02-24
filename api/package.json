@@ -7,7 +7,7 @@
 	},
 	"dependencies": {
 		"@azure/functions": "^4.11.0",
-		"openai": "^4.73.0"
+		"openai": "^6.24.0"
 	},
 	"main": "src/{index.js,functions/*.js}",
 	"author": "Yvan Razafindramanana",

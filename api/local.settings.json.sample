@@ -5,5 +5,8 @@
 		"FUNCTIONS_WORKER_RUNTIME": "node",
 		"GITHUB_TOKEN": "change_me",
 		"INTERACTIONS_STORAGE_CONNECTION_STRING": "UseDevelopmentStorage=true"
+	},
+	"Host": {
+		"CORS": "http://localhost:8080"
 	}
 }

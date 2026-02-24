@@ -80,8 +80,8 @@ async function readHtmlTemplate() {
 }
 
 const token = process.env["GITHUB_TOKEN"];
-const endpoint = "https://models.inference.ai.azure.com";
-const modelName = "gpt-4o-mini";
+const endpoint = "https://models.github.ai/inference";
+const modelName = "openai/gpt-4o-mini";
 
 const systemPromptPromise = readResource("system-prompt.txt");
 const userPromptPromise = readResource("user-prompt.txt");
@@ -107,6 +107,38 @@ async function getModelResponse(userInput, translationInstructions) {
 	});
 
 	return stream;
+}
+
+async function getRawModelResponse(userInput, translationInstructions) {
+	const client = new OpenAI({ baseURL: endpoint, apiKey: token });
+
+	let systemPrompt = await systemPromptPromise;
+	systemPrompt = systemPrompt.replace("{0}", translationInstructions);
+
+	let userPrompt = await userPromptPromise;
+	userPrompt = userPrompt.replace("{0}", userInput);
+
+	const response = await client.chat.completions.create({
+		messages: [
+			{ role: "system", content: systemPrompt },
+			{ role: "user", content: userPrompt },
+		],
+		temperature: 1.0,
+		max_tokens: 8000,
+		model: modelName,
+	});
+
+	const chunk = {
+		choices: [
+			{
+				delta: {
+					content: response.choices[0].message.content
+				}
+			}
+		]
+	}
+
+	return Readable.from([chunk]);
 }
 
 function buildTranslationInstructions(language) {
