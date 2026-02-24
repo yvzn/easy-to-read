@@ -6,7 +6,7 @@ Header set Strict-Transport-Security "max-age=31536000; includeSubDomains"
 Header set Referrer-Policy "origin-when-cross-origin"
 
 <FilesMatch "\.html$">
-	Header set Content-Security-Policy "default-src 'self'; connect-src 'self' https://easytoread.azurewebsites.net; form-action 'self' https://easytoread.azurewebsites.net; img-src 'self' https://www.inclusion-europe.eu; style-src 'self' 'unsafe-inline'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests; block-all-mixed-content"
+	Header set Content-Security-Policy "default-src 'self'; connect-src 'self' https://easytoread.azurewebsites.net http://localhost:7071; form-action 'self' https://easytoread.azurewebsites.net http://localhost:7071; img-src 'self' https://www.inclusion-europe.eu; style-src 'self' 'unsafe-inline'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests; block-all-mixed-content"
 	Header set Cache-Control "no-cache"
 </FilesMatch>
 

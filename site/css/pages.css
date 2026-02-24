@@ -63,6 +63,21 @@
 	line-height: 1.6;
 }
 
+.content-article figure {
+	display: flex;
+	gap: var(--spacing-sm);
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.content-article figure img {
+	display: inline-block;
+}
+
+.content-article figure figcaption {
+	text-align: center;
+}
+
 /* Small screens ***********************************************/
 
 @media (max-width: 48rem) {

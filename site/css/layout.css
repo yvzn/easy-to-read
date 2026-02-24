@@ -126,9 +126,9 @@ a#main-content {
 	display: none;
 }
 
-.example-column h4 {
+.example-column h3 {
 	margin-bottom: var(--spacing-sm);
-	color: var(--color-text-muted);
+	color: var(--color-text-primary);
 }
 
 .example-card a {
