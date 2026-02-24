@@ -1,4 +1,10 @@
-import GetGoogleFonts from 'get-google-fonts';
+import {
+	constructURL,
+	merge,
+	isValidURL,
+	parse,
+	download,
+} from "google-fonts-helper";
 import Image from '@11ty/eleventy-img';
 import { readFile } from 'fs/promises';
 
@@ -53,13 +59,16 @@ async function setDevServerOptions(eleventyConfig) {
 
 async function getGoogleFonts(eleventyConfig) {
 	try {
-		const ggf = new GetGoogleFonts()
-		await ggf.download('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap',
-			{
-				path: './fonts/',
-				overwriting: true,
-				verbose: true,
-			});
+		const downloader = download('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;700&display=swap', {
+			base64: false,
+			overwriting: true,
+			outputDir: './fonts',
+			stylePath: 'fonts.css',
+			fontsDir: '',
+			fontsPath: './fonts'
+		});
+
+		await downloader.execute();
 	}
 	catch (e) {
 		console.warn(e);
