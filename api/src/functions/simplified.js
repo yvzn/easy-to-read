@@ -45,7 +45,6 @@ app.http('simplified', {
 	}
 });
 
-
 async function* simplify(text, language, debug, context) {
 	try {
 		const [htmlHeader, htmlFooter] = await readHtmlTemplate();
@@ -53,7 +52,7 @@ async function* simplify(text, language, debug, context) {
 
 		const translationInstructions = buildTranslationInstructions(language);
 
-		const responseStream = await getRawModelResponse(text, translationInstructions);
+		const responseStream = await _getModelResponse_NoStreaming(text, translationInstructions);
 		for await (let chunk of responseStream) {
 			chunk = cleanModelOutput(chunk);
 
@@ -61,6 +60,35 @@ async function* simplify(text, language, debug, context) {
 			if (debug) {
 				yield "\n";
 			}
+		}
+
+		yield htmlFooter;
+	}
+	catch (error) {
+		context.error(error);
+
+		yield '<api-error>Service has failed to process the request. Please try again later.</api-error>';
+	}
+}
+
+async function* _simplifyMock(text, language, debug, context) {
+	try {
+		const [htmlHeader, htmlFooter] = await readHtmlTemplate();
+		yield htmlHeader;
+
+		const mockResponse = [
+			"<observation-1>Here is the first observation about the text.</observation-1>",
+			"<version-1>Here is the first simplified version of the text.</version-1>",
+			"<observation-2>Here is the second observation about the text.</observation-2>",
+			`<version-2>${text}</version-2>`,
+		]
+
+		for (let chunk of mockResponse) {
+			yield chunk;
+			if (debug) {
+				yield "\n";
+			}
+			await sleep(500);
 		}
 
 		yield htmlFooter;
@@ -111,7 +139,7 @@ async function getModelResponse(userInput, translationInstructions) {
 	return stream;
 }
 
-async function getRawModelResponse(userInput, translationInstructions) {
+async function _getModelResponse_NoStreaming(userInput, translationInstructions) {
 	const client = new OpenAI({ baseURL: endpoint, apiKey: token });
 
 	let systemPrompt = await systemPromptPromise;
@@ -167,4 +195,8 @@ async function readResource(fileName) {
 	const directory = './src/resources';
 	const data = await fs.readFile(`${directory}/${fileName}`, { encoding: "utf-8" });
 	return data;
+}
+
+function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
 }
