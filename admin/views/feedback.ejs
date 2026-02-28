@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-50">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EasyRead Admin – Feedback</title>
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body class="h-full flex flex-col">
+  <%- include('partials/header') %>
+  <main class="flex-1 container mx-auto px-4 py-8 max-w-7xl">
+    <h1 class="text-2xl font-bold text-gray-800 mb-6">Feedback Management</h1>
+
+    <!-- Search form -->
+    <form method="GET" action="/feedback" class="flex gap-3 mb-6">
+      <input
+        type="text"
+        name="filter"
+        value="<%= filter %>"
+        maxlength="200"
+        placeholder="Search by comment or interaction ID…"
+        class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+      />
+      <button
+        type="submit"
+        class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
+      >Search</button>
+      <% if (filter) { %>
+        <a href="/feedback" class="bg-gray-100 text-gray-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">Clear</a>
+      <% } %>
+    </form>
+
+    <% if (feedbacks.length === 0) { %>
+      <div class="bg-white rounded-xl shadow p-8 text-center text-gray-400">
+        No feedback entries found<% if (filter) { %> matching "<%= filter %>"<% } %>.
+      </div>
+    <% } else { %>
+      <div class="bg-white rounded-xl shadow overflow-hidden">
+        <div class="px-4 py-3 border-b border-gray-100 text-sm text-gray-500">
+          <%= feedbacks.length %> result<%= feedbacks.length !== 1 ? 's' : '' %>
+          <% if (filter) { %> for "<%= filter %>"<% } %>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left">
+            <thead class="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th class="px-4 py-3 font-medium text-gray-600">Date</th>
+                <th class="px-4 py-3 font-medium text-gray-600">Score</th>
+                <th class="px-4 py-3 font-medium text-gray-600">Interaction ID</th>
+                <th class="px-4 py-3 font-medium text-gray-600">Comment</th>
+                <th class="px-4 py-3 font-medium text-gray-600 text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <% feedbacks.forEach(function(f) { %>
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-3 text-gray-500 font-mono text-xs whitespace-nowrap"><%= f.formattedTimestamp %></td>
+                  <td class="px-4 py-3">
+                    <% if (f.Score >= 4) { %>
+                      <span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700"><%= f.Score %></span>
+                    <% } else if (f.Score >= 3) { %>
+                      <span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700"><%= f.Score %></span>
+                    <% } else { %>
+                      <span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700"><%= f.Score %></span>
+                    <% } %>
+                  </td>
+                  <td class="px-4 py-3 text-gray-500 font-mono text-xs"><%= f.InteractionId %></td>
+                  <td class="px-4 py-3 text-gray-700 max-w-xs">
+                    <% if (f.Comment) { %>
+                      <span class="line-clamp-2"><%= f.Comment %></span>
+                    <% } else { %>
+                      <span class="text-gray-400 italic">No comment</span>
+                    <% } %>
+                  </td>
+                  <td class="px-4 py-3 text-center">
+                    <form method="POST" action="/feedback/delete"
+                      onsubmit="return confirm('Delete this feedback entry?')">
+                      <input type="hidden" name="rowKey" value="<%= f.rowKey %>" />
+                      <button
+                        type="submit"
+                        class="text-red-600 hover:text-red-800 text-xs font-medium hover:underline transition-colors"
+                      >Delete</button>
+                    </form>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% } %>
+  </main>
+  <%- include('partials/footer') %>
+</body>
+</html>

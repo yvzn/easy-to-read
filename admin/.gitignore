@@ -1,0 +1,4 @@
+node_modules/
+dist/
+public/css/main.css
+.env
