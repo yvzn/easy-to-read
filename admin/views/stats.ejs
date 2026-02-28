@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-50">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EasyRead Admin – Usage Statistics</title>
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body class="h-full flex flex-col">
+  <%- include('partials/header') %>
+  <main class="flex-1 container mx-auto px-4 py-8 max-w-7xl">
+    <h1 class="text-2xl font-bold text-gray-800 mb-6">Usage Statistics</h1>
+
+    <!-- Interval selector -->
+    <div class="flex gap-2 mb-8">
+      <% ['week', 'month', 'year'].forEach(function(i) { %>
+        <a
+          href="/stats?interval=<%= i %>"
+          class="px-4 py-2 rounded-lg text-sm font-medium transition-colors
+            <%= interval === i
+              ? 'bg-indigo-600 text-white'
+              : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50' %>"
+        ><%= i.charAt(0).toUpperCase() + i.slice(1) %></a>
+      <% }); %>
+    </div>
+
+    <% if (stats.length === 0) { %>
+      <div class="bg-white rounded-xl shadow p-8 text-center text-gray-400">
+        No data available for the selected interval.
+      </div>
+    <% } else { %>
+      <%
+        const maxCount = Math.max(...stats.map(function(s) { return s.count; }), 1);
+      %>
+
+      <!-- Bar chart -->
+      <div class="bg-white rounded-xl shadow p-6 mb-8 overflow-x-auto">
+        <h2 class="text-base font-semibold text-gray-700 mb-4">
+          Interactions per <%= interval %>
+        </h2>
+        <div class="flex items-end gap-1 min-h-48 border-b border-l border-gray-200 relative" style="min-height:200px; padding-bottom:2rem; padding-left:0.5rem;">
+          <% stats.forEach(function(s) { %>
+            <%
+              const heightPct = Math.round((s.count / maxCount) * 100);
+            %>
+            <div class="flex flex-col items-center flex-1 min-w-0 group relative" style="min-width:20px;">
+              <!-- Tooltip -->
+              <div class="absolute bottom-full mb-1 hidden group-hover:flex flex-col items-center z-10">
+                <div class="bg-gray-800 text-white text-xs rounded px-2 py-1 whitespace-nowrap">
+                  <%= s.count %> interaction<%= s.count !== 1 ? 's' : '' %>
+                </div>
+                <div class="border-4 border-transparent border-t-gray-800"></div>
+              </div>
+              <!-- Bar -->
+              <div
+                class="w-full bg-indigo-500 hover:bg-indigo-600 transition-colors rounded-t"
+                style="height: <%= heightPct %>%; min-height: 2px;"
+              ></div>
+              <!-- Label -->
+              <div class="text-xs text-gray-400 mt-1 truncate w-full text-center" title="<%= s.period %>">
+                <%= s.period %>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      </div>
+
+      <!-- Data table -->
+      <div class="bg-white rounded-xl shadow overflow-hidden">
+        <table class="w-full text-sm text-left">
+          <thead class="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th class="px-4 py-3 font-medium text-gray-600">Period</th>
+              <th class="px-4 py-3 font-medium text-gray-600 text-right">Interactions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <% stats.slice().reverse().forEach(function(s) { %>
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-3 text-gray-700 font-mono"><%= s.period %></td>
+                <td class="px-4 py-3 text-gray-700 text-right font-semibold"><%= s.count %></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </main>
+  <%- include('partials/footer') %>
+</body>
+</html>
