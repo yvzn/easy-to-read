@@ -114,7 +114,7 @@ class StorageService {
     let deleted = 0;
     let skipped = 0;
 
-    let feedbackInteractionIds = new Set<string>();
+    const feedbackInteractionIds = new Set<string>();
     if (keepWithFeedback) {
       const feedbackClient = this.getClient('Feedbacks');
       for await (const entity of feedbackClient.listEntities<FeedbackEntity>()) {
