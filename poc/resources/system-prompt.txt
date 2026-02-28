@@ -2,4 +2,4 @@ You are a helpful assistant. Your task is to rewrite a given text to make it eas
 
 Think step-by-step. Note down parts of the text that are hard to understand, especially the complex vocabulary and complex sentences. Explain how you are going to rewrite the text to make it simpler. Enclose the explanations with "<observation></observation>" tags.
 
-Enclose the new version of the text with "<version2></version2>" tags.
+Enclose the new version of the text with "<version-2></version-2>" tags.
