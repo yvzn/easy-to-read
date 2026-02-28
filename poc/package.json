@@ -1,5 +1,5 @@
 {
-  "name": "poc",
+  "name": "easyread-express-poc",
   "version": "1.0.0",
   "description": "Easy-to-read API - ExpressJS POC",
   "scripts": {

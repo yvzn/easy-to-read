@@ -8,6 +8,7 @@ const router = Router();
 const ENDPOINT = 'https://models.github.ai/inference';
 const MODEL_NAME = 'openai/gpt-4o-mini';
 const RESOURCES_DIR = path.join(__dirname, '../../resources');
+const HTML_TEMPLATE_SEPARATOR = '-----';
 
 async function readResource(fileName: string): Promise<string> {
 	return fs.readFile(path.join(RESOURCES_DIR, fileName), {
@@ -52,7 +53,9 @@ router.post('/simplified', async (req: Request, res: Response) => {
 
 	try {
 		const template = await htmlTemplatePromise;
-		const [htmlHeader, htmlFooter] = template.split('-----');
+		const [htmlHeader, htmlFooter] = template.split(
+			HTML_TEMPLATE_SEPARATOR,
+		);
 
 		res.setHeader('Content-Type', 'text/html;charset=utf-8');
 		res.write(htmlHeader);
