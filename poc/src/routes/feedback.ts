@@ -1,10 +1,10 @@
-import { Router, Request, Response } from 'express';
-import { TableClient } from '@azure/data-tables';
-import { randomUUID } from 'crypto';
+import { Router, Request, Response } from "express";
+import { TableClient } from "@azure/data-tables";
+import { randomUUID } from "crypto";
 
 const router = Router();
 
-router.post('/feedback', async (req: Request, res: Response) => {
+router.post("/feedback", async (req: Request, res: Response) => {
 	const {
 		s: score,
 		c: comment,
@@ -16,7 +16,7 @@ router.post('/feedback', async (req: Request, res: Response) => {
 	};
 
 	if (!score || !interactionId) {
-		res.status(400).type('text').send('Missing parameters.');
+		res.status(400).type("text").send("Missing parameters.");
 		return;
 	}
 
@@ -24,29 +24,29 @@ router.post('/feedback', async (req: Request, res: Response) => {
 		const connectionString =
 			process.env.INTERACTIONS_STORAGE_CONNECTION_STRING;
 		if (!connectionString) {
-			throw new Error('Missing storage connection string.');
+			throw new Error("Missing storage connection string.");
 		}
 
 		const client = TableClient.fromConnectionString(
 			connectionString,
-			'Feedbacks',
+			"Feedbacks",
 		);
 
 		await client.createEntity({
-			partitionKey: 'Feedbacks',
+			partitionKey: "Feedbacks",
 			rowKey: randomUUID(),
 			InteractionId: interactionId,
 			Score: score,
-			Comment: comment ?? '',
+			Comment: comment ?? "",
 		});
 
 		res.status(201).send();
 	} catch (error) {
 		console.error(error);
 		res.status(503)
-			.type('text')
+			.type("text")
 			.send(
-				'Service has failed to process the request. Please try again later.',
+				"Service has failed to process the request. Please try again later.",
 			);
 	}
 });
