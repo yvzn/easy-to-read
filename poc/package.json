@@ -3,17 +3,18 @@
   "version": "1.0.0",
   "description": "Easy-to-read API - ExpressJS POC",
   "scripts": {
-    "start": "node dist/server.js",
+    "start": "node --env-file .env dist/server.js",
     "dev": "concurrently --kill-others --names tsc,server --pad-prefix 'npm:dev:build' 'npm:dev:server'",
     "dev:build": "tsc --watch --preserveWatchOutput",
-	"dev:server": "node --watch-path=./dist --watch-preserve-output dist/server.js",
+    "dev:server": "node --env-file .env --watch-path=./dist --watch-preserve-output --inspect dist/server.js",
     "build": "tsc",
     "lint": "eslint src/** --ext .ts",
     "format": "prettier --write src/**/*.ts",
-	"clean": "rimraf dist"
+    "clean": "rimraf dist"
   },
   "dependencies": {
     "@azure/data-tables": "^13.3.2",
+    "cors": "^2.8.6",
     "express": "^5.2.1",
     "helmet": "^8.1.0",
     "openai": "^6.24.0",
@@ -21,6 +22,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.1",
     "@types/node": "^22.14.0",
     "concurrently": "^9.2.1",
