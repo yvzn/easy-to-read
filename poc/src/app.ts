@@ -1,6 +1,7 @@
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
+import { authenticateRequest } from "./middleware/auth";
 import healthRouter from "./routes/health";
 import simplifiedRouter from "./routes/simplified";
 import feedbackRouter from "./routes/feedback";
@@ -18,9 +19,14 @@ app.use(cors({
 	origin: process.env.CORS_ORIGINS?.split(",") || "http://localhost:8080",
 }))
 
-// -- Routes -----
+// -- No-Auth Routes -----
 
 app.use("/api", healthRouter);
+
+// -- Authenticated Routes -----
+
+app.use("/api", authenticateRequest);
+
 app.use("/api", simplifiedRouter);
 app.use("/api", feedbackRouter);
 app.use("/api", interactionRouter);
