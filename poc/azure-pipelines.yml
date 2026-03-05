@@ -1,0 +1,91 @@
+variables:
+- group: "production"
+
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - poc
+
+pool:
+  vmImage: ubuntu-latest
+
+jobs:
+- job: CI
+  steps:
+  - task: UseNode@1
+    inputs:
+      version: '24.x'
+    displayName: 'Install Node.js'
+  - bash: |
+      cd poc
+      npm ci
+      npm run build --if-present
+      npm prune --production
+      mkdir -p $(Pipeline.Workspace)/zip
+      cp ecosystem.config.js $(Pipeline.Workspace)/zip/
+      cp -r dist $(Pipeline.Workspace)/zip/
+      cp -r resources $(Pipeline.Workspace)/zip/
+      cp -r node_modules $(Pipeline.Workspace)/zip/
+    displayName: 'Build and prepare files for artifact'
+  - task: ArchiveFiles@2
+    displayName: "Archive files"
+    inputs:
+      rootFolderOrFile: "$(Pipeline.Workspace)/zip"
+      includeRootFolder: false
+      archiveFile: "$(System.ArtifactStagingDirectory)/build$(Build.BuildId).zip"
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: '$(System.ArtifactStagingDirectory)/build$(Build.BuildId).zip''
+      publishLocation: 'pipeline'
+      artifact: 'poc'
+
+- deployment: CD
+  dependsOn: CI
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  environment: 'Azure'
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - task: ExtractFiles@1
+          inputs:
+            archiveFilePatterns: '$(Pipeline.Workspace)/poc/*.zip'
+            destinationFolder: '$(Pipeline.Workspace)/wip'
+            cleanDestinationFolder: true
+            overwriteExistingFiles: true
+        - task: DownloadSecureFile@1
+          name: userPromptTxt
+          displayName: 'Download user-prompt.txt'
+          inputs:
+            secureFile: 'user-prompt.txt'
+        - task: DownloadSecureFile@1
+          name: systemPromptTxt
+          displayName: 'Download system-prompt.txt'
+          inputs:
+            secureFile: 'system-prompt.txt'
+        - task: Bash@3
+          inputs:
+            targetType: 'inline'
+            script: |
+              echo Installing $(userPromptTxt.secureFilePath) to build directory
+              rm $(Pipeline.Workspace)/wip/resources/user-prompt.txt
+              cp $(userPromptTxt.secureFilePath) $(Pipeline.Workspace)/wip/resources/user-prompt.txt
+              echo Installing $(systemPromptTxt.secureFilePath) to build directory
+              rm $(Pipeline.Workspace)/wip/resources/system-prompt.txt
+              cp $(systemPromptTxt.secureFilePath) $(Pipeline.Workspace)/wip/resources/system-prompt.txt
+        - task: ArchiveFiles@2
+          inputs:
+            rootFolderOrFile: '$(Pipeline.Workspace)/wip'
+            includeRootFolder: false
+            archiveType: 'zip'
+            archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+        - task: AzureRmWebAppDeployment@4
+          inputs:
+            ConnectionType: 'AzureRM'
+            azureSubscription: '$(azureSubscription)'
+            appType: 'webApp'
+            WebAppName: '$(webAppName)'
+            packageForLinux: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'

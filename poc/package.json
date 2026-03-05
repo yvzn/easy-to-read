@@ -1,11 +1,11 @@
 {
-  "name": "easyread-express-poc",
-  "version": "1.0.0",
-  "description": "Easy-to-read API - ExpressJS POC",
+  "name": "api-express",
+  "version": "0.1.0",
+  "description": "Easy-to-read API - ExpressJS",
   "scripts": {
     "start": "node --env-file .env dist/server.js",
     "dev": "concurrently --kill-others --names tsc,server --pad-prefix 'npm:dev:build' 'npm:dev:server'",
-    "dev:build": "tsc --watch --preserveWatchOutput",
+    "dev:build": "tsc --watch --preserveWatchOutput --sourceMap true",
     "dev:server": "node --env-file .env --watch-path=./dist --watch-preserve-output --inspect dist/server.js",
     "build": "tsc",
     "lint": "eslint src/** --ext .ts",
