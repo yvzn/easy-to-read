@@ -15,25 +15,13 @@ pool:
 jobs:
 - job: CI
   steps:
-  - task: DownloadSecureFile@1
-    name: userPromptTxt
-    displayName: 'Download user-prompt.txt'
-    inputs:
-      secureFile: 'user-prompt.txt'
-  - task: DownloadSecureFile@1
-    name: systemPromptTxt
-    displayName: 'Download system-prompt.txt'
-    inputs:
-      secureFile: 'system-prompt.txt'
   - bash: |
       cd api
-      cp $(userPromptTxt.secureFilePath) ./src/resources/
-      cp $(systemPromptTxt.secureFilePath) ./src/resources/
       if [ -f extensions.csproj ]
       then
           dotnet build extensions.csproj --output ./bin
       fi
-      npm install 
+      npm ci
       npm run build --if-present
       npm prune --production
   - task: ArchiveFiles@2
@@ -42,10 +30,11 @@ jobs:
       rootFolderOrFile: "$(System.DefaultWorkingDirectory)/api"
       includeRootFolder: false
       archiveFile: "$(System.ArtifactStagingDirectory)/build$(Build.BuildId).zip"
-  - task: PublishBuildArtifacts@1
+  - task: PublishPipelineArtifact@1
     inputs:
-      PathtoPublish: '$(System.ArtifactStagingDirectory)/build$(Build.BuildId).zip'
-      artifactName: 'api'
+      targetPath: '$(System.ArtifactStagingDirectory)/build$(Build.BuildId).zip'
+      publishLocation: 'pipeline'
+      artifact: 'api'
 
 - deployment: CD
   dependsOn: CI
@@ -55,9 +44,41 @@ jobs:
     runOnce:
       deploy:
         steps:
-        - task: AzureFunctionApp@1 
+        - task: ExtractFiles@1
+          inputs:
+            archiveFilePatterns: '$(Pipeline.Workspace)/api/*.zip'
+            destinationFolder: '$(Pipeline.Workspace)/wip'
+            cleanDestinationFolder: true
+            overwriteExistingFiles: true
+        - task: DownloadSecureFile@1
+          name: userPromptTxt
+          displayName: 'Download user-prompt.txt'
+          inputs:
+            secureFile: 'user-prompt.txt'
+        - task: DownloadSecureFile@1
+          name: systemPromptTxt
+          displayName: 'Download system-prompt.txt'
+          inputs:
+            secureFile: 'system-prompt.txt'
+        - task: Bash@3
+          inputs:
+            targetType: 'inline'
+            script: |
+              echo Installing $(userPromptTxt.secureFilePath) to build directory
+              rm $(Pipeline.Workspace)/wip/src/resources/user-prompt.txt
+              cp $(userPromptTxt.secureFilePath) $(Pipeline.Workspace)/wip/src/resources/user-prompt.txt
+              echo Installing $(systemPromptTxt.secureFilePath) to build directory
+              rm $(Pipeline.Workspace)/wip/src/resources/system-prompt.txt
+              cp $(systemPromptTxt.secureFilePath) $(Pipeline.Workspace)/wip/src/resources/system-prompt.txt
+        - task: ArchiveFiles@2
+          inputs:
+            rootFolderOrFile: '$(Pipeline.Workspace)/wip'
+            includeRootFolder: false
+            archiveType: 'zip'
+            archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+        - task: AzureFunctionApp@1
           inputs:
             azureSubscription: '$(azureSubscription)'
-            appType: functionAppLinux 
+            appType: functionAppLinux
             appName: $(functionAppName)
-            package: $(Pipeline.Workspace)/**/*.zip
+            package: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
