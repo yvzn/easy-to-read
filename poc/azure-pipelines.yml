@@ -38,7 +38,7 @@ jobs:
       archiveFile: "$(System.ArtifactStagingDirectory)/build$(Build.BuildId).zip"
   - task: PublishPipelineArtifact@1
     inputs:
-      targetPath: '$(System.ArtifactStagingDirectory)/build$(Build.BuildId).zip''
+      targetPath: '$(System.ArtifactStagingDirectory)/build$(Build.BuildId).zip'
       publishLocation: 'pipeline'
       artifact: 'poc'
 
