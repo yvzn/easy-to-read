@@ -16,7 +16,7 @@
 		"build:js": "tsc",
 		"build:css": "postcss styles/main.css --output public/css/main.css",
 		"lint": "eslint src/** --ext .ts",
-		"format": "prettier --write 'src/**/*.ts' 'views/**/*.ejs'",
+		"format": "prettier '{src,views}/**/*.{ts,ejs}' --write",
 		"clean": "rimraf dist public/css"
 	},
 	"dependencies": {

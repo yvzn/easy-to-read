@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import {
-  getMaintenancePage,
-  deleteOldInteractions,
+	getMaintenancePage,
+	deleteOldInteractions,
 } from '../controllers/maintenance.controller.js';
 
 const router = Router();
