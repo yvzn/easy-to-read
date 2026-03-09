@@ -5,5 +5,6 @@ export default function () {
 		interactionUrl: process.env.INTERACTION_URL,
 		feedbackUrl: process.env.FEEDBACK_URL,
 		carbonFootprintUrl: process.env.CARBON_FOOTPRINT_URL,
+		monitoringUrl: process.env.MONITORING_URL,
 	};
 }
