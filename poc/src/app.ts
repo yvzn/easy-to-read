@@ -7,6 +7,7 @@ import simplifiedRouter from "./routes/simplified";
 import feedbackRouter from "./routes/feedback";
 import interactionRouter from "./routes/interaction";
 import carbonFootprintRouter from "./routes/carbon-footprint";
+import monitoringRouter from "./routes/monitoring";
 
 const app = express();
 
@@ -31,5 +32,6 @@ app.use("/api", simplifiedRouter);
 app.use("/api", feedbackRouter);
 app.use("/api", interactionRouter);
 app.use("/api", carbonFootprintRouter);
+app.use("/api", monitoringRouter);
 
 export default app;
