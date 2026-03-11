@@ -7,8 +7,10 @@ const router = Router();
 router.post("/monitoring", async (req: Request, res: Response) => {
 	const {
 		d: duration,
+		e: errorMessage,
 	} = req.body as {
 		d?: string;
+		e?: string;
 	};
 
 	if (!duration) {
@@ -32,6 +34,7 @@ router.post("/monitoring", async (req: Request, res: Response) => {
 			partitionKey: "Healthcheck",
 			rowKey: randomUUID(),
 			Duration: duration,
+			Error: errorMessage,
 		});
 
 		res.status(201).send();

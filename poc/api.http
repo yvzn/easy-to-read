@@ -1,0 +1,15 @@
+@apiUrl=https://easyreadme.azurewebsites.net
+@apiKey=CHANGE_ME
+
+##
+# @name HealthCheck
+GET {{apiUrl}}/api/health
+
+###########################################################
+
+##
+# @name SimplifiedText
+POST {{apiUrl}}/api/simplified?code={{apiKey}}
+Content-Type: application/x-www-form-urlencoded
+
+t=Google+has+unveiled+a+new+chip+which+it+claims+takes+five+minutes+to+solve+a+problem+that+would+currently+take+the+worlds+fastest+super+computers+ten+septillion+years+to+complete&l=fr

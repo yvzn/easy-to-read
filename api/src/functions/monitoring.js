@@ -17,6 +17,7 @@ app.http('monitoring', {
 			const requestParams = new URLSearchParams(requestBody);
 
 			const duration = requestParams.get("d");
+			const errorMessage = requestParams.get("e");
 
 			if (!duration) {
 				return {
@@ -31,6 +32,7 @@ app.http('monitoring', {
 				PartitionKey: 'Healthcheck',
 				RowKey: context.invocationId,
 				Duration: duration,
+				Error: errorMessage
 			});
 			context.extraOutputs.set(tableOutput, rows);
 
