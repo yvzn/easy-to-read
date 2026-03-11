@@ -16,12 +16,6 @@ router.post("/monitoring", async (req: Request, res: Response) => {
 		return;
 	}
 
-	const durationMs = Number(duration);
-	if (!Number.isFinite(durationMs) || durationMs < 0) {
-		res.status(400).type("text").send("Invalid parameters.");
-		return;
-	}
-
 	try {
 		const connectionString =
 			process.env.INTERACTIONS_STORAGE_CONNECTION_STRING;
@@ -37,7 +31,7 @@ router.post("/monitoring", async (req: Request, res: Response) => {
 		await client.createEntity({
 			partitionKey: "Healthcheck",
 			rowKey: randomUUID(),
-			Duration: durationMs,
+			Duration: duration,
 		});
 
 		res.status(201).send();

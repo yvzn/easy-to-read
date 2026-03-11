@@ -26,20 +26,11 @@ app.http('monitoring', {
 				};
 			}
 
-			const durationMs = Number(duration);
-			if (!Number.isFinite(durationMs) || durationMs < 0) {
-				return {
-					status: 400,
-					headers: { "Content-Type": "text/plain;charset=utf-8" },
-					body: "Invalid parameters.",
-				};
-			}
-
 			const rows = [];
 			rows.push({
 				PartitionKey: 'Healthcheck',
 				RowKey: context.invocationId,
-				Duration: durationMs,
+				Duration: duration,
 			});
 			context.extraOutputs.set(tableOutput, rows);
 
