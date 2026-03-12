@@ -1,95 +1,131 @@
-<!DOCTYPE html>
-<html lang="en" class="h-full bg-gray-50">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EasyRead Admin – Feedback</title>
-  <link rel="stylesheet" href="/css/main.css" />
-</head>
-<body class="h-full flex flex-col">
-  <%- include('partials/header') %>
-  <main class="flex-1 container mx-auto px-4 py-8 max-w-7xl">
-    <h1 class="text-2xl font-bold text-gray-800 mb-6">Feedback Management</h1>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EasyRead Admin – Feedback</title>
+    <link rel="stylesheet" href="/css/main.css" />
+  </head>
+  <body class="bg-gray-50 antialiased">
+    <%- include('partials/sidebar') %>
 
-    <!-- Search form -->
-    <form method="GET" action="/feedback" class="flex gap-3 mb-6">
-      <input
-        type="text"
-        name="filter"
-        value="<%= filter %>"
-        maxlength="200"
-        placeholder="Search by comment or interaction ID…"
-        class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
-      />
-      <button
-        type="submit"
-        class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
-      >Search</button>
-      <% if (filter) { %>
-        <a href="/feedback" class="bg-gray-100 text-gray-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">Clear</a>
-      <% } %>
-    </form>
+    <div class="sm:ml-64 flex flex-col min-h-screen">
+      <!-- Top bar -->
+      <div class="bg-white border-b border-gray-200 px-6 py-4">
+        <nav class="flex mb-1" aria-label="Breadcrumb">
+          <ol class="inline-flex items-center gap-1 text-sm text-gray-500">
+            <li><a href="/" class="hover:text-blue-700">Dashboard</a></li>
+            <li class="flex items-center gap-1">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+              <span class="text-gray-800 font-medium">Feedback</span>
+            </li>
+          </ol>
+        </nav>
+        <h1 class="text-xl font-semibold text-gray-900">Feedback Management</h1>
+      </div>
 
-    <% if (feedbacks.length === 0) { %>
-      <div class="bg-white rounded-xl shadow p-8 text-center text-gray-400">
-        No feedback entries found<% if (filter) { %> matching "<%= filter %>"<% } %>.
-      </div>
-    <% } else { %>
-      <div class="bg-white rounded-xl shadow overflow-hidden">
-        <div class="px-4 py-3 border-b border-gray-100 text-sm text-gray-500">
-          <%= feedbacks.length %> result<%= feedbacks.length !== 1 ? 's' : '' %>
-          <% if (filter) { %> for "<%= filter %>"<% } %>
+      <main class="flex-1 p-6">
+
+        <!-- Search bar -->
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 mb-5">
+          <form method="GET" action="/feedback" class="flex gap-3">
+            <div class="relative flex-1">
+              <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              </div>
+              <input
+                type="text"
+                name="filter"
+                value="<%= filter %>"
+                maxlength="200"
+                placeholder="Search by comment or interaction ID…"
+                class="block w-full pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <button
+              type="submit"
+              class="px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors"
+            >Search</button>
+            <% if (filter) { %>
+              <a
+                href="/feedback"
+                class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-colors"
+              >Clear</a>
+            <% } %>
+          </form>
         </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm text-left">
-            <thead class="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th class="px-4 py-3 font-medium text-gray-600">Date</th>
-                <th class="px-4 py-3 font-medium text-gray-600">Score</th>
-                <th class="px-4 py-3 font-medium text-gray-600">Interaction ID</th>
-                <th class="px-4 py-3 font-medium text-gray-600">Comment</th>
-                <th class="px-4 py-3 font-medium text-gray-600 text-center">Action</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-              <% feedbacks.forEach(function(f) { %>
-                <tr class="hover:bg-gray-50">
-                  <td class="px-4 py-3 text-gray-500 font-mono text-xs whitespace-nowrap"><%= f.formattedTimestamp %></td>
-                  <td class="px-4 py-3">
-                    <% if (f.Score >= 4) { %>
-                      <span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700"><%= f.Score %></span>
-                    <% } else if (f.Score >= 3) { %>
-                      <span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700"><%= f.Score %></span>
-                    <% } else { %>
-                      <span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700"><%= f.Score %></span>
-                    <% } %>
-                  </td>
-                  <td class="px-4 py-3 text-gray-500 font-mono text-xs"><%= f.InteractionId %></td>
-                  <td class="px-4 py-3 text-gray-700 max-w-xs">
-                    <% if (f.Comment) { %>
-                      <span class="line-clamp-2"><%= f.Comment %></span>
-                    <% } else { %>
-                      <span class="text-gray-400 italic">No comment</span>
-                    <% } %>
-                  </td>
-                  <td class="px-4 py-3 text-center">
-                    <form method="POST" action="/feedback/delete"
-                      onsubmit="return confirm('Delete this feedback entry?')">
-                      <input type="hidden" name="rowKey" value="<%= f.rowKey %>" />
-                      <button
-                        type="submit"
-                        class="text-red-600 hover:text-red-800 text-xs font-medium hover:underline transition-colors"
-                      >Delete</button>
-                    </form>
-                  </td>
-                </tr>
-              <% }); %>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    <% } %>
-  </main>
-  <%- include('partials/footer') %>
-</body>
+
+        <!-- Results -->
+        <% if (feedbacks.length === 0) { %>
+          <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-10 text-center">
+            <svg class="mx-auto w-10 h-10 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
+            <p class="text-sm text-gray-500">
+              No feedback entries found<% if (filter) { %> matching "<strong><%= filter %></strong>"<% } %>.
+            </p>
+          </div>
+        <% } else { %>
+          <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="px-5 py-3 border-b border-gray-200 flex items-center justify-between">
+              <span class="text-sm text-gray-600">
+                <span class="font-medium text-gray-900"><%= feedbacks.length %></span>
+                result<%= feedbacks.length !== 1 ? 's' : '' %><% if (filter) { %> for &ldquo;<%= filter %>&rdquo;<% } %>
+              </span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left">
+                <thead class="bg-gray-50 border-b border-gray-200 text-xs text-gray-600 uppercase tracking-wider">
+                  <tr>
+                    <th class="px-5 py-3">Date</th>
+                    <th class="px-5 py-3">Score</th>
+                    <th class="px-5 py-3">Interaction ID</th>
+                    <th class="px-5 py-3">Comment</th>
+                    <th class="px-5 py-3 text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                  <% feedbacks.forEach(function(f) { %>
+                    <tr class="hover:bg-gray-50 transition-colors">
+                      <td class="px-5 py-3 text-gray-500 font-mono text-xs whitespace-nowrap"><%= f.formattedTimestamp %></td>
+                      <td class="px-5 py-3">
+                        <% if (Number(f.Score) >= 4) { %>
+                          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"><%= f.Score %></span>
+                        <% } else if (Number(f.Score) >= 3) { %>
+                          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"><%= f.Score %></span>
+                        <% } else { %>
+                          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"><%= f.Score %></span>
+                        <% } %>
+                      </td>
+                      <td class="px-5 py-3 text-gray-500 font-mono text-xs"><%= f.InteractionId %></td>
+                      <td class="px-5 py-3 text-gray-700 max-w-xs">
+                        <% if (f.Comment) { %>
+                          <span class="line-clamp-2 text-sm"><%= f.Comment %></span>
+                        <% } else { %>
+                          <span class="text-gray-400 italic text-xs">No comment</span>
+                        <% } %>
+                      </td>
+                      <td class="px-5 py-3 text-center">
+                        <form
+                          method="POST"
+                          action="/feedback/delete"
+                          onsubmit="return confirm('Delete this feedback entry?')"
+                        >
+                          <input type="hidden" name="rowKey" value="<%= f.rowKey %>" />
+                          <button
+                            type="submit"
+                            class="font-medium text-red-600 hover:text-red-800 text-xs hover:underline transition-colors"
+                          >Delete</button>
+                        </form>
+                      </td>
+                    </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        <% } %>
+
+      </main>
+      <%- include('partials/footer') %>
+    </div>
+  </body>
 </html>

@@ -5,7 +5,7 @@ import maintenanceRouter from './maintenance.js';
 
 const router = Router();
 
-router.get('/', (_req, res) => res.redirect('/stats'));
+router.get('/', (_req, res) => res.render('index'));
 router.use('/stats', statsRouter);
 router.use('/feedback', feedbackRouter);
 router.use('/maintenance', maintenanceRouter);

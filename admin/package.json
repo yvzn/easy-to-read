@@ -12,12 +12,13 @@
 		"dev:build": "tsc --watch --preserveWatchOutput --sourceMap true",
 		"dev:server": "node --env-file .env --watch-path=./dist --watch-preserve-output --inspect dist/server.js",
 		"predev": "npm run build",
-		"build": "npm run build:js && npm run build:css",
+		"build": "npm run build:js && npm run build:css && npm run build:assets",
 		"build:js": "tsc",
 		"build:css": "postcss styles/main.css --output public/css/main.css",
+		"build:assets": "node -e \"const {cpSync, mkdirSync} = require('fs'); mkdirSync('public/js', {recursive: true}); cpSync('node_modules/chart.js/dist/chart.umd.js', 'public/js/chart.umd.js');\"",
 		"lint": "eslint src/** --ext .ts",
-		"format": "prettier '{src,views}/**/*.{ts,ejs}' --write",
-		"clean": "rimraf dist public/css"
+		"format": "prettier --plugin=prettier-plugin-ejs '{src,views}/**/*.{ts,ejs}' --write",
+		"clean": "rimraf dist public/css public/js/chart.umd.js"
 	},
 	"dependencies": {
 		"@azure/data-tables": "^13.2.2",
@@ -37,11 +38,13 @@
 		"@types/ejs": "^3.1.5",
 		"@types/express": "^5.0.1",
 		"@types/node": "^24.11.0",
+		"chart.js": "^4.5.1",
 		"concurrently": "^9.2.1",
 		"eslint": "^10.0.2",
 		"eslint-config-prettier": "^10.1.8",
 		"globals": "^17.4.0",
 		"prettier": "^3.8.1",
+		"prettier-plugin-ejs": "^1.0.3",
 		"rimraf": "^6.1.3",
 		"typescript": "^5.9.3",
 		"typescript-eslint": "^8.56.1"

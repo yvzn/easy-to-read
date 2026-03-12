@@ -62,7 +62,7 @@ app.use((_req: Request, res: Response) => {
 });
 
 // Error handler
-app.use((err: Error, _req: Request, res: Response) => {
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 	console.error(err.stack);
 	const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
 	res.status(statusCode).render('error', {
