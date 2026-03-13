@@ -7,7 +7,7 @@
 	"description": "Administrative backend for EasyRead.me",
 	"main": "dist/server.js",
 	"scripts": {
-		"start": "node --env-file .env dist/server.js",
+		"start": "npm run dev",
 		"dev": "concurrently --kill-others --names tsc,server --pad-prefix 'npm:dev:build' 'npm:dev:server'",
 		"dev:build": "tsc --watch --preserveWatchOutput --sourceMap true",
 		"dev:server": "node --env-file .env --watch-path=./dist --watch-preserve-output --inspect dist/server.js",
@@ -16,6 +16,7 @@
 		"build:js": "tsc",
 		"build:css": "postcss styles/main.css --output public/css/main.css",
 		"build:assets": "node -e \"const {cpSync, mkdirSync} = require('fs'); mkdirSync('public/js', {recursive: true}); cpSync('node_modules/chart.js/dist/chart.umd.js', 'public/js/chart.umd.js');\"",
+		"preview": "node --env-file .env dist/server.js",
 		"lint": "eslint src/** --ext .ts",
 		"format": "prettier --plugin=prettier-plugin-ejs '{src,views}/**/*.{ts,ejs}' --write",
 		"clean": "rimraf dist public/css public/js/chart.umd.js"
