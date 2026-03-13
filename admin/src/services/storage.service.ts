@@ -1,4 +1,4 @@
-import { TableClient } from '@azure/data-tables';
+import { TableClient, TableServiceClient } from '@azure/data-tables';
 import { config } from '../config/index.js';
 import {
 	CarbonFootprintEntity,
@@ -19,6 +19,26 @@ function getISOWeek(date: Date): string {
 class StorageService {
 	private getClient(tableName: string): TableClient {
 		return TableClient.fromConnectionString(config.storageConnectionString, tableName);
+	}
+
+	async ensureTablesExist(): Promise<void> {
+		if (config.nodeEnv !== 'development') return;
+		const serviceClient = TableServiceClient.fromConnectionString(config.storageConnectionString);
+		for (const tableName of ['Interactions', 'Feedbacks', 'CarbonFootprint']) {
+			try {
+				await serviceClient.createTable(tableName);
+			} catch (err: unknown) {
+				// 409 means the table already exists — safe to ignore
+				if (
+					err &&
+					typeof err === 'object' &&
+					'statusCode' in err &&
+					(err as { statusCode: number }).statusCode !== 409
+				) {
+					throw err;
+				}
+			}
+		}
 	}
 
 	async getCarbonFootprintStats(interval: 'week' | 'month' | 'year'): Promise<UsageStats[]> {
