@@ -1,0 +1,52 @@
+{
+	"name": "admin",
+	"version": "1.0.0",
+	"engines": {
+		"node": ">=24"
+	},
+	"description": "Administrative backend for EasyRead.me",
+	"main": "dist/server.js",
+	"scripts": {
+		"start": "npm run dev",
+		"dev": "concurrently --kill-others --names tsc,server --pad-prefix 'npm:dev:build' 'npm:dev:server'",
+		"dev:build": "tsc --watch --preserveWatchOutput --sourceMap true",
+		"dev:server": "node --env-file .env --watch-path=./dist --watch-preserve-output --inspect dist/server.js",
+		"predev": "npm run build",
+		"build": "npm run build:js && npm run build:assets",
+		"build:js": "tsc",
+		"build:assets": "node build-assets.mjs",
+		"preview": "node --env-file .env dist/server.js",
+		"lint": "eslint src/** --ext .ts",
+		"format": "prettier --plugin=prettier-plugin-ejs '{src,views}/**/*.{ts,ejs}' --write",
+		"clean": "rimraf dist public/css public/js/chart.umd.js"
+	},
+	"dependencies": {
+		"@azure/data-tables": "^13.2.2",
+		"@tailwindcss/postcss": "^4.2.1",
+		"cors": "^2.8.5",
+		"ejs": "^4.0.1",
+		"express": "^5.2.1",
+		"express-rate-limit": "^8.3.0",
+		"helmet": "^8.1.0",
+		"tailwindcss": "^4.2.1"
+	},
+	"devDependencies": {
+		"@eslint/js": "^10.0.1",
+		"@types/cors": "^2.8.17",
+		"@types/ejs": "^3.1.5",
+		"@types/express": "^5.0.1",
+		"@types/node": "^24.11.0",
+		"chart.js": "^4.5.1",
+		"concurrently": "^9.2.1",
+		"eslint": "^10.0.2",
+		"eslint-config-prettier": "^10.1.8",
+		"globals": "^17.4.0",
+		"postcss": "^8.5.8",
+		"postcss-cli": "^11.0.1",
+		"prettier": "^3.8.1",
+		"prettier-plugin-ejs": "^1.0.3",
+		"rimraf": "^6.1.3",
+		"typescript": "^5.9.3",
+		"typescript-eslint": "^8.56.1"
+	}
+}

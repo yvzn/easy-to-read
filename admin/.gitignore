@@ -1,0 +1,5 @@
+node_modules/
+dist/
+public/css/
+public/js/chart.umd.js
+.env

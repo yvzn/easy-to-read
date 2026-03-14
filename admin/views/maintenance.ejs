@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EasyRead Admin – Maintenance</title>
+    <link rel="stylesheet" href="/css/main.css" />
+  </head>
+  <body class="bg-gray-50 antialiased">
+    <%- include('partials/sidebar') %>
+
+    <div class="sm:ml-64 flex flex-col min-h-screen">
+      <!-- Top bar -->
+      <div class="h-16 bg-white border-b border-gray-200 px-6 flex items-center">
+        <h1 class="text-xl font-semibold text-gray-900">Database Maintenance</h1>
+      </div>
+
+      <main class="flex-1 p-6">
+        <!-- Breadcrumb -->
+        <nav class="flex mb-5" aria-label="Breadcrumb">
+          <ol class="inline-flex items-center gap-1 text-sm text-gray-500">
+            <li><a href="/" class="hover:text-blue-700">Dashboard</a></li>
+            <li class="flex items-center gap-1">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+              <span class="text-gray-800 font-medium">Maintenance</span>
+            </li>
+          </ol>
+        </nav>
+
+        <!-- Alert: error -->
+        <% if (error) { %>
+          <div class="flex items-center gap-3 mb-5 p-4 text-sm text-red-800 bg-red-50 rounded-xl border border-red-200" role="alert">
+            <svg class="w-5 h-5 shrink-0 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+            <span><%= error %></span>
+          </div>
+        <% } %>
+
+        <!-- Alert: success -->
+        <% if (result) { %>
+          <div class="flex items-center gap-3 mb-5 p-4 text-sm text-green-800 bg-green-50 rounded-xl border border-green-200" role="alert">
+            <svg class="w-5 h-5 shrink-0 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <span>
+              Cleanup complete for interactions before
+              <strong><%= result.beforeDate %></strong>:
+              <strong><%= result.deleted %></strong> deleted,
+              <strong><%= result.skipped %></strong> skipped (linked to feedback).
+            </span>
+          </div>
+        <% } %>
+
+        <!-- Form card -->
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 max-w-lg">
+          <div class="flex items-center gap-3 mb-1">
+            <div class="flex items-center justify-center w-9 h-9 bg-red-100 rounded-lg shrink-0">
+              <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+            </div>
+            <h2 class="text-base font-semibold text-gray-900">Delete Old Interactions</h2>
+          </div>
+          <p class="text-sm text-gray-500 mb-6 ml-12">
+            Remove interaction records created before the specified date. Optionally keep
+            records that have associated user feedback.
+          </p>
+
+          <form
+            method="POST"
+            action="/maintenance/delete"
+            onsubmit="return confirm('This will permanently delete interactions. Continue?')"
+          >
+            <div class="mb-4">
+              <label for="beforeDate" class="block mb-1.5 text-sm font-medium text-gray-700">
+                Delete interactions before
+              </label>
+              <input
+                type="date"
+                id="beforeDate"
+                name="beforeDate"
+                required
+                max="<%= new Date().toISOString().split('T')[0] %>"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              />
+            </div>
+
+            <div class="flex items-center mb-6">
+              <input
+                id="keepWithFeedback"
+                type="checkbox"
+                name="keepWithFeedback"
+                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+              />
+              <label for="keepWithFeedback" class="ml-2 text-sm font-medium text-gray-700">
+                Keep interactions linked to feedback
+              </label>
+            </div>
+
+            <button
+              type="submit"
+              class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300 transition-colors"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+              Delete Old Interactions
+            </button>
+          </form>
+        </div>
+
+      </main>
+      <%- include('partials/footer') %>
+    </div>
+  </body>
+</html>
