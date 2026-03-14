@@ -1,18 +1,24 @@
 // @ts-check
-import { execFileSync } from 'child_process';
-import { mkdirSync, copyFileSync } from 'fs';
+import postcss from 'postcss';
+import tailwindcss from '@tailwindcss/postcss';
+import { readFileSync, writeFileSync, mkdirSync, copyFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-function buildCss() {
+async function buildCss() {
 	const input = join(__dirname, 'styles', 'main.css');
 	const output = join(__dirname, 'public', 'css', 'main.css');
 	mkdirSync(dirname(output), { recursive: true });
 
-	const postcss = join(__dirname, 'node_modules', '.bin', 'postcss');
-	execFileSync(postcss, [input, '--output', output], { stdio: 'inherit' });
+	const css = readFileSync(input, 'utf8');
+	const result = await postcss([tailwindcss()]).process(css, { from: input, to: output });
+
+	writeFileSync(output, result.css);
+	if (result.map) {
+		writeFileSync(output + '.map', result.map.toString());
+	}
 	console.log('CSS built:', output);
 }
 
@@ -24,5 +30,7 @@ function copyAssets() {
 	console.log('Assets copied:', dest);
 }
 
-buildCss();
-copyAssets();
+buildCss().then(copyAssets).catch((err) => {
+	console.error('Build failed:', err);
+	process.exit(1);
+});
