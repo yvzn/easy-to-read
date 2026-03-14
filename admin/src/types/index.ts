@@ -37,3 +37,16 @@ export interface UsageStats {
 export interface FeedbackWithTimestamp extends FeedbackEntity {
 	formattedTimestamp: string;
 }
+
+export interface MonitoringEntity {
+	partitionKey: string;
+	rowKey: string;
+	timestamp?: Date;
+	Duration: number;
+	Error?: string;
+}
+
+export interface MonitoringStats {
+	period: string;
+	avgDuration: number;
+}
