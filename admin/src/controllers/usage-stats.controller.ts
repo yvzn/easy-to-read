@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { storageService } from '../services/storage.service.js';
 
-export const getStats = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getUsageStats = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		const interval = (req.query.interval as string) || 'week';
 		if (!['week', 'month', 'year'].includes(interval)) {
@@ -17,7 +17,7 @@ export const getStats = async (req: Request, res: Response, next: NextFunction):
 			storageService.getCarbonFootprintStats('year'),
 		]);
 
-		res.render('stats', { stats, interval, weekStats, monthStats, yearStats });
+		res.render('usage-stats', { stats, interval, weekStats, monthStats, yearStats });
 	} catch (error) {
 		next(error);
 	}

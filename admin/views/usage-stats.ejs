@@ -22,7 +22,7 @@
             <li><a href="/" class="hover:text-blue-700">Dashboard</a></li>
             <li class="flex items-center gap-1">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-              <span class="text-gray-800 font-medium">Statistics</span>
+              <span class="text-gray-800 font-medium">Usage Stats</span>
             </li>
           </ol>
         </nav>
@@ -56,7 +56,7 @@
               </div>
             <% } %>
             <a
-              href="/stats?interval=<%= section.key %>"
+              href="/usage-stats?interval=<%= section.key %>"
               class="mt-4 inline-flex items-center gap-1 text-xs font-medium
                 <%= interval === section.key
                   ? 'text-blue-700 font-bold underline underline-offset-2'
