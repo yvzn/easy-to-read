@@ -1,10 +1,10 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import { TableClient } from "@azure/data-tables";
 import { randomUUID } from "crypto";
 
 const router = Router();
 
-router.post("/interaction", async (req: Request, res: Response) => {
+router.post("/interaction", async (req: Request, res: Response, next: NextFunction) => {
 	const {
 		t: input,
 		o: output,
@@ -45,12 +45,7 @@ router.post("/interaction", async (req: Request, res: Response) => {
 
 		res.status(201).send();
 	} catch (error) {
-		console.error(error);
-		res.status(503)
-			.type("text")
-			.send(
-				"Service has failed to process the request. Please try again later.",
-			);
+		next(error);
 	}
 });
 

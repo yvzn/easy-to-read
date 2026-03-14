@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import helmet from "helmet";
 import cors from "cors";
 import { authenticateRequest } from "./middleware/auth";
@@ -33,5 +33,16 @@ app.use("/api", feedbackRouter);
 app.use("/api", interactionRouter);
 app.use("/api", carbonFootprintRouter);
 app.use("/api", monitoringRouter);
+
+// -- Error Handler -----
+
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+	console.error(err);
+	res.status(503)
+		.type("text")
+		.send(
+			"Service has failed to process the request. Please try again later.",
+		);
+});
 
 export default app;
