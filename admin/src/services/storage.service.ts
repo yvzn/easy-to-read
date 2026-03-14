@@ -4,6 +4,8 @@ import {
 	CarbonFootprintEntity,
 	FeedbackEntity,
 	InteractionEntity,
+	MonitoringEntity,
+	MonitoringStats,
 	UsageStats,
 } from '../types/index.js';
 
@@ -24,7 +26,7 @@ class StorageService {
 	async ensureTablesExist(): Promise<void> {
 		if (config.nodeEnv !== 'development') return;
 		const serviceClient = TableServiceClient.fromConnectionString(config.storageConnectionString);
-		for (const tableName of ['Interactions', 'Feedbacks', 'CarbonFootprint']) {
+		for (const tableName of ['Interactions', 'Feedbacks', 'CarbonFootprint', 'Monitoring']) {
 			try {
 				await serviceClient.createTable(tableName);
 			} catch (err: unknown) {
@@ -155,6 +157,56 @@ class StorageService {
 		}
 
 		return { deleted, skipped };
+	}
+	async getMonitoringStats(interval: 'week' | 'month' | 'year'): Promise<MonitoringStats[]> {
+		const client = this.getClient('Monitoring');
+		const buckets = new Map<string, { sum: number; count: number }>();
+		const now = new Date();
+
+		for await (const entity of client.listEntities<MonitoringEntity>()) {
+			const ts = entity.timestamp ? new Date(entity.timestamp) : new Date();
+			let key: string;
+
+			if (interval === 'week') {
+				key = getISOWeek(ts);
+			} else if (interval === 'month') {
+				key = `${ts.getFullYear()}-${String(ts.getMonth() + 1).padStart(2, '0')}`;
+			} else {
+				key = String(ts.getFullYear());
+			}
+
+			const duration = Number(entity.Duration) || 0;
+			const bucket = buckets.get(key) || { sum: 0, count: 0 };
+			bucket.sum += duration;
+			bucket.count += 1;
+			buckets.set(key, bucket);
+		}
+
+		// Determine cutoff
+		const cutoffDate = new Date(now);
+		if (interval === 'week') {
+			cutoffDate.setDate(cutoffDate.getDate() - 52 * 7);
+		} else if (interval === 'month') {
+			cutoffDate.setMonth(cutoffDate.getMonth() - 24);
+		} else {
+			cutoffDate.setFullYear(cutoffDate.getFullYear() - 10);
+		}
+
+		const cutoffKey =
+			interval === 'week'
+				? getISOWeek(cutoffDate)
+				: interval === 'month'
+					? `${cutoffDate.getFullYear()}-${String(cutoffDate.getMonth() + 1).padStart(2, '0')}`
+					: String(cutoffDate.getFullYear());
+
+		const result: MonitoringStats[] = [];
+		for (const [period, { sum, count }] of buckets.entries()) {
+			if (period >= cutoffKey) {
+				result.push({ period, avgDuration: Math.round(sum / count) });
+			}
+		}
+
+		return result.sort((a, b) => a.period.localeCompare(b.period));
 	}
 }
 

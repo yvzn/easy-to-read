@@ -99,4 +99,55 @@ document.addEventListener('DOMContentLoaded', () => {
       },
     });
   });
+
+  // Line chart
+  document.querySelectorAll('[data-chart="line"]').forEach((canvas) => {
+    const el = /** @type {HTMLCanvasElement} */ (canvas);
+    const labels = JSON.parse(el.dataset.labels || '[]');
+    const values = JSON.parse(el.dataset.values || '[]');
+    const yLabel = el.dataset.ylabel || '';
+
+    new Chart(el, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: yLabel,
+            data: values,
+            borderColor: '#1C64F2',
+            backgroundColor: 'rgba(28,100,242,0.08)',
+            borderWidth: 2,
+            pointRadius: 3,
+            pointHoverRadius: 5,
+            fill: true,
+            tension: 0.3,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => ` ${ctx.parsed.y} ms`,
+            },
+          },
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { precision: 0 },
+            grid: { color: '#F3F4F6' },
+            title: { display: true, text: 'ms' },
+          },
+          x: {
+            grid: { display: false },
+            ticks: { maxRotation: 45, minRotation: 0 },
+          },
+        },
+      },
+    });
+  });
 });
