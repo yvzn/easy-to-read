@@ -158,7 +158,7 @@ class StorageService {
 
 		return { deleted, skipped };
 	}
-	async getMonitoringStats(interval: 'week' | 'month' | 'year'): Promise<MonitoringStats[]> {
+	async getMonitoringStats(interval: 'day' | 'week' | 'month' | 'year'): Promise<MonitoringStats[]> {
 		const client = this.getClient('Monitoring');
 		const buckets = new Map<string, { sum: number; count: number }>();
 		const now = new Date();
@@ -167,7 +167,9 @@ class StorageService {
 			const ts = entity.timestamp ? new Date(entity.timestamp) : new Date();
 			let key: string;
 
-			if (interval === 'week') {
+			if (interval === 'day') {
+				key = ts.toISOString().slice(0, 10);
+			} else if (interval === 'week') {
 				key = getISOWeek(ts);
 			} else if (interval === 'month') {
 				key = `${ts.getFullYear()}-${String(ts.getMonth() + 1).padStart(2, '0')}`;
@@ -184,7 +186,9 @@ class StorageService {
 
 		// Determine cutoff
 		const cutoffDate = new Date(now);
-		if (interval === 'week') {
+		if (interval === 'day') {
+			cutoffDate.setDate(cutoffDate.getDate() - 90);
+		} else if (interval === 'week') {
 			cutoffDate.setDate(cutoffDate.getDate() - 52 * 7);
 		} else if (interval === 'month') {
 			cutoffDate.setMonth(cutoffDate.getMonth() - 24);
@@ -193,11 +197,13 @@ class StorageService {
 		}
 
 		const cutoffKey =
-			interval === 'week'
-				? getISOWeek(cutoffDate)
-				: interval === 'month'
-					? `${cutoffDate.getFullYear()}-${String(cutoffDate.getMonth() + 1).padStart(2, '0')}`
-					: String(cutoffDate.getFullYear());
+			interval === 'day'
+				? cutoffDate.toISOString().slice(0, 10)
+				: interval === 'week'
+					? getISOWeek(cutoffDate)
+					: interval === 'month'
+						? `${cutoffDate.getFullYear()}-${String(cutoffDate.getMonth() + 1).padStart(2, '0')}`
+						: String(cutoffDate.getFullYear());
 
 		const result: MonitoringStats[] = [];
 		for (const [period, { sum, count }] of buckets.entries()) {
