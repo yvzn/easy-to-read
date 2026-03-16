@@ -70,7 +70,7 @@
               <canvas
                 data-chart="line"
                 data-ylabel="Avg. response time (ms)"
-                data-labels="<%- JSON.stringify(stats.map(function(s){ return s.period; })) %>"
+                data-labels='<%- JSON.stringify(stats.map(function(s){ return s.period; })) %>'
                 data-values="<%- JSON.stringify(stats.map(function(s){ return s.avgDuration; })) %>"
               ></canvas>
             </div>

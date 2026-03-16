@@ -46,7 +46,7 @@
               <div class="relative w-36 h-36">
                 <canvas
                   data-chart="doughnut"
-                  data-labels="<%- JSON.stringify(section.data.map(function(s){ return s.period; })) %>"
+                  data-labels='<%- JSON.stringify(section.data.map(function(s){ return s.period; })) %>'
                   data-values="<%- JSON.stringify(section.data.map(function(s){ return s.count; })) %>"
                 ></canvas>
                 <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
@@ -86,7 +86,7 @@
             <div class="relative h-72">
               <canvas
                 data-chart="bar"
-                data-labels="<%- JSON.stringify(stats.map(function(s){ return s.period; })) %>"
+                data-labels='<%- JSON.stringify(stats.map(function(s){ return s.period; })) %>'
                 data-values="<%- JSON.stringify(stats.map(function(s){ return s.count; })) %>"
               ></canvas>
             </div>
