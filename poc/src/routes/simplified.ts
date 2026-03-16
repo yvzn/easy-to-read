@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import path from "path";
 import fs from "fs/promises";
 import OpenAI from "openai";
@@ -35,7 +35,7 @@ function buildTranslationInstructions(language: string | undefined): string {
 	}
 }
 
-router.post("/simplified", async (req: Request, res: Response) => {
+router.post("/simplified", async (req: Request, res: Response, next: NextFunction) => {
 	const {
 		t: userInput,
 		l: language,
@@ -94,19 +94,7 @@ router.post("/simplified", async (req: Request, res: Response) => {
 		res.write(htmlFooter);
 		res.end();
 	} catch (error) {
-		console.error(error);
-		if (!res.headersSent) {
-			res.status(503)
-				.type("text")
-				.send(
-					"Service has failed to process the request. Please try again later.",
-				);
-		} else {
-			res.write(
-				"<api-error>Service has failed to process the request. Please try again later.</api-error>",
-			);
-			res.end();
-		}
+		next(error);
 	}
 });
 
