@@ -1,0 +1,60 @@
+variables:
+- group: "production"
+
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - admin
+
+pool:
+  vmImage: ubuntu-latest
+
+jobs:
+- job: CI
+  steps:
+  - task: UseNode@1
+    inputs:
+      version: '24.x'
+    displayName: 'Install Node.js'
+  - bash: |
+      cd admin
+      npm ci
+      npm run build --if-present
+      npm prune --omit=dev
+      mkdir -p $(Pipeline.Workspace)/zip
+      cp ecosystem.config.js $(Pipeline.Workspace)/zip/
+      cp -r dist $(Pipeline.Workspace)/zip/
+      cp -r views $(Pipeline.Workspace)/zip/
+      cp -r public $(Pipeline.Workspace)/zip/
+      cp -r node_modules $(Pipeline.Workspace)/zip/
+    displayName: 'Build and prepare files for artifact'
+  - task: ArchiveFiles@2
+    displayName: "Archive files"
+    inputs:
+      rootFolderOrFile: "$(Pipeline.Workspace)/zip"
+      includeRootFolder: false
+      archiveFile: "$(System.ArtifactStagingDirectory)/build$(Build.BuildId).zip"
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: '$(System.ArtifactStagingDirectory)/build$(Build.BuildId).zip'
+      publishLocation: 'pipeline'
+      artifact: 'admin'
+
+- deployment: CD
+  dependsOn: CI
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  environment: 'Azure'
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - task: AzureRmWebAppDeployment@4
+          inputs:
+            ConnectionType: 'AzureRM'
+            azureSubscription: '$(azureSubscription)'
+            appType: 'webApp'
+            WebAppName: '$(adminAppName)'
+            packageForLinux: '$(Pipeline.Workspace)/admin/*.zip'
