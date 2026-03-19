@@ -49,4 +49,7 @@ export interface MonitoringEntity {
 export interface MonitoringStats {
 	period: string;
 	avgDuration: number;
+	medianDuration: number;
+	p95Duration: number;
+	p99Duration: number;
 }

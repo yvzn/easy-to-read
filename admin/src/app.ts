@@ -53,6 +53,12 @@ app.set('views', path.join(__dirname, '..', 'views'));
 // Static assets
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
+// Expose current path to all views for active sidebar state
+app.use((req: Request, res: Response, next: NextFunction) => {
+	res.locals.currentPath = req.path;
+	next();
+});
+
 // Routes
 app.use(router);
 
