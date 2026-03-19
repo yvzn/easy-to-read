@@ -31,10 +31,12 @@
       <li>
         <a
           href="/"
-          class="flex items-center gap-3 p-2 text-gray-900 rounded-lg hover:bg-gray-100 group"
+          class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 group
+            <%= currentPath === '/' ? 'bg-blue-50 text-blue-700' : 'text-gray-900' %>"
         >
           <svg
-            class="w-5 h-5 text-gray-500 group-hover:text-gray-900 shrink-0"
+            class="w-5 h-5 shrink-0
+              <%= currentPath === '/' ? 'text-blue-700' : 'text-gray-500 group-hover:text-gray-900' %>"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -47,16 +49,21 @@
               d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
             />
           </svg>
-          <span class="text-sm">Dashboard</span>
+          <span class="text-sm <%= currentPath === '/' ? 'font-semibold text-blue-700' : '' %>">Dashboard</span>
+          <% if (currentPath === '/') { %>
+            <span class="ml-auto w-1.5 h-1.5 rounded-full bg-blue-700"></span>
+          <% } %>
         </a>
       </li>
       <li>
         <a
           href="/usage-stats"
-          class="flex items-center gap-3 p-2 text-gray-900 rounded-lg hover:bg-gray-100 group"
+          class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 group
+            <%= currentPath === '/usage-stats' ? 'bg-blue-50 text-blue-700' : 'text-gray-900' %>"
         >
           <svg
-            class="w-5 h-5 text-gray-500 group-hover:text-gray-900 shrink-0"
+            class="w-5 h-5 shrink-0
+              <%= currentPath === '/usage-stats' ? 'text-blue-700' : 'text-gray-500 group-hover:text-gray-900' %>"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -69,16 +76,21 @@
               d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
             />
           </svg>
-          <span class="text-sm">Usage Stats</span>
+          <span class="text-sm <%= currentPath === '/usage-stats' ? 'font-semibold text-blue-700' : '' %>">Usage Stats</span>
+          <% if (currentPath === '/usage-stats') { %>
+            <span class="ml-auto w-1.5 h-1.5 rounded-full bg-blue-700"></span>
+          <% } %>
         </a>
       </li>
       <li>
         <a
           href="/feedback"
-          class="flex items-center gap-3 p-2 text-gray-900 rounded-lg hover:bg-gray-100 group"
+          class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 group
+            <%= currentPath === '/feedback' ? 'bg-blue-50 text-blue-700' : 'text-gray-900' %>"
         >
           <svg
-            class="w-5 h-5 text-gray-500 group-hover:text-gray-900 shrink-0"
+            class="w-5 h-5 shrink-0
+              <%= currentPath === '/feedback' ? 'text-blue-700' : 'text-gray-500 group-hover:text-gray-900' %>"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -91,7 +103,10 @@
               d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
             />
           </svg>
-          <span class="text-sm">Feedback</span>
+          <span class="text-sm <%= currentPath === '/feedback' ? 'font-semibold text-blue-700' : '' %>">Feedback</span>
+          <% if (currentPath === '/feedback') { %>
+            <span class="ml-auto w-1.5 h-1.5 rounded-full bg-blue-700"></span>
+          <% } %>
         </a>
       </li>
       <li>
@@ -124,10 +139,12 @@
       <li>
         <a
           href="/maintenance"
-          class="flex items-center gap-3 p-2 text-gray-900 rounded-lg hover:bg-gray-100 group"
+          class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 group
+            <%= currentPath === '/maintenance' ? 'bg-blue-50 text-blue-700' : 'text-gray-900' %>"
         >
           <svg
-            class="w-5 h-5 text-gray-500 group-hover:text-gray-900 shrink-0"
+            class="w-5 h-5 shrink-0
+              <%= currentPath === '/maintenance' ? 'text-blue-700' : 'text-gray-500 group-hover:text-gray-900' %>"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -146,7 +163,10 @@
               d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
             />
           </svg>
-          <span class="text-sm">Maintenance</span>
+          <span class="text-sm <%= currentPath === '/maintenance' ? 'font-semibold text-blue-700' : '' %>">Maintenance</span>
+          <% if (currentPath === '/maintenance') { %>
+            <span class="ml-auto w-1.5 h-1.5 rounded-full bg-blue-700"></span>
+          <% } %>
         </a>
       </li>
     </ul>
