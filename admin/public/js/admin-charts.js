@@ -105,13 +105,64 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = /** @type {HTMLCanvasElement} */ (canvas);
     const labels = JSON.parse(el.dataset.labels || '[]');
     const values = JSON.parse(el.dataset.values || '[]');
+    const median = JSON.parse(el.dataset.median || 'null');
+    const p95 = JSON.parse(el.dataset.p95 || 'null');
+    const p99 = JSON.parse(el.dataset.p99 || 'null');
     const yLabel = el.dataset.ylabel || '';
 
-    new Chart(el, {
-      type: 'line',
-      data: {
-        labels,
-        datasets: [
+    const hasPercentiles = median && p95 && p99;
+
+    const datasets = hasPercentiles
+      ? [
+          {
+            label: 'Avg',
+            data: values,
+            borderColor: '#1C64F2',
+            backgroundColor: 'rgba(28,100,242,0.06)',
+            borderWidth: 2,
+            pointRadius: 3,
+            pointHoverRadius: 5,
+            fill: true,
+            tension: 0.3,
+          },
+          {
+            label: 'Median (p50)',
+            data: median,
+            borderColor: '#10B981',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            pointRadius: 2,
+            pointHoverRadius: 4,
+            fill: false,
+            tension: 0.3,
+            borderDash: [],
+          },
+          {
+            label: 'p95',
+            data: p95,
+            borderColor: '#F59E0B',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            pointRadius: 2,
+            pointHoverRadius: 4,
+            fill: false,
+            tension: 0.3,
+            borderDash: [4, 4],
+          },
+          {
+            label: 'p99',
+            data: p99,
+            borderColor: '#EF4444',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            pointRadius: 2,
+            pointHoverRadius: 4,
+            fill: false,
+            tension: 0.3,
+            borderDash: [2, 2],
+          },
+        ]
+      : [
           {
             label: yLabel,
             data: values,
@@ -123,15 +174,18 @@ document.addEventListener('DOMContentLoaded', () => {
             fill: true,
             tension: 0.3,
           },
-        ],
-      },
+        ];
+
+    new Chart(el, {
+      type: 'line',
+      data: { labels, datasets },
       options: {
         responsive: true,
         plugins: {
-          legend: { display: false },
+          legend: { display: hasPercentiles },
           tooltip: {
             callbacks: {
-              label: (ctx) => ` ${ctx.parsed.y} ms`,
+              label: (ctx) => ` ${ctx.dataset.label}: ${ctx.parsed.y} ms`,
             },
           },
         },

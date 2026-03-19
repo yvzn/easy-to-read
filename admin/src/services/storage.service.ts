@@ -160,7 +160,7 @@ class StorageService {
 	}
 	async getMonitoringStats(interval: 'day' | 'week' | 'month' | 'year'): Promise<MonitoringStats[]> {
 		const client = this.getClient('Monitoring');
-		const buckets = new Map<string, { sum: number; count: number }>();
+		const buckets = new Map<string, { sum: number; durations: number[] }>();
 		const now = new Date();
 
 		for await (const entity of client.listEntities<MonitoringEntity>()) {
@@ -178,9 +178,9 @@ class StorageService {
 			}
 
 			const duration = Number(entity.Duration) || 0;
-			const bucket = buckets.get(key) || { sum: 0, count: 0 };
+			const bucket = buckets.get(key) || { sum: 0, durations: [] };
 			bucket.sum += duration;
-			bucket.count += 1;
+			bucket.durations.push(duration);
 			buckets.set(key, bucket);
 		}
 
@@ -206,9 +206,21 @@ class StorageService {
 						: String(cutoffDate.getFullYear());
 
 		const result: MonitoringStats[] = [];
-		for (const [period, { sum, count }] of buckets.entries()) {
+		for (const [period, { sum, durations }] of buckets.entries()) {
 			if (period >= cutoffKey) {
-				result.push({ period, avgDuration: Math.round(sum / count) });
+				const sorted = [...durations].sort((a, b) => a - b);
+				const percentile = (p: number) => {
+					if (sorted.length === 0) return 0;
+					const idx = Math.floor((p / 100) * (sorted.length - 1));
+					return Math.round(sorted[idx]);
+				};
+				result.push({
+					period,
+					avgDuration: Math.round(sum / durations.length),
+					medianDuration: percentile(50),
+					p95Duration: percentile(95),
+					p99Duration: percentile(99),
+				});
 			}
 		}
 
