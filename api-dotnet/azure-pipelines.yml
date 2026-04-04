@@ -1,0 +1,84 @@
+variables:
+- group: "production"
+
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - api-dotnet
+
+pool:
+  vmImage: ubuntu-latest
+
+jobs:
+- job: CI
+  steps:
+  - task: UseDotNet@2
+    inputs:
+      version: '8.x'
+  - bash: |
+      cd api-dotnet
+      dotnet restore
+      dotnet build --configuration Release --no-restore
+      dotnet publish --configuration Release --output $(Build.ArtifactStagingDirectory)/publish
+  - task: ArchiveFiles@2
+    displayName: "Archive files"
+    inputs:
+      rootFolderOrFile: "$(Build.ArtifactStagingDirectory)/publish"
+      includeRootFolder: false
+      archiveFile: "$(System.ArtifactStagingDirectory)/build$(Build.BuildId).zip"
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: '$(System.ArtifactStagingDirectory)/build$(Build.BuildId).zip'
+      publishLocation: 'pipeline'
+      artifact: 'api-dotnet'
+
+- deployment: CD
+  dependsOn: CI
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  environment: 'Azure'
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - task: ExtractFiles@1
+          inputs:
+            archiveFilePatterns: '$(Pipeline.Workspace)/api-dotnet/*.zip'
+            destinationFolder: '$(Pipeline.Workspace)/wip'
+            cleanDestinationFolder: true
+            overwriteExistingFiles: true
+        - task: DownloadSecureFile@1
+          name: userPromptTxt
+          displayName: 'Download user-prompt.txt'
+          inputs:
+            secureFile: 'user-prompt.txt'
+        - task: DownloadSecureFile@1
+          name: systemPromptTxt
+          displayName: 'Download system-prompt.txt'
+          inputs:
+            secureFile: 'system-prompt.txt'
+        - task: Bash@3
+          inputs:
+            targetType: 'inline'
+            script: |
+              echo Installing $(userPromptTxt.secureFilePath) to build directory
+              rm $(Pipeline.Workspace)/wip/Resources/user-prompt.txt
+              cp $(userPromptTxt.secureFilePath) $(Pipeline.Workspace)/wip/Resources/user-prompt.txt
+              echo Installing $(systemPromptTxt.secureFilePath) to build directory
+              rm $(Pipeline.Workspace)/wip/Resources/system-prompt.txt
+              cp $(systemPromptTxt.secureFilePath) $(Pipeline.Workspace)/wip/Resources/system-prompt.txt
+        - task: ArchiveFiles@2
+          inputs:
+            rootFolderOrFile: '$(Pipeline.Workspace)/wip'
+            includeRootFolder: false
+            archiveType: 'zip'
+            archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+        - task: AzureFunctionApp@2
+          inputs:
+            azureSubscription: '$(azureSubscription)'
+            appType: functionAppLinux
+            appName: $(functionAppName)
+            package: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+            runtimeStack: 'DOTNET-ISOLATED|8.0'
