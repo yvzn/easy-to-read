@@ -19,7 +19,8 @@ public class MonitoringFunction
     public async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = "monitoring")] HttpRequest req)
     {
-        _logger.LogInformation("Http function processed request for url \"{Url}\"", req.Path);
+        var path = req.Path.Value?.Replace("\r", "").Replace("\n", "") ?? string.Empty;
+        _logger.LogInformation("Http function processed request for url \"{Url}\"", path);
 
         try
         {

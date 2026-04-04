@@ -18,7 +18,8 @@ public class HealthFunction
     public IActionResult Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "health")] HttpRequest req)
     {
-        _logger.LogInformation("Http function processed request for url \"{Url}\"", req.Path);
+        var path = req.Path.Value?.Replace("\r", "").Replace("\n", "") ?? string.Empty;
+        _logger.LogInformation("Http function processed request for url \"{Url}\"", path);
 
         return new OkObjectResult("Healthy");
     }

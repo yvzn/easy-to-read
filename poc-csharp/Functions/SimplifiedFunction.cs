@@ -23,7 +23,7 @@ public class SimplifiedFunction
     private static readonly Lazy<Task<string>> UserPromptTask = new(
         () => File.ReadAllTextAsync(Path.Combine(ResourcesDirectory, "user-prompt.txt")));
 
-    private static readonly Uri ModelEndpoint = new("https://models.github.ai/inference");
+    private static readonly Uri GitHubModelsEndpoint = new("https://models.github.ai/inference");
     private const string ModelName = "openai/gpt-4o-mini";
 
     public SimplifiedFunction(ILogger<SimplifiedFunction> logger)
@@ -35,7 +35,8 @@ public class SimplifiedFunction
     public async Task Run(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = "simplified")] HttpRequest req)
     {
-        _logger.LogInformation("Http function processed request for url \"{Url}\"", req.Path);
+        var path = req.Path.Value?.Replace("\r", "").Replace("\n", "") ?? string.Empty;
+        _logger.LogInformation("Http function processed request for url \"{Url}\"", path);
 
         try
         {
@@ -62,13 +63,15 @@ public class SimplifiedFunction
             await req.HttpContext.Response.Body.FlushAsync();
 
             var translationInstructions = BuildTranslationInstructions(language);
+            // The production system-prompt.txt (deployed via secure file) contains a {0} placeholder
+            // for translation instructions. The sample file in the repository does not include it.
             var systemPrompt = (await SystemPromptTask.Value).Replace("{0}", translationInstructions);
             var userPrompt = (await UserPromptTask.Value).Replace("{0}", userInput);
 
             var token = Environment.GetEnvironmentVariable("GITHUB_TOKEN") ?? string.Empty;
             var openAiClient = new OpenAIClient(
                 new ApiKeyCredential(token),
-                new OpenAIClientOptions { Endpoint = ModelEndpoint });
+                new OpenAIClientOptions { Endpoint = GitHubModelsEndpoint });
             var chatClient = openAiClient.GetChatClient(ModelName);
 
             var completion = await chatClient.CompleteChatAsync(
