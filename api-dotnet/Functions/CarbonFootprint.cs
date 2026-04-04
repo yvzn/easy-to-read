@@ -25,7 +25,7 @@ public class CarbonFootprint
         try
         {
             var requestBody = await req.ReadAsStringAsync() ?? string.Empty;
-            var requestParams = ParseFormData(requestBody);
+            var requestParams = FormDataParser.Parse(requestBody);
 
             var userInputLength = requestParams.GetValueOrDefault("ul");
             var userInputWordCount = requestParams.GetValueOrDefault("uw");
@@ -69,25 +69,5 @@ public class CarbonFootprint
             await errorResponse.WriteStringAsync("Service has failed to process the request. Please try again later.");
             return errorResponse;
         }
-    }
-
-    private static Dictionary<string, string> ParseFormData(string body)
-    {
-        var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-        if (string.IsNullOrEmpty(body))
-            return result;
-
-        foreach (var part in body.Split('&'))
-        {
-            var idx = part.IndexOf('=');
-            if (idx < 0) continue;
-
-            var key = Uri.UnescapeDataString(part[..idx].Replace('+', ' '));
-            var value = Uri.UnescapeDataString(part[(idx + 1)..].Replace('+', ' '));
-            result[key] = value;
-        }
-
-        return result;
     }
 }
