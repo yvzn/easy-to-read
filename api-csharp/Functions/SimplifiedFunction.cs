@@ -24,7 +24,8 @@ public class SimplifiedFunction(OpenAIClient aiClient, ILogger<SimplifiedFunctio
         [HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest req,
         FunctionContext context)
     {
-        logger.LogInformation("Http function processed request for url \"{Url}\"", req.Path);
+        logger.LogInformation("Http function processed request for url \"{Url}\"",
+            req.Path.Value?.ReplaceLineEndings(string.Empty));
 
         string? userInput = null;
         string? language = null;

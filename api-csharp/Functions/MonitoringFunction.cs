@@ -11,7 +11,8 @@ public class MonitoringFunction(TableServiceClient tableServiceClient, ILogger<M
     public async Task<IResult> Run(
         [HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest req)
     {
-        logger.LogInformation("Http function processed request for url \"{Url}\"", req.Path);
+        logger.LogInformation("Http function processed request for url \"{Url}\"",
+            req.Path.Value?.ReplaceLineEndings(string.Empty));
 
         try
         {
