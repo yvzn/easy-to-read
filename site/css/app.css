@@ -49,6 +49,16 @@
 
 /* Feedback dialog ***********************************************/
 
+/* Hide dialog content by default for browsers without <dialog> support */
+dialog {
+	display: none;
+}
+
+/* Show dialog when supported and opened */
+dialog[open] {
+	display: block;
+}
+
 .feedback-dialog {
 	position: fixed;
 	top: 50%;
