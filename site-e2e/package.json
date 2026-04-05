@@ -1,0 +1,17 @@
+{
+  "name": "site-e2e",
+  "version": "1.0.0",
+  "description": "End-to-end tests for the easy-to-read site",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "build-site": "cd ../site && npm install && API_URL=http://localhost:7071 SIMPLIFIED_TEXT_URL=http://localhost:7071/api/simplified INTERACTION_URL=http://localhost:7071/api/interaction FEEDBACK_URL=http://localhost:7071/api/feedback CARBON_FOOTPRINT_URL=http://localhost:7071/api/carbon-footprint npx dotenvx run --ignore MISSING_ENV_FILE -- eleventy"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.51.1",
+    "@dotenvx/dotenvx": "^1.29.0",
+    "serve": "^14.2.4",
+    "typescript": "^5.8.3"
+  }
+}
