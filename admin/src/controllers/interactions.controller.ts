@@ -2,15 +2,19 @@ import { Request, Response, NextFunction } from 'express';
 import { storageService } from '../services/storage.service.js';
 import { InteractionWithTimestamp } from '../types/index.js';
 
+function formatTimestamp(timestamp?: Date): string {
+	return timestamp
+		? new Date(timestamp).toISOString().replace('T', ' ').substring(0, 19)
+		: 'N/A';
+}
+
 export const getInteractions = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const interactions = await storageService.getInteractions();
 
 		const interactionsWithTimestamp: InteractionWithTimestamp[] = interactions.map((i) => ({
 			...i,
-			formattedTimestamp: i.timestamp
-				? new Date(i.timestamp).toISOString().replace('T', ' ').substring(0, 19)
-				: 'N/A',
+			formattedTimestamp: formatTimestamp(i.timestamp),
 		}));
 
 		res.render('interactions', { interactions: interactionsWithTimestamp });
@@ -35,11 +39,10 @@ export const getInteractionDetail = async (req: Request, res: Response, next: Ne
 			return;
 		}
 
-		const formattedTimestamp = interaction.timestamp
-			? new Date(interaction.timestamp).toISOString().replace('T', ' ').substring(0, 19)
-			: 'N/A';
-
-		res.render('interaction-detail', { interaction, formattedTimestamp });
+		res.render('interaction-detail', {
+			interaction,
+			formattedTimestamp: formatTimestamp(interaction.timestamp),
+		});
 	} catch (error) {
 		next(error);
 	}
