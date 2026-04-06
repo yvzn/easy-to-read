@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import usageStatsRouter from './usage-stats.js';
 import feedbackRouter from './feedback.js';
+import interactionsRouter from './interactions.js';
 import maintenanceRouter from './maintenance.js';
 import monitoringRouter from './monitoring.js';
 
@@ -9,6 +10,7 @@ const router = Router();
 router.get('/', (_req, res) => res.render('index'));
 router.use('/usage-stats', usageStatsRouter);
 router.use('/feedback', feedbackRouter);
+router.use('/interactions', interactionsRouter);
 router.use('/maintenance', maintenanceRouter);
 router.use('/monitoring', monitoringRouter);
 

@@ -38,6 +38,10 @@ export interface FeedbackWithTimestamp extends FeedbackEntity {
 	formattedTimestamp: string;
 }
 
+export interface InteractionWithTimestamp extends InteractionEntity {
+	formattedTimestamp: string;
+}
+
 export interface MonitoringEntity {
 	partitionKey: string;
 	rowKey: string;

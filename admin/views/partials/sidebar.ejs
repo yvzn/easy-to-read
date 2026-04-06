@@ -84,6 +84,33 @@
       </li>
       <li>
         <a
+          href="/interactions"
+          class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 group
+            <%= currentPath === '/interactions' || currentPath.startsWith('/interactions/') ? 'bg-blue-50 text-blue-700' : 'text-gray-900' %>"
+        >
+          <svg
+            class="w-5 h-5 shrink-0
+              <%= currentPath === '/interactions' || currentPath.startsWith('/interactions/') ? 'text-blue-700' : 'text-gray-500 group-hover:text-gray-900' %>"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
+            />
+          </svg>
+          <span class="text-sm <%= currentPath === '/interactions' || currentPath.startsWith('/interactions/') ? 'font-semibold text-blue-700' : '' %>">Interactions</span>
+          <% if (currentPath === '/interactions' || currentPath.startsWith('/interactions/')) { %>
+            <span class="ml-auto w-1.5 h-1.5 rounded-full bg-blue-700"></span>
+          <% } %>
+        </a>
+      </li>
+      <li>
+        <a
           href="/feedback"
           class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 group
             <%= currentPath === '/feedback' ? 'bg-blue-50 text-blue-700' : 'text-gray-900' %>"
