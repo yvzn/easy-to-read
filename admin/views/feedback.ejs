@@ -78,7 +78,7 @@
                 <thead class="bg-gray-50 border-b border-gray-200 text-xs text-gray-600 uppercase tracking-wider">
                   <tr>
                     <th class="px-5 py-3">
-                      <a href="/feedback?filter=<%= filter %>&sort=<%= sort === 'asc' ? 'desc' : 'asc' %>" class="inline-flex items-center gap-1 hover:text-blue-700 transition-colors">
+                      <a href="/feedback?<%= filter ? 'filter=' + encodeURIComponent(filter) + '&' : '' %>sort=<%= sort === 'asc' ? 'desc' : 'asc' %>" class="inline-flex items-center gap-1 hover:text-blue-700 transition-colors">
                         Date
                         <%- sort === 'asc' ? '↑' : '↓' %>
                       </a>

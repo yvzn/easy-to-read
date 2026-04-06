@@ -28,8 +28,8 @@ export const getFeedbacks = async (
 		}));
 
 		feedbacksWithTimestamp.sort((a, b) => {
-			const ta = a.timestamp ? new Date(a.timestamp).getTime() : 0;
-			const tb = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+			const ta = a.timestamp?.getTime() ?? 0;
+			const tb = b.timestamp?.getTime() ?? 0;
 			return sort === 'asc' ? ta - tb : tb - ta;
 		});
 
