@@ -11,6 +11,13 @@ export const getFeedbacks = async (
 		const filter = (req.query.filter as string) || '';
 		// Limit filter length for safety
 		const safeFilter = filter.substring(0, 200);
+
+		const sort = (req.query.sort as string) || 'desc';
+		if (!['asc', 'desc'].includes(sort)) {
+			res.status(400).render('error', { message: 'Invalid sort parameter' });
+			return;
+		}
+
 		const feedbacks = await storageService.getFeedbacks(safeFilter || undefined);
 
 		const feedbacksWithTimestamp: FeedbackWithTimestamp[] = feedbacks.map((f) => ({
@@ -20,7 +27,13 @@ export const getFeedbacks = async (
 				: 'N/A',
 		}));
 
-		res.render('feedback', { feedbacks: feedbacksWithTimestamp, filter: safeFilter });
+		feedbacksWithTimestamp.sort((a, b) => {
+			const ta = a.timestamp ?? '';
+			const tb = b.timestamp ?? '';
+			return sort === 'asc' ? ta.localeCompare(tb) : tb.localeCompare(ta);
+		});
+
+		res.render('feedback', { feedbacks: feedbacksWithTimestamp, filter: safeFilter, sort });
 	} catch (error) {
 		next(error);
 	}

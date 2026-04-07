@@ -43,13 +43,14 @@
                 class="block w-full pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
+            <input type="hidden" name="sort" value="<%= sort %>" />
             <button
               type="submit"
               class="px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors"
             >Search</button>
             <% if (filter) { %>
               <a
-                href="/feedback"
+                href="/feedback?sort=<%= sort %>"
                 class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-colors"
               >Clear</a>
             <% } %>
@@ -76,7 +77,12 @@
               <table class="w-full text-sm text-left">
                 <thead class="bg-gray-50 border-b border-gray-200 text-xs text-gray-600 uppercase tracking-wider">
                   <tr>
-                    <th class="px-5 py-3">Date</th>
+                    <th class="px-5 py-3">
+                      <a href="/feedback?<%= filter ? 'filter=' + encodeURIComponent(filter) + '&' : '' %>sort=<%= sort === 'asc' ? 'desc' : 'asc' %>" class="inline-flex items-center gap-1 hover:text-blue-700 transition-colors">
+                        Date
+                        <%- sort === 'asc' ? '↑' : '↓' %>
+                      </a>
+                    </th>
                     <th class="px-5 py-3">Score</th>
                     <th class="px-5 py-3">Interaction ID</th>
                     <th class="px-5 py-3">Comment</th>

@@ -11,7 +11,7 @@ export interface InteractionEntity {
 export interface FeedbackEntity {
 	partitionKey: string;
 	rowKey: string;
-	timestamp?: Date;
+	timestamp?: string;
 	InteractionId: string;
 	Score: number;
 	Comment?: string;

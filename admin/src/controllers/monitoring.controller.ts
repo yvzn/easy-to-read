@@ -9,9 +9,15 @@ export const getMonitoring = async (req: Request, res: Response, next: NextFunct
 			return;
 		}
 
+		const sort = (req.query.sort as string) || 'desc';
+		if (!['asc', 'desc'].includes(sort)) {
+			res.status(400).render('error', { message: 'Invalid sort parameter' });
+			return;
+		}
+
 		const stats = await storageService.getMonitoringStats(interval as 'day' | 'week' | 'month' | 'year');
 
-		res.render('monitoring', { stats, interval });
+		res.render('monitoring', { stats, interval, sort });
 	} catch (error) {
 		next(error);
 	}
