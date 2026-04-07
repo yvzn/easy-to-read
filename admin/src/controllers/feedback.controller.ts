@@ -28,9 +28,9 @@ export const getFeedbacks = async (
 		}));
 
 		feedbacksWithTimestamp.sort((a, b) => {
-			const ta = a.timestamp?.getTime() ?? 0;
-			const tb = b.timestamp?.getTime() ?? 0;
-			return sort === 'asc' ? ta - tb : tb - ta;
+			const ta = a.timestamp ?? '';
+			const tb = b.timestamp ?? '';
+			return sort === 'asc' ? ta.localeCompare(tb) : tb.localeCompare(ta);
 		});
 
 		res.render('feedback', { feedbacks: feedbacksWithTimestamp, filter: safeFilter, sort });
