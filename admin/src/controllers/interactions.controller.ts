@@ -10,14 +10,20 @@ function formatTimestamp(timestamp?: Date): string {
 
 export const getInteractions = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const interactions = await storageService.getInteractions();
+		const sort = (req.query.sort as string) || 'desc';
+		if (!['asc', 'desc'].includes(sort)) {
+			res.status(400).render('error', { message: 'Invalid sort parameter' });
+			return;
+		}
+
+		const interactions = await storageService.getInteractions(sort as 'asc' | 'desc');
 
 		const interactionsWithTimestamp: InteractionWithTimestamp[] = interactions.map((i) => ({
 			...i,
 			formattedTimestamp: formatTimestamp(i.timestamp),
 		}));
 
-		res.render('interactions', { interactions: interactionsWithTimestamp });
+		res.render('interactions', { interactions: interactionsWithTimestamp, sort });
 	} catch (error) {
 		next(error);
 	}

@@ -27,6 +27,24 @@
           </ol>
         </nav>
 
+        <!-- Sort selector -->
+        <div class="flex gap-2 mb-5">
+          <a
+            href="/interactions?sort=desc"
+            class="px-4 py-2 rounded-lg text-sm font-medium border transition-colors
+              <%= sort === 'desc'
+                ? 'bg-blue-700 text-white border-blue-700'
+                : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50' %>"
+          >Newest first</a>
+          <a
+            href="/interactions?sort=asc"
+            class="px-4 py-2 rounded-lg text-sm font-medium border transition-colors
+              <%= sort === 'asc'
+                ? 'bg-blue-700 text-white border-blue-700'
+                : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50' %>"
+          >Oldest first</a>
+        </div>
+
         <!-- Results -->
         <% if (interactions.length === 0) { %>
           <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-10 text-center">

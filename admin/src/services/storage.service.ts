@@ -115,7 +115,7 @@ class StorageService {
 		await client.deleteEntity(partitionKey, rowKey);
 	}
 
-	async getInteractions(): Promise<InteractionEntity[]> {
+	async getInteractions(sort: 'asc' | 'desc' = 'desc'): Promise<InteractionEntity[]> {
 		const client = this.getClient('Interactions');
 		const interactions: InteractionEntity[] = [];
 
@@ -126,7 +126,7 @@ class StorageService {
 		return interactions.sort((a, b) => {
 			const ta = a.timestamp ? new Date(a.timestamp).getTime() : 0;
 			const tb = b.timestamp ? new Date(b.timestamp).getTime() : 0;
-			return tb - ta;
+			return sort === 'asc' ? ta - tb : tb - ta;
 		});
 	}
 
