@@ -94,15 +94,20 @@
                     <tr class="hover:bg-gray-50 transition-colors">
                       <td class="px-5 py-3 text-gray-500 font-mono text-xs whitespace-nowrap"><%= f.formattedTimestamp %></td>
                       <td class="px-5 py-3">
-                        <% if (Number(f.Score) >= 4) { %>
+                        <% if (Number(f.Score) > 0) { %>
                           <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"><%= f.Score %></span>
-                        <% } else if (Number(f.Score) >= 3) { %>
+                        <% } else if (Number(f.Score) === 0) { %>
                           <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"><%= f.Score %></span>
                         <% } else { %>
                           <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"><%= f.Score %></span>
                         <% } %>
                       </td>
-                      <td class="px-5 py-3 text-gray-500 font-mono text-xs"><%= f.InteractionId %></td>
+                      <td class="px-5 py-3 text-gray-500 font-mono text-xs">
+                        <a
+                          href="/interactions/<%= encodeURIComponent(f.InteractionId) %>"
+                          class="text-blue-700 hover:underline"
+                        ><%= f.InteractionId %></a>
+                      </td>
                       <td class="px-5 py-3 text-gray-700 max-w-xs">
                         <% if (f.Comment) { %>
                           <span class="line-clamp-2 text-sm"><%= f.Comment %></span>

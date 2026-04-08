@@ -115,6 +115,33 @@ class StorageService {
 		await client.deleteEntity(partitionKey, rowKey);
 	}
 
+	async getInteractions(sort: 'asc' | 'desc' = 'desc'): Promise<InteractionEntity[]> {
+		const client = this.getClient('Interactions');
+		const interactions: InteractionEntity[] = [];
+
+		for await (const entity of client.listEntities<InteractionEntity>()) {
+			interactions.push(entity as InteractionEntity);
+		}
+
+		return interactions.sort((a, b) => {
+			const ta = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+			const tb = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+			return sort === 'asc' ? ta - tb : tb - ta;
+		});
+	}
+
+	async getInteractionById(interactionId: string): Promise<InteractionEntity | undefined> {
+		const client = this.getClient('Interactions');
+
+		for await (const entity of client.listEntities<InteractionEntity>()) {
+			if ((entity as InteractionEntity).InteractionId === interactionId) {
+				return entity as InteractionEntity;
+			}
+		}
+
+		return undefined;
+	}
+
 	async getOldInteractions(beforeDate: Date): Promise<InteractionEntity[]> {
 		const client = this.getClient('Interactions');
 		const interactions: InteractionEntity[] = [];
