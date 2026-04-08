@@ -27,24 +27,6 @@
           </ol>
         </nav>
 
-        <!-- Sort selector -->
-        <div class="flex gap-2 mb-5">
-          <a
-            href="/interactions?sort=desc"
-            class="px-4 py-2 rounded-lg text-sm font-medium border transition-colors
-              <%= sort === 'desc'
-                ? 'bg-blue-700 text-white border-blue-700'
-                : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50' %>"
-          >Newest first</a>
-          <a
-            href="/interactions?sort=asc"
-            class="px-4 py-2 rounded-lg text-sm font-medium border transition-colors
-              <%= sort === 'asc'
-                ? 'bg-blue-700 text-white border-blue-700'
-                : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50' %>"
-          >Oldest first</a>
-        </div>
-
         <!-- Results -->
         <% if (interactions.length === 0) { %>
           <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-10 text-center">
@@ -63,7 +45,18 @@
               <table class="w-full text-sm text-left">
                 <thead class="bg-gray-50 border-b border-gray-200 text-xs text-gray-600 uppercase tracking-wider">
                   <tr>
-                    <th class="px-5 py-3">Date</th>
+                    <th class="px-5 py-3">
+                      <a
+                        href="/interactions?sort=<%= sort === 'desc' ? 'asc' : 'desc' %>"
+                        class="inline-flex items-center gap-1 group hover:text-blue-700 transition-colors"
+                      >Date
+                        <% if (sort === 'desc') { %>
+                          <svg class="w-3 h-3 text-gray-400 group-hover:text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                        <% } else { %>
+                          <svg class="w-3 h-3 text-gray-400 group-hover:text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
+                        <% } %>
+                      </a>
+                    </th>
                     <th class="px-5 py-3">Interaction ID</th>
                     <th class="px-5 py-3">Input</th>
                     <th class="px-5 py-3">Href</th>
