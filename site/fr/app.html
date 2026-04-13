@@ -10,6 +10,7 @@ smallCta: no
 		<div class="chat-interface">
 			<div class="input-group" id="simplify-form">
 				<form action="{{environment.simplifiedTextUrl}}" method="post">
+					<input type="hidden" name="s" value="false" />
 					<label for="userText" class="input-label">Entrez votre texte&puncsp;:</label>
 					<div class="input-wrapper">
 						<textarea id="userText" name="t" class="text-input" rows="6" required="required"
