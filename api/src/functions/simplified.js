@@ -16,6 +16,7 @@ app.http('simplified', {
 			const userInput = requestParams.get("t");
 			const language = requestParams.get("l");
 			const debug = requestParams.get("d") === "true";
+			const streaming = requestParams.get("s") !== "false";
 
 			if (!userInput) {
 				return {
@@ -25,10 +26,10 @@ app.http('simplified', {
 				};
 			}
 
-			const responseStream = simplify(userInput, language, debug, context);
+			const responseStream = simplify(userInput, language, streaming, debug, context);
 
 			const response = new HttpResponse({
-				body: responseStream,
+				body: Readable.from(responseStream),
 			});
 			response.headers.set("Content-Type", "text/html;charset=utf-8");
 
@@ -45,14 +46,18 @@ app.http('simplified', {
 	}
 });
 
-async function* simplify(text, language, debug, context) {
+async function* simplify(text, language, streaming, debug, context) {
 	try {
 		const [htmlHeader, htmlFooter] = await readHtmlTemplate();
 		yield htmlHeader;
 
 		const translationInstructions = buildTranslationInstructions(language);
 
-		const responseStream = await _getModelResponse_NoStreaming(text, translationInstructions);
+		const responseStream = streaming
+			? await getModelResponse(text, translationInstructions)
+			: await getModelResponse_NoStreaming(text, translationInstructions);
+
+		await getModelResponse(text, translationInstructions);
 		for await (let chunk of responseStream) {
 			chunk = cleanModelOutput(chunk);
 
@@ -71,7 +76,7 @@ async function* simplify(text, language, debug, context) {
 	}
 }
 
-async function* _simplifyMock(text, language, debug, context) {
+async function* _simplifyMock(text, _language, _streaming, debug, context) {
 	try {
 		const [htmlHeader, htmlFooter] = await readHtmlTemplate();
 		yield htmlHeader;
@@ -139,7 +144,7 @@ async function getModelResponse(userInput, translationInstructions) {
 	return stream;
 }
 
-async function _getModelResponse_NoStreaming(userInput, translationInstructions) {
+async function getModelResponse_NoStreaming(userInput, translationInstructions) {
 	const client = new OpenAI({ baseURL: endpoint, apiKey: token });
 
 	let systemPrompt = await systemPromptPromise;
