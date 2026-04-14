@@ -1,0 +1,15 @@
+{
+	"name": "e2e",
+	"version": "1.0.0",
+	"description": "Easy-to-read end-to-end tests",
+	"private": true,
+	"scripts": {
+		"install:browsers": "playwright install --with-deps",
+		"install:ci": "playwright install chromium",
+		"test": "playwright test"
+	},
+	"devDependencies": {
+		"@playwright/test": "^1.57.0",
+		"@types/node": "^24.10.1"
+	}
+}

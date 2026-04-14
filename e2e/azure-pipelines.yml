@@ -1,0 +1,42 @@
+trigger: none
+
+schedules:
+- cron: "0 4 * * 1"
+  displayName: Weekly Monday 4am
+  branches:
+    include:
+    - main
+  always: true
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: UseNode@1
+  inputs:
+    version: '24'
+  displayName: 'Install Node.js'
+- task: Npm@1
+  displayName: 'npm install'
+  inputs:
+    command: 'ci'
+    workingDir: 'e2e'
+- script: npm run install:ci
+  displayName: 'npm install browser drivers'
+  workingDirectory: 'e2e'
+- script: npm run test
+  displayName: 'run e2e tests'
+  workingDirectory: 'e2e'
+  env:
+    CI: 'true'
+
+- task: PublishTestResults@2
+  displayName: 'Publish test results'
+  inputs:
+    searchFolder: 'e2e/test-results'
+    testResultsFormat: 'JUnit'
+    testResultsFiles: 'e2e-junit-results.xml'
+    mergeTestResults: true
+    failTaskOnFailedTests: true
+    testRunTitle: 'Easy-to-read End-To-End Tests'
+  condition: succeededOrFailed()
