@@ -179,15 +179,15 @@ async function getModelResponse_NoStreaming(userInput, translationInstructions) 
 function buildTranslationInstructions(language) {
 	switch (language) {
 		case 'es':
-			return 'The new versions should be translated into Spanish.';
+			return 'The new versions must be translated into Spanish.';
 		case 'fr':
-			return 'The new versions should be translated into French.';
+			return 'The new versions must be translated into French.';
 		case 'de':
-			return 'The new versions should be translated into German.';
+			return 'The new versions must be translated into German.';
 		case 'en':
-			return 'The new versions should be translated into English.';
+			return 'The new versions must be translated into English.';
 		default:
-			return 'The new versions should be in the same language.';
+			return 'The new versions must be in the same language as the original text.';
 	}
 }
 
