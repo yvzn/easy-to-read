@@ -17,6 +17,7 @@ app.http('simplified', {
 			const language = requestParams.get("l");
 			const debug = requestParams.get("d") === "true";
 			const streaming = requestParams.get("s") !== "false";
+			const provider = requestParams.get("p") || "openai";
 
 			if (!userInput) {
 				return {
@@ -26,7 +27,7 @@ app.http('simplified', {
 				};
 			}
 
-			const responseStream = simplify(userInput, language, streaming, debug, context);
+			const responseStream = simplify(userInput, language, streaming, provider, debug, context);
 
 			const response = new HttpResponse({
 				body: Readable.from(responseStream),
@@ -46,18 +47,20 @@ app.http('simplified', {
 	}
 });
 
-async function* simplify(text, language, streaming, debug, context) {
+function resolveModelResponseFn(streaming, provider) {
+	if (provider === 'mock') return getModelResponse_Mock;
+	return streaming ? getModelResponse : getModelResponse_NoStreaming;
+}
+
+async function* simplify(text, language, streaming, provider, debug, context) {
 	try {
 		const [htmlHeader, htmlFooter] = await readHtmlTemplate();
 		yield htmlHeader;
 
 		const translationInstructions = buildTranslationInstructions(language);
+		const getResponse = resolveModelResponseFn(streaming, provider);
+		const responseStream = await getResponse(text, translationInstructions);
 
-		const responseStream = streaming
-			? await getModelResponse(text, translationInstructions)
-			: await getModelResponse_NoStreaming(text, translationInstructions);
-
-		await getModelResponse(text, translationInstructions);
 		for await (let chunk of responseStream) {
 			chunk = cleanModelOutput(chunk);
 
@@ -76,33 +79,22 @@ async function* simplify(text, language, streaming, debug, context) {
 	}
 }
 
-async function* _simplifyMock(text, _language, _streaming, debug, context) {
-	try {
-		const [htmlHeader, htmlFooter] = await readHtmlTemplate();
-		yield htmlHeader;
+async function getModelResponse_Mock(userInput, _translationInstructions) {
+	const mockChunks = [
+		"<observation-1>Here is the first observation about the text.</observation-1>",
+		"<version-1>Here is the first simplified version of the text.</version-1>",
+		"<observation-2>Here is the second observation about the text.</observation-2>",
+		`<version-2>This is a mock version of the text: ${userInput}</version-2>`,
+	];
 
-		const mockResponse = [
-			"<observation-1>Here is the first observation about the text.</observation-1>",
-			"<version-1>Here is the first simplified version of the text.</version-1>",
-			"<observation-2>Here is the second observation about the text.</observation-2>",
-			`<version-2>${text}</version-2>`,
-		]
-
-		for (let chunk of mockResponse) {
-			yield chunk;
-			if (debug) {
-				yield "\n";
-			}
+	async function* generate() {
+		for (const content of mockChunks) {
+			yield { choices: [{ delta: { content } }] };
 			await sleep(500);
 		}
-
-		yield htmlFooter;
 	}
-	catch (error) {
-		context.error(error);
 
-		yield '<api-error>Service has failed to process the request. Please try again later.</api-error>';
-	}
+	return generate();
 }
 
 const htmlTemplatePromise = readResource("template.html");
@@ -125,10 +117,10 @@ async function getModelResponse(userInput, translationInstructions) {
 	const client = new OpenAI({ baseURL: endpoint, apiKey: token });
 
 	let systemPrompt = await systemPromptPromise;
-	systemPrompt = systemPrompt.replace("{0}", translationInstructions);
+	systemPrompt = systemPrompt.replaceAll("{0}", translationInstructions);
 
 	let userPrompt = await userPromptPromise;
-	userPrompt = userPrompt.replace("{0}", userInput);
+	userPrompt = userPrompt.replaceAll("{0}", userInput);
 
 	const stream = await client.chat.completions.create({
 		messages: [
@@ -148,10 +140,10 @@ async function getModelResponse_NoStreaming(userInput, translationInstructions) 
 	const client = new OpenAI({ baseURL: endpoint, apiKey: token });
 
 	let systemPrompt = await systemPromptPromise;
-	systemPrompt = systemPrompt.replace("{0}", translationInstructions);
+	systemPrompt = systemPrompt.replaceAll("{0}", translationInstructions);
 
 	let userPrompt = await userPromptPromise;
-	userPrompt = userPrompt.replace("{0}", userInput);
+	userPrompt = userPrompt.replaceAll("{0}", userInput);
 
 	const response = await client.chat.completions.create({
 		messages: [
@@ -179,15 +171,15 @@ async function getModelResponse_NoStreaming(userInput, translationInstructions) 
 function buildTranslationInstructions(language) {
 	switch (language) {
 		case 'es':
-			return 'The new versions must be translated into Spanish.';
+			return 'Make sure the new version is translated into Spanish.';
 		case 'fr':
-			return 'The new versions must be translated into French.';
+			return 'Make sure the new version is translated into French.';
 		case 'de':
-			return 'The new versions must be translated into German.';
+			return 'Make sure the new version is translated into German.';
 		case 'en':
-			return 'The new versions must be translated into English.';
+			return 'Make sure the new version is translated into English.';
 		default:
-			return 'The new versions must be in the same language as the original text.';
+			return '';
 	}
 }
 
