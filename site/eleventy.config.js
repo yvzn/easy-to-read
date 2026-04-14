@@ -1,10 +1,4 @@
-import {
-	constructURL,
-	merge,
-	isValidURL,
-	parse,
-	download,
-} from "google-fonts-helper";
+import { download } from "google-fonts-helper";
 import Image from '@11ty/eleventy-img';
 import { readFile } from 'fs/promises';
 

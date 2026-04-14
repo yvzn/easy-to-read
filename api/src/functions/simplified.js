@@ -171,15 +171,15 @@ async function getModelResponse_NoStreaming(userInput, translationInstructions) 
 function buildTranslationInstructions(language) {
 	switch (language) {
 		case 'es':
-			return 'Make sure the new version is translated into Spanish.';
+			return 'Make sure to write the new version in Spanish, even if the original text is in another language.';
 		case 'fr':
-			return 'Make sure the new version is translated into French.';
+			return 'Make sure to write the new version in French, even if the original text is in another language.';
 		case 'de':
-			return 'Make sure the new version is translated into German.';
+			return 'Make sure to write the new version in German, even if the original text is in another language.';
 		case 'en':
-			return 'Make sure the new version is translated into English.';
+			return 'Make sure to write the new version in English, even if the original text is in another language.';
 		default:
-			return '';
+			return 'Write the new version in the same language as the original text.';
 	}
 }
 
