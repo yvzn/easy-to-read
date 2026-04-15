@@ -3,13 +3,18 @@
 	"version": "1.0.0",
 	"description": "Easy-to-read API",
 	"scripts": {
-		"start": "func start"
+		"build": "tsc",
+		"start": "npm run build && func start"
 	},
 	"dependencies": {
 		"@azure/functions": "^4.11.0",
 		"openai": "^6.24.0"
 	},
-	"main": "src/{index.js,functions/*.js}",
+	"devDependencies": {
+		"@types/node": "^24.7.2",
+		"typescript": "^5.9.3"
+	},
+	"main": "dist/{index.js,functions/*.js}",
 	"author": "Yvan Razafindramanana",
 	"license": "MIT"
 }

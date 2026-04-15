@@ -15,7 +15,7 @@ Make information clear and easy for everyone.
 EasyRead.me is a web application that consists in :
 
 - a front-end application and website, built with <a href="https://11ty.dev">Eleventy</a>
-- a back-end application, built with <a href="https://azure.microsoft.com/en-us/services/functions/">Azure Functions</a>
+- a back-end application, built with <a href="https://azure.microsoft.com/en-us/services/functions/">Azure Functions</a> and TypeScript
 - a development database, built with <a href="https://github.com/Azure/Azurite">Azurite</a>
 
 ## Resources
