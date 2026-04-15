@@ -69,7 +69,7 @@ app.engine(
 								item && typeof item === 'object'
 									? (item as Record<string, unknown>)[key]
 									: undefined
-							)
+							).filter((item) => item !== undefined && item !== null)
 						: []
 				),
 			lower: (value: unknown) => String(value ?? '').toLowerCase(),
@@ -80,8 +80,6 @@ app.engine(
 						? [...items].reverse()
 						: [],
 			gt: (a: unknown, b: unknown) => Number(a) > Number(b),
-			currentYear: () => new Date().getFullYear(),
-			todayDate: () => new Date().toISOString().split('T')[0],
 			buildFeedbackSortHref: (filter: unknown, sort: unknown) => {
 				const query = new URLSearchParams();
 				const safeFilter = typeof filter === 'string' ? filter : '';
@@ -103,6 +101,9 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 // Expose current path to all views for active sidebar state
 app.use((req: Request, res: Response, next: NextFunction) => {
 	res.locals.currentPath = req.path;
+	const now = new Date();
+	res.locals.currentYear = now.getFullYear();
+	res.locals.todayDate = now.toISOString().split('T')[0];
 	next();
 });
 
