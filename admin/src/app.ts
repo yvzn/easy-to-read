@@ -3,6 +3,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import path from 'path';
+import { engine } from 'express-handlebars';
 import { config } from './config/index.js';
 import router from './routes/index.js';
 
@@ -47,7 +48,53 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 // View engine
-app.set('view engine', 'ejs');
+app.engine(
+	'hbs',
+	engine({
+		extname: '.hbs',
+		defaultLayout: false,
+		helpers: {
+			eq: (a: unknown, b: unknown) => a === b,
+			or: (a: unknown, b: unknown) => Boolean(a || b),
+			startsWith: (value: unknown, prefix: string) =>
+				typeof value === 'string' && value.startsWith(prefix),
+			ternary: (condition: unknown, truthy: string, falsy: string) => (condition ? truthy : falsy),
+			toggleSort: (sort: unknown) => (sort === 'asc' ? 'desc' : 'asc'),
+			pluralSuffix: (count: unknown) => (Number(count) === 1 ? '' : 's'),
+			encodeURIComponent: (value: unknown) => encodeURIComponent(String(value ?? '')),
+			jsonMap: (items: unknown, key: string) =>
+				JSON.stringify(
+					Array.isArray(items)
+						? items.map((item) =>
+								item && typeof item === 'object'
+									? (item as Record<string, unknown>)[key]
+									: undefined
+							)
+						: []
+				),
+			lower: (value: unknown) => String(value ?? '').toLowerCase(),
+			sortedBySort: (items: unknown, sort: unknown) =>
+				Array.isArray(items) && sort === 'asc'
+					? items
+					: Array.isArray(items)
+						? [...items].reverse()
+						: [],
+			gt: (a: unknown, b: unknown) => Number(a) > Number(b),
+			currentYear: () => new Date().getFullYear(),
+			todayDate: () => new Date().toISOString().split('T')[0],
+			buildFeedbackSortHref: (filter: unknown, sort: unknown) => {
+				const query = new URLSearchParams();
+				const safeFilter = typeof filter === 'string' ? filter : '';
+				if (safeFilter) {
+					query.set('filter', safeFilter);
+				}
+				query.set('sort', sort === 'asc' ? 'desc' : 'asc');
+				return `/feedback?${query.toString()}`;
+			},
+		},
+	})
+);
+app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, '..', 'views'));
 
 // Static assets

@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/css/main.css" />
   </head>
   <body class="bg-gray-50 antialiased">
-    <%- include('partials/sidebar') %>
+    {{> sidebar}}
 
     <div class="sm:ml-64 flex flex-col min-h-screen">
       <div class="h-16 bg-white border-b border-gray-200 px-6 flex items-center">
@@ -22,7 +22,7 @@
             </svg>
           </div>
           <h2 class="text-lg font-semibold text-gray-900 mb-2">Something went wrong</h2>
-          <p class="text-sm text-gray-500 mb-6"><%= message %></p>
+          <p class="text-sm text-gray-500 mb-6">{{message}}</p>
           <a
             href="/"
             class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors"
@@ -32,7 +32,7 @@
           </a>
         </div>
       </main>
-      <%- include('partials/footer') %>
+      {{> footer}}
     </div>
   </body>
 </html>

@@ -1,7 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import { storageService } from '../services/storage.service.js';
 
-export const getUsageStats = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getUsageStats = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
 	try {
 		const interval = (req.query.interval as string) || 'week';
 		if (!['week', 'month', 'year'].includes(interval)) {
@@ -23,7 +27,16 @@ export const getUsageStats = async (req: Request, res: Response, next: NextFunct
 			storageService.getCarbonFootprintStats('year'),
 		]);
 
-		res.render('usage-stats', { stats, interval, weekStats, monthStats, yearStats, sort });
+		const doughnutSections = [
+			{ key: 'week', label: 'Weekly', data: weekStats.slice(-8) },
+			{ key: 'month', label: 'Monthly', data: monthStats.slice(-6) },
+			{ key: 'year', label: 'Yearly', data: yearStats.slice(-5) },
+		].map((section) => ({
+			...section,
+			total: section.data.reduce((sum, item) => sum + item.count, 0),
+		}));
+
+		res.render('usage-stats', { stats, interval, sort, doughnutSections });
 	} catch (error) {
 		next(error);
 	}

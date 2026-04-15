@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/css/main.css" />
   </head>
   <body class="bg-gray-50 antialiased">
-    <%- include('partials/sidebar') %>
+    {{> sidebar}}
 
     <div class="sm:ml-64 flex flex-col min-h-screen">
       <!-- Top bar -->
@@ -26,7 +26,7 @@
             </li>
             <li class="flex items-center gap-1">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-              <span class="text-gray-800 font-medium font-mono text-xs"><%= interaction.InteractionId %></span>
+              <span class="text-gray-800 font-medium font-mono text-xs">{{interaction.InteractionId}}</span>
             </li>
           </ol>
         </nav>
@@ -49,54 +49,54 @@
           <dl class="divide-y divide-gray-100">
             <div class="px-5 py-4 grid grid-cols-4 gap-4">
               <dt class="text-xs font-semibold text-gray-500 uppercase tracking-wide col-span-1 flex items-start pt-0.5">InteractionId</dt>
-              <dd class="col-span-3 font-mono text-sm text-gray-900 break-all"><%= interaction.InteractionId %></dd>
+              <dd class="col-span-3 font-mono text-sm text-gray-900 break-all">{{interaction.InteractionId}}</dd>
             </div>
 
             <div class="px-5 py-4 grid grid-cols-4 gap-4">
               <dt class="text-xs font-semibold text-gray-500 uppercase tracking-wide col-span-1 flex items-start pt-0.5">RowKey</dt>
-              <dd class="col-span-3 font-mono text-xs text-gray-500 break-all"><%= interaction.rowKey %></dd>
+              <dd class="col-span-3 font-mono text-xs text-gray-500 break-all">{{interaction.rowKey}}</dd>
             </div>
 
             <div class="px-5 py-4 grid grid-cols-4 gap-4">
               <dt class="text-xs font-semibold text-gray-500 uppercase tracking-wide col-span-1 flex items-start pt-0.5">PartitionKey</dt>
-              <dd class="col-span-3 font-mono text-xs text-gray-500 break-all"><%= interaction.partitionKey %></dd>
+              <dd class="col-span-3 font-mono text-xs text-gray-500 break-all">{{interaction.partitionKey}}</dd>
             </div>
 
             <div class="px-5 py-4 grid grid-cols-4 gap-4">
               <dt class="text-xs font-semibold text-gray-500 uppercase tracking-wide col-span-1 flex items-start pt-0.5">Timestamp</dt>
-              <dd class="col-span-3 font-mono text-xs text-gray-600"><%= formattedTimestamp %></dd>
+              <dd class="col-span-3 font-mono text-xs text-gray-600">{{formattedTimestamp}}</dd>
             </div>
 
             <div class="px-5 py-4 grid grid-cols-4 gap-4">
               <dt class="text-xs font-semibold text-gray-500 uppercase tracking-wide col-span-1 flex items-start pt-0.5">Input</dt>
-              <dd id="input-display" data-raw="<%= interaction.Input %>" class="col-span-3 text-sm text-gray-900 whitespace-pre-wrap"><%= interaction.Input %></dd>
+              <dd id="input-display" data-raw="{{interaction.Input}}" class="col-span-3 text-sm text-gray-900 whitespace-pre-wrap">{{interaction.Input}}</dd>
             </div>
 
             <div class="px-5 py-4 grid grid-cols-4 gap-4">
               <dt class="text-xs font-semibold text-gray-500 uppercase tracking-wide col-span-1 flex items-start pt-0.5">Output</dt>
-              <dd id="output-display" data-raw="<%= interaction.Output %>" class="col-span-3 text-sm text-gray-900 whitespace-pre-wrap"><%= interaction.Output %></dd>
+              <dd id="output-display" data-raw="{{interaction.Output}}" class="col-span-3 text-sm text-gray-900 whitespace-pre-wrap">{{interaction.Output}}</dd>
             </div>
 
             <div class="px-5 py-4 grid grid-cols-4 gap-4">
               <dt class="text-xs font-semibold text-gray-500 uppercase tracking-wide col-span-1 flex items-start pt-0.5">Href</dt>
               <dd class="col-span-3">
-                <% if (interaction.Href) { %>
+                {{#if interaction.Href}}
                   <a
-                    href="<%= interaction.Href %>"
+                    href="{{interaction.Href}}"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="text-sm text-blue-700 hover:underline break-all"
-                  ><%= interaction.Href %></a>
-                <% } else { %>
+                  >{{interaction.Href}}</a>
+                {{else}}
                   <span class="text-gray-400 italic text-sm">—</span>
-                <% } %>
+                {{/if}}
               </dd>
             </div>
           </dl>
         </div>
 
       </main>
-      <%- include('partials/footer') %>
+      {{> footer}}
     </div>
     <script src="/js/interaction-detail.js"></script>
   </body>

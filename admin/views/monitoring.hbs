@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EasyRead Admin – Monitoring</title>
+    <link rel="stylesheet" href="/css/main.css" />
+  </head>
+  <body class="bg-gray-50 antialiased">
+    {{> sidebar}}
+
+    <div class="sm:ml-64 flex flex-col min-h-screen">
+      <!-- Top bar -->
+      <div class="h-16 bg-white border-b border-gray-200 px-6 flex items-center">
+        <h1 class="text-xl font-semibold text-gray-900">Monitoring</h1>
+      </div>
+
+      <main class="flex-1 p-6">
+        <!-- Breadcrumb -->
+        <nav class="flex mb-5" aria-label="Breadcrumb">
+          <ol class="inline-flex items-center gap-1 text-sm text-gray-500">
+            <li><a href="/" class="hover:text-blue-700">Dashboard</a></li>
+            <li class="flex items-center gap-1">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+              <span class="text-gray-800 font-medium">Monitoring</span>
+            </li>
+          </ol>
+        </nav>
+
+        <!-- Interval selector -->
+        <div class="flex gap-2 mb-6">
+          <a
+            href="/monitoring?interval=day&sort={{sort}}"
+            class="px-4 py-2 rounded-lg text-sm font-medium border transition-colors {{ternary (eq interval 'day') 'bg-blue-700 text-white border-blue-700' 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}}"
+          >Daily</a>
+          <a
+            href="/monitoring?interval=week&sort={{sort}}"
+            class="px-4 py-2 rounded-lg text-sm font-medium border transition-colors {{ternary (eq interval 'week') 'bg-blue-700 text-white border-blue-700' 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}}"
+          >Weekly</a>
+          <a
+            href="/monitoring?interval=month&sort={{sort}}"
+            class="px-4 py-2 rounded-lg text-sm font-medium border transition-colors {{ternary (eq interval 'month') 'bg-blue-700 text-white border-blue-700' 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}}"
+          >Monthly</a>
+          <a
+            href="/monitoring?interval=year&sort={{sort}}"
+            class="px-4 py-2 rounded-lg text-sm font-medium border transition-colors {{ternary (eq interval 'year') 'bg-blue-700 text-white border-blue-700' 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}}"
+          >Yearly</a>
+        </div>
+
+        <!-- Line chart -->
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-semibold text-gray-800">
+              Response time per
+              <span class="text-blue-700">{{interval}}</span>
+            </h2>
+            <span class="text-xs text-gray-400">{{stats.length}} period{{pluralSuffix stats.length}}</span>
+          </div>
+          {{#if stats.length}}
+            <div class="relative h-72">
+              <canvas
+                data-chart="line"
+                data-ylabel="Response time (ms)"
+                data-labels='{{{jsonMap stats "period"}}}'
+                data-values="{{{jsonMap stats "avgDuration"}}}"
+                data-median="{{{jsonMap stats "medianDuration"}}}"
+                data-p95="{{{jsonMap stats "p95Duration"}}}"
+                data-p99="{{{jsonMap stats "p99Duration"}}}"
+              ></canvas>
+            </div>
+          {{else}}
+            <div class="flex items-center justify-center h-48 text-gray-400 text-sm">
+              No data available for the selected period.
+            </div>
+          {{/if}}
+        </div>
+
+        <!-- Data table -->
+        {{#if stats.length}}
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          <div class="px-5 py-4 border-b border-gray-200">
+            <h3 class="text-sm font-semibold text-gray-700">Detail</h3>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead class="bg-gray-50 border-b border-gray-200 text-xs text-gray-600 uppercase tracking-wider">
+                <tr>
+                  <th class="px-5 py-3">
+                    <a href="/monitoring?interval={{interval}}&sort={{toggleSort sort}}" class="inline-flex items-center gap-1 hover:text-blue-700 transition-colors">
+                      Period
+                      {{{ternary (eq sort 'asc') '↑' '↓'}}}
+                    </a>
+                  </th>
+                  <th class="px-5 py-3 text-right">Avg (ms)</th>
+                  <th class="px-5 py-3 text-right">Median (ms)</th>
+                  <th class="px-5 py-3 text-right">p95 (ms)</th>
+                  <th class="px-5 py-3 text-right">p99 (ms)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-100">
+                {{#each (sortedBySort stats sort)}}
+                  <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-5 py-3 font-mono text-gray-700">{{period}}</td>
+                    <td class="px-5 py-3 text-right font-semibold text-gray-900">{{avgDuration}}</td>
+                    <td class="px-5 py-3 text-right text-gray-700">{{medianDuration}}</td>
+                    <td class="px-5 py-3 text-right text-gray-700">{{p95Duration}}</td>
+                    <td class="px-5 py-3 text-right text-gray-700">{{p99Duration}}</td>
+                  </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        {{/if}}
+
+      </main>
+      {{> footer}}
+    </div>
+
+    <script src="/js/chart.umd.js"></script>
+    <script src="/js/admin-charts.js"></script>
+  </body>
+</html>

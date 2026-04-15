@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/css/main.css" />
   </head>
   <body class="bg-gray-50 antialiased">
-    <%- include('partials/sidebar') %>
+    {{> sidebar}}
 
     <div class="sm:ml-64 flex flex-col min-h-screen">
       <div class="h-16 bg-white border-b border-gray-200 px-6 flex items-center">
@@ -66,7 +66,7 @@
           </a>
         </div>
       </main>
-      <%- include('partials/footer') %>
+      {{> footer}}
     </div>
   </body>
 </html>

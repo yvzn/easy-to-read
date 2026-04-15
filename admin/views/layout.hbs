@@ -7,10 +7,10 @@
   <link rel="stylesheet" href="/css/main.css" />
 </head>
 <body class="h-full flex flex-col">
-  <%- include('partials/header') %>
+  {{> header}}
   <main class="flex-1 container mx-auto px-4 py-8 max-w-7xl">
-    <%- body %>
+    {{{body}}}
   </main>
-  <%- include('partials/footer') %>
+  {{> footer}}
 </body>
 </html>

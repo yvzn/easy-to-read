@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/css/main.css" />
   </head>
   <body class="bg-gray-50 antialiased">
-    <%- include('partials/sidebar') %>
+    {{> sidebar}}
 
     <div class="sm:ml-64 flex flex-col min-h-screen">
       <!-- Top bar -->
@@ -37,40 +37,33 @@
               <input
                 type="text"
                 name="filter"
-                value="<%= filter %>"
+                value="{{filter}}"
                 maxlength="200"
                 placeholder="Search by comment or interaction ID…"
                 class="block w-full pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-            <input type="hidden" name="sort" value="<%= sort %>" />
+            <input type="hidden" name="sort" value="{{sort}}" />
             <button
               type="submit"
               class="px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors"
             >Search</button>
-            <% if (filter) { %>
+            {{#if filter}}
               <a
-                href="/feedback?sort=<%= sort %>"
+                href="/feedback?sort={{sort}}"
                 class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-colors"
               >Clear</a>
-            <% } %>
+            {{/if}}
           </form>
         </div>
 
         <!-- Results -->
-        <% if (feedbacks.length === 0) { %>
-          <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-10 text-center">
-            <svg class="mx-auto w-10 h-10 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
-            <p class="text-sm text-gray-500">
-              No feedback entries found<% if (filter) { %> matching "<strong><%= filter %></strong>"<% } %>.
-            </p>
-          </div>
-        <% } else { %>
+        {{#if feedbacks.length}}
           <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
             <div class="px-5 py-3 border-b border-gray-200 flex items-center justify-between">
               <span class="text-sm text-gray-600">
-                <span class="font-medium text-gray-900"><%= feedbacks.length %></span>
-                result<%= feedbacks.length !== 1 ? 's' : '' %><% if (filter) { %> for &ldquo;<%= filter %>&rdquo;<% } %>
+                <span class="font-medium text-gray-900">{{feedbacks.length}}</span>
+                result{{pluralSuffix feedbacks.length}}{{#if filter}} for &ldquo;{{filter}}&rdquo;{{/if}}
               </span>
             </div>
             <div class="overflow-x-auto">
@@ -78,9 +71,9 @@
                 <thead class="bg-gray-50 border-b border-gray-200 text-xs text-gray-600 uppercase tracking-wider">
                   <tr>
                     <th class="px-5 py-3">
-                      <a href="/feedback?<%= filter ? 'filter=' + encodeURIComponent(filter) + '&' : '' %>sort=<%= sort === 'asc' ? 'desc' : 'asc' %>" class="inline-flex items-center gap-1 hover:text-blue-700 transition-colors">
+                      <a href="{{buildFeedbackSortHref filter sort}}" class="inline-flex items-center gap-1 hover:text-blue-700 transition-colors">
                         Date
-                        <%- sort === 'asc' ? '↑' : '↓' %>
+                        {{{ternary (eq sort 'asc') '↑' '↓'}}}
                       </a>
                     </th>
                     <th class="px-5 py-3">Score</th>
@@ -90,30 +83,32 @@
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
-                  <% feedbacks.forEach(function(f) { %>
+                  {{#each feedbacks}}
                     <tr class="hover:bg-gray-50 transition-colors">
-                      <td class="px-5 py-3 text-gray-500 font-mono text-xs whitespace-nowrap"><%= f.formattedTimestamp %></td>
+                      <td class="px-5 py-3 text-gray-500 font-mono text-xs whitespace-nowrap">{{formattedTimestamp}}</td>
                       <td class="px-5 py-3">
-                        <% if (Number(f.Score) > 0) { %>
-                          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"><%= f.Score %></span>
-                        <% } else if (Number(f.Score) === 0) { %>
-                          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"><%= f.Score %></span>
-                        <% } else { %>
-                          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"><%= f.Score %></span>
-                        <% } %>
+                        {{#if (gt Score 0)}}
+                          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">{{Score}}</span>
+                        {{else}}
+                          {{#if (eq Score 0)}}
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">{{Score}}</span>
+                          {{else}}
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">{{Score}}</span>
+                          {{/if}}
+                        {{/if}}
                       </td>
                       <td class="px-5 py-3 text-gray-500 font-mono text-xs">
                         <a
-                          href="/interactions/<%= encodeURIComponent(f.InteractionId) %>"
+                          href="/interactions/{{encodeURIComponent InteractionId}}"
                           class="text-blue-700 hover:underline"
-                        ><%= f.InteractionId %></a>
+                        >{{InteractionId}}</a>
                       </td>
                       <td class="px-5 py-3 text-gray-700 max-w-xs">
-                        <% if (f.Comment) { %>
-                          <span class="line-clamp-2 text-sm"><%= f.Comment %></span>
-                        <% } else { %>
+                        {{#if Comment}}
+                          <span class="line-clamp-2 text-sm">{{Comment}}</span>
+                        {{else}}
                           <span class="text-gray-400 italic text-xs">No comment</span>
-                        <% } %>
+                        {{/if}}
                       </td>
                       <td class="px-5 py-3 text-center">
                         <form
@@ -121,7 +116,7 @@
                           action="/feedback/delete"
                           onsubmit="return confirm('Delete this feedback entry?')"
                         >
-                          <input type="hidden" name="rowKey" value="<%= f.rowKey %>" />
+                          <input type="hidden" name="rowKey" value="{{rowKey}}" />
                           <button
                             type="submit"
                             class="font-medium text-red-600 hover:text-red-800 text-xs hover:underline transition-colors"
@@ -129,15 +124,22 @@
                         </form>
                       </td>
                     </tr>
-                  <% }); %>
+                  {{/each}}
                 </tbody>
               </table>
             </div>
           </div>
-        <% } %>
+        {{else}}
+          <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-10 text-center">
+            <svg class="mx-auto w-10 h-10 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
+            <p class="text-sm text-gray-500">
+              No feedback entries found{{#if filter}} matching "<strong>{{filter}}</strong>"{{/if}}.
+            </p>
+          </div>
+        {{/if}}
 
       </main>
-      <%- include('partials/footer') %>
+      {{> footer}}
     </div>
   </body>
 </html>
