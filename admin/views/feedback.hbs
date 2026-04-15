@@ -63,7 +63,7 @@
             <div class="px-5 py-3 border-b border-gray-200 flex items-center justify-between">
               <span class="text-sm text-gray-600">
                 <span class="font-medium text-gray-900">{{feedbacks.length}}</span>
-                result{{pluralSuffix feedbacks.length}}{{#if filter}} for &ldquo;{{filter}}&rdquo;{{/if}}
+                {{feedbackCountLabel}}{{#if filter}} for &ldquo;{{filter}}&rdquo;{{/if}}
               </span>
             </div>
             <div class="overflow-x-auto">
@@ -71,9 +71,9 @@
                 <thead class="bg-gray-50 border-b border-gray-200 text-xs text-gray-600 uppercase tracking-wider">
                   <tr>
                     <th class="px-5 py-3">
-                      <a href="{{buildFeedbackSortHref filter sort}}" class="inline-flex items-center gap-1 hover:text-blue-700 transition-colors">
+                      <a href="{{sortHref}}" class="inline-flex items-center gap-1 hover:text-blue-700 transition-colors">
                         Date
-                        {{{ternary (eq sort 'asc') '↑' '↓'}}}
+                        {{sortMeta.arrow}}
                       </a>
                     </th>
                     <th class="px-5 py-3">Score</th>
@@ -87,19 +87,11 @@
                     <tr class="hover:bg-gray-50 transition-colors">
                       <td class="px-5 py-3 text-gray-500 font-mono text-xs whitespace-nowrap">{{formattedTimestamp}}</td>
                       <td class="px-5 py-3">
-                        {{#if (gt Score 0)}}
-                          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">{{Score}}</span>
-                        {{else}}
-                          {{#if (eq Score 0)}}
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">{{Score}}</span>
-                          {{else}}
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">{{Score}}</span>
-                          {{/if}}
-                        {{/if}}
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium {{scoreClass}}">{{Score}}</span>
                       </td>
                       <td class="px-5 py-3 text-gray-500 font-mono text-xs">
                         <a
-                          href="/interactions/{{encodeURIComponent InteractionId}}"
+                          href="{{detailUrl}}"
                           class="text-blue-700 hover:underline"
                         >{{InteractionId}}</a>
                       </td>

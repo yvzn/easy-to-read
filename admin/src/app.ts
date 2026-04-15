@@ -1,11 +1,11 @@
-import express, { Request, Response, NextFunction } from 'express';
-import helmet from 'helmet';
-import cors from 'cors';
-import rateLimit from 'express-rate-limit';
-import path from 'path';
-import { engine } from 'express-handlebars';
-import { config } from './config/index.js';
-import router from './routes/index.js';
+import express, { Request, Response, NextFunction } from "express";
+import helmet from "helmet";
+import cors from "cors";
+import rateLimit from "express-rate-limit";
+import path from "path";
+import { engine } from "express-handlebars";
+import { config } from "./config/index.js";
+import router from "./routes/index.js";
 
 const app = express();
 
@@ -17,10 +17,10 @@ app.use(
 				defaultSrc: ["'self'"],
 				styleSrc: ["'self'", "'unsafe-inline'"],
 				scriptSrc: ["'self'"],
-				imgSrc: ["'self'", 'data:'],
+				imgSrc: ["'self'", "data:"],
 			},
 		},
-	})
+	}),
 );
 
 // CORS: same-origin only (no external origins)
@@ -40,7 +40,7 @@ app.use(express.json());
 
 // Apply rate limiter to POST routes
 app.use((req: Request, res: Response, next: NextFunction) => {
-	if (req.method === 'POST') {
+	if (req.method === "POST") {
 		postLimiter(req, res, next);
 	} else {
 		next();
@@ -49,61 +49,39 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 // View engine
 app.engine(
-	'hbs',
+	"hbs",
 	engine({
-		extname: '.hbs',
+		extname: ".hbs",
 		defaultLayout: false,
-		helpers: {
-			eq: (a: unknown, b: unknown) => a === b,
-			or: (a: unknown, b: unknown) => Boolean(a || b),
-			startsWith: (value: unknown, prefix: string) =>
-				typeof value === 'string' && value.startsWith(prefix),
-			ternary: (condition: unknown, truthy: string, falsy: string) => (condition ? truthy : falsy),
-			toggleSort: (sort: unknown) => (sort === 'asc' ? 'desc' : 'asc'),
-			pluralSuffix: (count: unknown) => (Number(count) === 1 ? '' : 's'),
-			encodeURIComponent: (value: unknown) => encodeURIComponent(String(value ?? '')),
-			jsonMap: (items: unknown, key: string) =>
-				JSON.stringify(
-					Array.isArray(items)
-						? items.map((item) =>
-								item && typeof item === 'object'
-									? (item as Record<string, unknown>)[key]
-									: undefined
-							).filter((item) => item !== undefined && item !== null)
-						: []
-				),
-			lower: (value: unknown) => String(value ?? '').toLowerCase(),
-			sortedBySort: (items: unknown, sort: unknown) =>
-				Array.isArray(items) && sort === 'asc'
-					? items
-					: Array.isArray(items)
-						? [...items].reverse()
-						: [],
-			gt: (a: unknown, b: unknown) => Number(a) > Number(b),
-			buildFeedbackSortHref: (filter: unknown, sort: unknown) => {
-				const query = new URLSearchParams();
-				const safeFilter = typeof filter === 'string' ? filter : '';
-				if (safeFilter) {
-					query.set('filter', safeFilter);
-				}
-				query.set('sort', sort === 'asc' ? 'desc' : 'asc');
-				return `/feedback?${query.toString()}`;
-			},
-		},
-	})
+	}),
 );
-app.set('view engine', 'hbs');
-app.set('views', path.join(__dirname, '..', 'views'));
+app.set("view engine", "hbs");
+app.set("views", path.join(__dirname, "..", "views"));
 
 // Static assets
-app.use(express.static(path.join(__dirname, '..', 'public')));
+app.use(express.static(path.join(__dirname, "..", "public")));
 
 // Expose current path to all views for active sidebar state
 app.use((req: Request, res: Response, next: NextFunction) => {
 	res.locals.currentPath = req.path;
 	const now = new Date();
 	res.locals.currentYear = now.getFullYear();
-	res.locals.todayDate = now.toISOString().split('T')[0];
+	res.locals.todayDate = now.toISOString().split("T")[0];
+	const isInteractions = req.path === "/interactions" || req.path.startsWith("/interactions/");
+	const navItem = (active: boolean) => ({
+		active,
+		linkClass: active ? "bg-blue-50 text-blue-700" : "text-gray-900",
+		iconClass: active ? "text-blue-700" : "text-gray-500 group-hover:text-gray-900",
+		textClass: active ? "font-semibold text-blue-700" : "",
+	});
+	res.locals.nav = {
+		dashboard: navItem(req.path === "/"),
+		usageStats: navItem(req.path === "/usage-stats"),
+		interactions: navItem(isInteractions),
+		feedback: navItem(req.path === "/feedback"),
+		monitoring: navItem(req.path === "/monitoring"),
+		maintenance: navItem(req.path === "/maintenance"),
+	};
 	next();
 });
 
@@ -112,15 +90,15 @@ app.use(router);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {
-	res.status(404).render('error', { message: 'Page not found' });
+	res.status(404).render("error", { message: "Page not found" });
 });
 
 // Error handler
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 	console.error(err.stack);
 	const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
-	res.status(statusCode).render('error', {
-		message: config.nodeEnv === 'development' ? err.message : 'An unexpected error occurred',
+	res.status(statusCode).render("error", {
+		message: config.nodeEnv === "development" ? err.message : "An unexpected error occurred",
 	});
 });
 

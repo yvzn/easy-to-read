@@ -33,7 +33,7 @@
             <div class="px-5 py-3 border-b border-gray-200 flex items-center justify-between">
               <span class="text-sm text-gray-600">
                 <span class="font-medium text-gray-900">{{interactions.length}}</span>
-                interaction{{pluralSuffix interactions.length}}
+                {{interactionCountLabel}}
               </span>
             </div>
             <div class="overflow-x-auto">
@@ -42,10 +42,10 @@
                   <tr>
                     <th class="px-5 py-3">
                       <a
-                        href="/interactions?sort={{toggleSort sort}}"
+                        href="/interactions?sort={{sortMeta.next}}"
                         class="inline-flex items-center gap-1 group hover:text-blue-700 transition-colors"
                       >Date
-                        {{{ternary (eq sort 'asc') '↑' '↓'}}}
+                        {{sortMeta.arrow}}
                       </a>
                     </th>
                     <th class="px-5 py-3">Interaction ID</th>
@@ -57,12 +57,12 @@
                   {{#each interactions}}
                     <tr
                       class="hover:bg-blue-50 transition-colors cursor-pointer"
-                      onclick="window.location.href='/interactions/{{encodeURIComponent InteractionId}}'"
+                      onclick="window.location.href='{{detailUrl}}'"
                     >
                       <td class="px-5 py-3 text-gray-500 font-mono text-xs whitespace-nowrap">{{formattedTimestamp}}</td>
                       <td class="px-5 py-3">
                         <a
-                          href="/interactions/{{encodeURIComponent InteractionId}}"
+                          href="{{detailUrl}}"
                           class="font-mono text-xs text-blue-700 hover:underline"
                           onclick="event.stopPropagation()"
                         >{{InteractionId}}</a>

@@ -29,22 +29,12 @@
 
         <!-- Interval selector -->
         <div class="flex gap-2 mb-6">
-          <a
-            href="/monitoring?interval=day&sort={{sort}}"
-            class="px-4 py-2 rounded-lg text-sm font-medium border transition-colors {{ternary (eq interval 'day') 'bg-blue-700 text-white border-blue-700' 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}}"
-          >Daily</a>
-          <a
-            href="/monitoring?interval=week&sort={{sort}}"
-            class="px-4 py-2 rounded-lg text-sm font-medium border transition-colors {{ternary (eq interval 'week') 'bg-blue-700 text-white border-blue-700' 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}}"
-          >Weekly</a>
-          <a
-            href="/monitoring?interval=month&sort={{sort}}"
-            class="px-4 py-2 rounded-lg text-sm font-medium border transition-colors {{ternary (eq interval 'month') 'bg-blue-700 text-white border-blue-700' 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}}"
-          >Monthly</a>
-          <a
-            href="/monitoring?interval=year&sort={{sort}}"
-            class="px-4 py-2 rounded-lg text-sm font-medium border transition-colors {{ternary (eq interval 'year') 'bg-blue-700 text-white border-blue-700' 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}}"
-          >Yearly</a>
+          {{#each intervalLinks}}
+            <a
+              href="{{href}}"
+              class="px-4 py-2 rounded-lg text-sm font-medium border transition-colors {{className}}"
+            >{{label}}</a>
+          {{/each}}
         </div>
 
         <!-- Line chart -->
@@ -54,18 +44,18 @@
               Response time per
               <span class="text-blue-700">{{interval}}</span>
             </h2>
-            <span class="text-xs text-gray-400">{{stats.length}} period{{pluralSuffix stats.length}}</span>
+            <span class="text-xs text-gray-400">{{stats.length}} {{periodLabel}}</span>
           </div>
           {{#if stats.length}}
             <div class="relative h-72">
               <canvas
                 data-chart="line"
                 data-ylabel="Response time (ms)"
-                data-labels='{{{jsonMap stats "period"}}}'
-                data-values="{{{jsonMap stats "avgDuration"}}}"
-                data-median="{{{jsonMap stats "medianDuration"}}}"
-                data-p95="{{{jsonMap stats "p95Duration"}}}"
-                data-p99="{{{jsonMap stats "p99Duration"}}}"
+                data-labels='{{{chartData.labels}}}'
+                data-values="{{{chartData.avgValues}}}"
+                data-median="{{{chartData.medianValues}}}"
+                data-p95="{{{chartData.p95Values}}}"
+                data-p99="{{{chartData.p99Values}}}"
               ></canvas>
             </div>
           {{else}}
@@ -86,9 +76,9 @@
               <thead class="bg-gray-50 border-b border-gray-200 text-xs text-gray-600 uppercase tracking-wider">
                 <tr>
                   <th class="px-5 py-3">
-                    <a href="/monitoring?interval={{interval}}&sort={{toggleSort sort}}" class="inline-flex items-center gap-1 hover:text-blue-700 transition-colors">
+                    <a href="/monitoring?interval={{interval}}&sort={{sortMeta.next}}" class="inline-flex items-center gap-1 hover:text-blue-700 transition-colors">
                       Period
-                      {{{ternary (eq sort 'asc') '↑' '↓'}}}
+                      {{sortMeta.arrow}}
                     </a>
                   </th>
                   <th class="px-5 py-3 text-right">Avg (ms)</th>
@@ -98,7 +88,7 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-100">
-                {{#each (sortedBySort stats sort)}}
+                {{#each sortedStats}}
                   <tr class="hover:bg-gray-50 transition-colors">
                     <td class="px-5 py-3 font-mono text-gray-700">{{period}}</td>
                     <td class="px-5 py-3 text-right font-semibold text-gray-900">{{avgDuration}}</td>
