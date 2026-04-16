@@ -1,4 +1,12 @@
-const { app, output } = require('@azure/functions');
+import { app, HttpRequest, HttpResponseInit, InvocationContext, output } from '@azure/functions';
+
+interface FeedbackEntity {
+	PartitionKey: string;
+	RowKey: string;
+	InteractionId: string;
+	Score: string;
+	Comment: string | null;
+}
 
 const tableOutput = output.table({
 	tableName: 'Feedbacks',
@@ -9,26 +17,26 @@ app.http('feedback', {
 	methods: ['POST'],
 	authLevel: 'function',
 	extraOutputs: [tableOutput],
-	handler: async (request, context) => {
+	handler: async (request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> => {
 		context.log(`Http function processed request for url "${request.url}"`);
 
 		try {
 			const requestBody = await request.text();
 			const requestParams = new URLSearchParams(requestBody);
 
-			const feedbackScore = requestParams.get("s");
-			const comment = requestParams.get("c");
-			const interactionId = requestParams.get("i");
+			const feedbackScore = requestParams.get('s');
+			const comment = requestParams.get('c');
+			const interactionId = requestParams.get('i');
 
 			if (!feedbackScore || !interactionId) {
 				return {
 					status: 400,
-					headers: { "Content-Type": "text/plain;charset=utf-8" },
-					body: "Missing parameters.",
+					headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+					body: 'Missing parameters.',
 				};
 			}
 
-			const rows = [];
+			const rows: FeedbackEntity[] = [];
 			rows.push({
 				PartitionKey: 'Feedbacks',
 				RowKey: context.invocationId,
@@ -44,9 +52,9 @@ app.http('feedback', {
 
 			return {
 				status: 503,
-				headers: { "Content-Type": "text/plain;charset=utf-8" },
-				body: "Service has failed to process the request. Please try again later.",
+				headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+				body: 'Service has failed to process the request. Please try again later.',
 			};
 		}
-	}
+	},
 });

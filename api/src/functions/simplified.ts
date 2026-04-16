@@ -1,30 +1,30 @@
-const { app, HttpResponse } = require('@azure/functions');
-const OpenAI = require("openai");
-const { Mistral } = require("@mistralai/mistralai");
-const { Readable } = require('node:stream');
-const fs = require('node:fs/promises');
+import { app, HttpRequest, HttpResponse, HttpResponseInit, InvocationContext } from '@azure/functions';
+import OpenAI from 'openai';
+import { Mistral } from "@mistralai/mistralai";
+import { Readable } from 'node:stream';
+import fs from 'node:fs/promises';
 
 app.http('simplified', {
 	methods: ['POST'],
 	authLevel: 'function',
-	handler: async (request, context) => {
+	handler: async (request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> => {
 		context.info(`Http function processed request for url "${request.url}"`);
 
 		try {
 			const requestBody = await request.text();
 			const requestParams = new URLSearchParams(requestBody);
 
-			const userInput = requestParams.get("t");
-			const language = requestParams.get("l");
-			const debug = requestParams.get("d") === "true";
-			const streaming = requestParams.get("s") !== "false";
-			const provider = requestParams.get("p") || "openai";
+			const userInput = requestParams.get('t');
+			const language = requestParams.get('l');
+			const debug = requestParams.get('d') === 'true';
+			const streaming = requestParams.get('s') !== 'false';
+			const provider = requestParams.get('p') || 'openai';
 
 			if (!userInput) {
 				return {
 					status: 400,
-					headers: { "Content-Type": "text/plain;charset=utf-8" },
-					body: "Empty content.",
+					headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+					body: 'Empty content.',
 				};
 			}
 
@@ -33,7 +33,7 @@ app.http('simplified', {
 			const response = new HttpResponse({
 				body: Readable.from(responseStream),
 			});
-			response.headers.set("Content-Type", "text/html;charset=utf-8");
+			response.headers.set('Content-Type', 'text/html;charset=utf-8');
 
 			return response;
 		} catch (error) {
@@ -41,14 +41,14 @@ app.http('simplified', {
 
 			return {
 				status: 503,
-				headers: { "Content-Type": "text/plain;charset=utf-8" },
-				body: "Service has failed to process the request. Please try again later.",
+				headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+				body: 'Service has failed to process the request. Please try again later.',
 			};
 		}
-	}
+	},
 });
 
-function getModelProvider(streaming, provider) {
+function getModelProvider(streaming: boolean, provider: string) {
 	const isMock = provider === 'mock';
 	const isMistral = provider === 'mistral';
 	const isStreaming = streaming;
@@ -74,7 +74,14 @@ function getModelProvider(streaming, provider) {
 	return { getResponse, cleanModelOutput };
 }
 
-async function* simplify(text, language, streaming, provider, debug, context) {
+async function* simplify(
+	text: string,
+	language: string | null,
+	streaming: boolean,
+	provider: string,
+	debug: boolean,
+	context: InvocationContext,
+) {
 	try {
 		const [htmlHeader, htmlFooter] = await readHtmlTemplate();
 		yield htmlHeader;
@@ -83,29 +90,27 @@ async function* simplify(text, language, streaming, provider, debug, context) {
 		const { getResponse, cleanModelOutput } = getModelProvider(streaming, provider);
 		const responseStream = await getResponse(text, translationInstructions);
 
-		for await (let chunk of responseStream) {
-			chunk = cleanModelOutput(chunk);
-
-			yield chunk;
+		for await (const chunk of responseStream) {
+			const content = cleanModelOutput(chunk);
+			yield content;
 			if (debug) {
-				yield "\n";
+				yield '\n';
 			}
 		}
 
 		yield htmlFooter;
-	}
-	catch (error) {
+	} catch (error) {
 		context.error(error);
 
 		yield '<api-error>Service has failed to process the request. Please try again later.</api-error>';
 	}
 }
 
-async function getModelResponse_Mock(userInput, _translationInstructions) {
+async function getModelResponse_Mock(userInput: string, _translationInstructions: string) {
 	const mockChunks = [
-		"<observation-1>Here is the first observation about the text.</observation-1>",
-		"<version-1>Here is the first simplified version of the text.</version-1>",
-		"<observation-2>Here is the second observation about the text.</observation-2>",
+		'<observation-1>Here is the first observation about the text.</observation-1>',
+		'<version-1>Here is the first simplified version of the text.</version-1>',
+		'<observation-2>Here is the second observation about the text.</observation-2>',
 		`<version-2>This is a mock version of the text: ${userInput}</version-2>`,
 	];
 
@@ -119,58 +124,58 @@ async function getModelResponse_Mock(userInput, _translationInstructions) {
 	return generate();
 }
 
-const htmlTemplatePromise = readResource("template.html");
+const htmlTemplatePromise = readResource('template.html');
 
 async function readHtmlTemplate() {
 	const template = await htmlTemplatePromise;
-	const parts = template.split("-----");
+	const parts = template.split('-----');
 
 	return parts;
 }
 
-const token = process.env["GITHUB_TOKEN"];
-const endpoint = "https://models.github.ai/inference";
-const modelName = "openai/gpt-4o-mini";
+const token = process.env.GITHUB_TOKEN;
+const endpoint = 'https://models.github.ai/inference';
+const modelName = 'openai/gpt-4o-mini';
 
-const systemPromptPromise = readResource("system-prompt.txt");
-const userPromptPromise = readResource("user-prompt.txt");
+const systemPromptPromise = readResource('system-prompt.txt');
+const userPromptPromise = readResource('user-prompt.txt');
 
-async function getModelResponse_OpenAI(userInput, translationInstructions) {
+async function getModelResponse_OpenAI(userInput: string, translationInstructions: string) {
 	const client = new OpenAI({ baseURL: endpoint, apiKey: token });
 
 	let systemPrompt = await systemPromptPromise;
-	systemPrompt = systemPrompt.replaceAll("{0}", translationInstructions);
+	systemPrompt = systemPrompt.replaceAll('{0}', translationInstructions);
 
 	let userPrompt = await userPromptPromise;
-	userPrompt = userPrompt.replaceAll("{0}", userInput);
+	userPrompt = userPrompt.replaceAll('{0}', userInput);
 
 	const stream = await client.chat.completions.create({
 		messages: [
-			{ role: "system", content: systemPrompt },
-			{ role: "user", content: userPrompt },
+			{ role: 'system', content: systemPrompt },
+			{ role: 'user', content: userPrompt },
 		],
 		temperature: 1.0,
 		max_tokens: 12000,
 		model: modelName,
-		stream: true
+		stream: true,
 	});
 
 	return stream;
 }
 
-async function getModelResponse_OpenAI_NoStreaming(userInput, translationInstructions) {
+async function getModelResponse_OpenAI_NoStreaming(userInput: string, translationInstructions: string) {
 	const client = new OpenAI({ baseURL: endpoint, apiKey: token });
 
 	let systemPrompt = await systemPromptPromise;
-	systemPrompt = systemPrompt.replaceAll("{0}", translationInstructions);
+	systemPrompt = systemPrompt.replaceAll('{0}', translationInstructions);
 
 	let userPrompt = await userPromptPromise;
-	userPrompt = userPrompt.replaceAll("{0}", userInput);
+	userPrompt = userPrompt.replaceAll('{0}', userInput);
 
 	const response = await client.chat.completions.create({
 		messages: [
-			{ role: "system", content: systemPrompt },
-			{ role: "user", content: userPrompt },
+			{ role: 'system', content: systemPrompt },
+			{ role: 'user', content: userPrompt },
 		],
 		temperature: 1.0,
 		max_tokens: 12000,
@@ -181,11 +186,11 @@ async function getModelResponse_OpenAI_NoStreaming(userInput, translationInstruc
 		choices: [
 			{
 				delta: {
-					content: response.choices[0].message.content
-				}
-			}
-		]
-	}
+					content: response.choices[0].message.content,
+				},
+			},
+		],
+	};
 
 	return Readable.from([chunk]);
 }
@@ -193,8 +198,8 @@ async function getModelResponse_OpenAI_NoStreaming(userInput, translationInstruc
 const mistralApiKey = process.env["MISTRAL_API_KEY"];
 const mistralModelName = 'ministral-3b-latest';
 
-async function getModelResponse_Mistral(userInput, translationInstructions) {
-	const client = new Mistral({apiKey: mistralApiKey});
+async function getModelResponse_Mistral(userInput: string, translationInstructions: string) {
+	const client = new Mistral({ apiKey: mistralApiKey });
 
 	let systemPrompt = await systemPromptPromise;
 	systemPrompt = systemPrompt.replaceAll("{0}", translationInstructions);
@@ -208,7 +213,6 @@ async function getModelResponse_Mistral(userInput, translationInstructions) {
 			{ role: "user", content: userPrompt },
 		],
 		temperature: 1.0,
-		max_tokens: 12000,
 		model: mistralModelName,
 		stream: true
 	});
@@ -216,7 +220,7 @@ async function getModelResponse_Mistral(userInput, translationInstructions) {
 	return stream;
 }
 
-function buildTranslationInstructions(language) {
+function buildTranslationInstructions(language: string | null) {
 	switch (language) {
 		case 'es':
 			return 'Make sure to write the new version in Spanish, even if the original text is in another language.';
@@ -231,22 +235,22 @@ function buildTranslationInstructions(language) {
 	}
 }
 
-function cleanModelOutput_OpenAI(chunk) {
+function cleanModelOutput_OpenAI(chunk: OpenAI.Chat.Completions.ChatCompletionChunk) {
 	const sanitized = chunk.choices[0]?.delta?.content || '';
 	return sanitized;
 }
 
-function cleanModelOutput_Mistral(chunk) {
+function cleanModelOutput_Mistral(chunk: any) {
 	const sanitized = chunk.data.choices[0]?.delta?.content || '';
 	return sanitized;
 }
 
-async function readResource(fileName) {
+async function readResource(fileName: string) {
 	const directory = './src/resources';
-	const data = await fs.readFile(`${directory}/${fileName}`, { encoding: "utf-8" });
+	const data = await fs.readFile(`${directory}/${fileName}`, { encoding: 'utf-8' });
 	return data;
 }
 
-function sleep(ms) {
-	return new Promise(resolve => setTimeout(resolve, ms));
+function sleep(ms: number) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
 }
