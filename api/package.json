@@ -7,6 +7,7 @@
 	},
 	"dependencies": {
 		"@azure/functions": "^4.11.0",
+		"@mistralai/mistralai": "^2.2.0",
 		"openai": "^6.24.0"
 	},
 	"main": "src/{index.js,functions/*.js}",

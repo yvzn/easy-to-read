@@ -1,5 +1,6 @@
 const { app, HttpResponse } = require('@azure/functions');
 const OpenAI = require("openai");
+const { Mistral } = require("@mistralai/mistralai");
 const { Readable } = require('node:stream');
 const fs = require('node:fs/promises');
 
@@ -47,9 +48,30 @@ app.http('simplified', {
 	}
 });
 
-function resolveModelResponseFn(streaming, provider) {
-	if (provider === 'mock') return getModelResponse_Mock;
-	return streaming ? getModelResponse : getModelResponse_NoStreaming;
+function getModelProvider(streaming, provider) {
+	const isMock = provider === 'mock';
+	const isMistral = provider === 'mistral';
+	const isStreaming = streaming;
+
+	let getResponse, cleanModelOutput;
+
+	if (isMock) {
+		getResponse = getModelResponse_Mock;
+	} else if (isMistral) {
+		getResponse = getModelResponse_Mistral;
+	} else if (isStreaming) {
+		getResponse = getModelResponse_OpenAI;
+	} else {
+		getResponse = getModelResponse_OpenAI_NoStreaming;
+	}
+
+	if (isMistral) {
+		cleanModelOutput = cleanModelOutput_Mistral;
+	} else {
+		cleanModelOutput = cleanModelOutput_OpenAI;
+	}
+
+	return { getResponse, cleanModelOutput };
 }
 
 async function* simplify(text, language, streaming, provider, debug, context) {
@@ -58,7 +80,7 @@ async function* simplify(text, language, streaming, provider, debug, context) {
 		yield htmlHeader;
 
 		const translationInstructions = buildTranslationInstructions(language);
-		const getResponse = resolveModelResponseFn(streaming, provider);
+		const { getResponse, cleanModelOutput } = getModelProvider(streaming, provider);
 		const responseStream = await getResponse(text, translationInstructions);
 
 		for await (let chunk of responseStream) {
@@ -113,7 +135,7 @@ const modelName = "openai/gpt-4o-mini";
 const systemPromptPromise = readResource("system-prompt.txt");
 const userPromptPromise = readResource("user-prompt.txt");
 
-async function getModelResponse(userInput, translationInstructions) {
+async function getModelResponse_OpenAI(userInput, translationInstructions) {
 	const client = new OpenAI({ baseURL: endpoint, apiKey: token });
 
 	let systemPrompt = await systemPromptPromise;
@@ -136,7 +158,7 @@ async function getModelResponse(userInput, translationInstructions) {
 	return stream;
 }
 
-async function getModelResponse_NoStreaming(userInput, translationInstructions) {
+async function getModelResponse_OpenAI_NoStreaming(userInput, translationInstructions) {
 	const client = new OpenAI({ baseURL: endpoint, apiKey: token });
 
 	let systemPrompt = await systemPromptPromise;
@@ -168,6 +190,32 @@ async function getModelResponse_NoStreaming(userInput, translationInstructions) 
 	return Readable.from([chunk]);
 }
 
+const mistralApiKey = process.env["MISTRAL_API_KEY"];
+const mistralModelName = 'ministral-3b-latest';
+
+async function getModelResponse_Mistral(userInput, translationInstructions) {
+	const client = new Mistral({apiKey: mistralApiKey});
+
+	let systemPrompt = await systemPromptPromise;
+	systemPrompt = systemPrompt.replaceAll("{0}", translationInstructions);
+
+	let userPrompt = await userPromptPromise;
+	userPrompt = userPrompt.replaceAll("{0}", userInput);
+
+	const stream = await client.chat.stream({
+		messages: [
+			{ role: "system", content: systemPrompt },
+			{ role: "user", content: userPrompt },
+		],
+		temperature: 1.0,
+		max_tokens: 12000,
+		model: mistralModelName,
+		stream: true
+	});
+
+	return stream;
+}
+
 function buildTranslationInstructions(language) {
 	switch (language) {
 		case 'es':
@@ -183,8 +231,13 @@ function buildTranslationInstructions(language) {
 	}
 }
 
-function cleanModelOutput(chunk) {
+function cleanModelOutput_OpenAI(chunk) {
 	const sanitized = chunk.choices[0]?.delta?.content || '';
+	return sanitized;
+}
+
+function cleanModelOutput_Mistral(chunk) {
+	const sanitized = chunk.data.choices[0]?.delta?.content || '';
 	return sanitized;
 }
 

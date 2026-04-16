@@ -66,6 +66,11 @@ smallCta: no
 				</label>
 				<div class="formatted-output"></div>
 			</div>
+			<div class="chat-output d-none" id="error-message">
+				<h4>❌ There was a problem.</h4>
+				<p>The text simplifier could not handle your request.</p>
+				<button class="btn btn-outline retry-btn" type="button">Retry</button>
+			</div>
 			<div class="chat-output d-none" id="user-feedback">
 				<h4>Are you happy with the new version?</h4>
 				<button type="button" class="btn btn-outline feedback-btn" data-feedback-score="1">👍 Yes</button>
@@ -77,11 +82,6 @@ smallCta: no
 					<div class="formatted-output"></div>
 				</details>
 				<a href="#" class="btn btn-outline edit-link">Edit your text</a>
-			</div>
-			<div class="chat-output d-none" id="error-message">
-				<h4>❌ There was a problem.</h4>
-				<p>The text simplifier could not handle your request.</p>
-				<button class="btn btn-outline retry-btn" type="button">Retry</button>
 			</div>
 			</div>
 			<p class="disclaimer">
