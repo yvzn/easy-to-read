@@ -31,9 +31,11 @@ app.http('simplified', {
 			const responseStream = simplify(userInput, language, streaming, provider, debug, context);
 
 			const response = new HttpResponse({
-				body: Readable.from(responseStream),
+				body: responseStream,
+				headers: {
+					'Content-Type': 'text/html;charset=utf-8',
+				}
 			});
-			response.headers.set('Content-Type', 'text/html;charset=utf-8');
 
 			return response;
 		} catch (error) {
@@ -74,7 +76,7 @@ function getModelProvider(streaming: boolean, provider: string) {
 	return { getResponse, cleanModelOutput };
 }
 
-async function* simplify(
+function simplify(
 	text: string,
 	language: string | null,
 	streaming: boolean,
@@ -82,28 +84,36 @@ async function* simplify(
 	debug: boolean,
 	context: InvocationContext,
 ) {
-	try {
-		const [htmlHeader, htmlFooter] = await readHtmlTemplate();
-		yield htmlHeader;
+	return new ReadableStream({
+		async start(controller) {
+			try {
+				const [htmlHeader, htmlFooter] = await readHtmlTemplate();
+				controller.enqueue(htmlHeader);
 
-		const translationInstructions = buildTranslationInstructions(language);
-		const { getResponse, cleanModelOutput } = getModelProvider(streaming, provider);
-		const responseStream = await getResponse(text, translationInstructions);
+				const translationInstructions = buildTranslationInstructions(language);
+				const { getResponse, cleanModelOutput } = getModelProvider(streaming, provider);
+				const responseStream = await getResponse(text, translationInstructions);
 
-		for await (const chunk of responseStream) {
-			const content = cleanModelOutput(chunk);
-			yield content;
-			if (debug) {
-				yield '\n';
+				for await (const chunk of responseStream) {
+					const content = cleanModelOutput(chunk);
+					controller.enqueue(content);
+					if (debug) {
+						controller.enqueue('\n');
+					}
+				}
+
+				controller.enqueue(htmlFooter);
+			} catch (error) {
+				context.error(error);
+				controller.enqueue('<api-error>Service has failed to process the request. Please try again later.</api-error>');
+			} finally {
+				controller.close();
 			}
+		},
+		cancel() {
+			context.warn('Stream cancelled by the client.');
 		}
-
-		yield htmlFooter;
-	} catch (error) {
-		context.error(error);
-
-		yield '<api-error>Service has failed to process the request. Please try again later.</api-error>';
-	}
+	});
 }
 
 async function getModelResponse_Mock(userInput: string, _translationInstructions: string) {
@@ -128,8 +138,9 @@ const htmlTemplatePromise = readResource('template.html');
 
 async function readHtmlTemplate() {
 	const template = await htmlTemplatePromise;
-	const parts = template.split('-----');
-
+	const parts = template
+		.split('-----')
+		.map(part => part.trim().replaceAll(/[\n\r\t]/g, ''));
 	return parts;
 }
 
