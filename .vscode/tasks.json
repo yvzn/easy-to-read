@@ -7,7 +7,7 @@
 			"command": "host start",
 			"problemMatcher": "$func-node-watch",
 			"isBackground": true,
-			"dependsOn": "npm install (functions)",
+			"dependsOn": "npm build (functions)",
 			"options": {
 				"cwd": "${workspaceFolder}/api"
 			}
@@ -25,6 +25,16 @@
 			"label": "npm prune (functions)",
 			"command": "npm prune --production",
 			"problemMatcher": [],
+			"options": {
+				"cwd": "${workspaceFolder}/api"
+			}
+		},
+		{
+			"type": "shell",
+			"label": "npm build (functions)",
+			"command": "npm run build",
+			"problemMatcher": [],
+			"dependsOn": "npm install (functions)",
 			"options": {
 				"cwd": "${workspaceFolder}/api"
 			}
