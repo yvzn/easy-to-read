@@ -18,7 +18,7 @@ app.http('simplified', {
 			const language = requestParams.get('l');
 			const debug = requestParams.get('d') === 'true';
 			const streaming = requestParams.get('s') !== 'false';
-			const provider = requestParams.get('p') || 'openai';
+			const providerName = requestParams.get('p') || 'openai';
 
 			if (!userInput) {
 				return {
@@ -28,7 +28,7 @@ app.http('simplified', {
 				};
 			}
 
-			const responseStream = simplify(userInput, language, streaming, provider, debug, context);
+			const responseStream = simplify(userInput, language, streaming, providerName, debug, context);
 
 			const response = new HttpResponse({
 				body: responseStream,
@@ -50,37 +50,11 @@ app.http('simplified', {
 	},
 });
 
-function getModelProvider(streaming: boolean, provider: string) {
-	const isMock = provider === 'mock';
-	const isMistral = provider === 'mistral';
-	const isStreaming = streaming;
-
-	let getResponse, cleanModelOutput;
-
-	if (isMock) {
-		getResponse = getModelResponse_Mock;
-	} else if (isMistral) {
-		getResponse = getModelResponse_Mistral;
-	} else if (isStreaming) {
-		getResponse = getModelResponse_OpenAI;
-	} else {
-		getResponse = getModelResponse_OpenAI_NoStreaming;
-	}
-
-	if (isMistral) {
-		cleanModelOutput = cleanModelOutput_Mistral;
-	} else {
-		cleanModelOutput = cleanModelOutput_OpenAI;
-	}
-
-	return { getResponse, cleanModelOutput };
-}
-
 function simplify(
 	text: string,
 	language: string | null,
 	streaming: boolean,
-	provider: string,
+	providerName: string,
 	debug: boolean,
 	context: InvocationContext,
 ) {
@@ -91,11 +65,12 @@ function simplify(
 				controller.enqueue(htmlHeader);
 
 				const translationInstructions = buildTranslationInstructions(language);
-				const { getResponse, cleanModelOutput } = getModelProvider(streaming, provider);
-				const responseStream = await getResponse(text, translationInstructions);
+				const modelProvider = getModelProvider(streaming, providerName);
+				context.info(`Using provider=${modelProvider.providerName}, streaming=${modelProvider.streaming}`);
+				const responseStream = await modelProvider.getResponse(text, translationInstructions);
 
 				for await (const chunk of responseStream) {
-					const content = cleanModelOutput(chunk);
+					const content = modelProvider.cleanModelOutput(chunk);
 					controller.enqueue(content);
 					if (debug) {
 						controller.enqueue('\n');
@@ -116,23 +91,15 @@ function simplify(
 	});
 }
 
-async function getModelResponse_Mock(userInput: string, _translationInstructions: string) {
-	const mockChunks = [
-		'<observation-1>Here is the first observation about the text.</observation-1>',
-		'<version-1>Here is the first simplified version of the text.</version-1>',
-		'<observation-2>Here is the second observation about the text.</observation-2>',
-		`<version-2>This is a mock version of the text: ${userInput}</version-2>`,
-	];
 
-	async function* generate() {
-		for (const content of mockChunks) {
-			yield { choices: [{ delta: { content } }] };
-			await sleep(500);
-		}
-	}
 
-	return generate();
-}
+
+
+// --- Prompt Building and Template Handling ----------------------------------
+
+
+
+
 
 const htmlTemplatePromise = readResource('template.html');
 
@@ -144,92 +111,258 @@ async function readHtmlTemplate() {
 	return parts;
 }
 
-const token = process.env.GITHUB_TOKEN;
-const endpoint = 'https://models.github.ai/inference';
-const modelName = 'openai/gpt-4o-mini';
-
 const systemPromptPromise = readResource('system-prompt.txt');
 const userPromptPromise = readResource('user-prompt.txt');
 
-async function getModelResponse_OpenAI(userInput: string, translationInstructions: string) {
-	const client = new OpenAI({ baseURL: endpoint, apiKey: token });
-
-	let systemPrompt = await systemPromptPromise;
-	systemPrompt = systemPrompt.replaceAll('{0}', translationInstructions);
-
-	let userPrompt = await userPromptPromise;
-	userPrompt = userPrompt.replaceAll('{0}', userInput);
-
-	const stream = await client.chat.completions.create({
-		messages: [
-			{ role: 'system', content: systemPrompt },
-			{ role: 'user', content: userPrompt },
-		],
-		temperature: 1.0,
-		max_tokens: 12000,
-		model: modelName,
-		stream: true,
-	});
-
-	return stream;
+interface PromptPair {
+	systemPrompt: string;
+	userPrompt: string;
 }
 
-async function getModelResponse_OpenAI_NoStreaming(userInput: string, translationInstructions: string) {
-	const client = new OpenAI({ baseURL: endpoint, apiKey: token });
+async function buildPrompts(userInput: string, translationInstructions: string): Promise<PromptPair> {
+	const [systemPromptTemplate, userPromptTemplate] = await Promise.all([systemPromptPromise, userPromptPromise]);
 
-	let systemPrompt = await systemPromptPromise;
-	systemPrompt = systemPrompt.replaceAll('{0}', translationInstructions);
-
-	let userPrompt = await userPromptPromise;
-	userPrompt = userPrompt.replaceAll('{0}', userInput);
-
-	const response = await client.chat.completions.create({
-		messages: [
-			{ role: 'system', content: systemPrompt },
-			{ role: 'user', content: userPrompt },
-		],
-		temperature: 1.0,
-		max_tokens: 12000,
-		model: modelName,
-	});
-
-	const chunk = {
-		choices: [
-			{
-				delta: {
-					content: response.choices[0].message.content,
-				},
-			},
-		],
+	return {
+		systemPrompt: systemPromptTemplate.replaceAll('{0}', translationInstructions),
+		userPrompt: userPromptTemplate.replaceAll('{0}', userInput),
 	};
+}
 
-	return Readable.from([chunk]);
+function buildChatMessages(systemPrompt: string, userPrompt: string): OpenAI.Chat.Completions.ChatCompletionMessageParam[] {
+	return [
+		{ role: 'system', content: systemPrompt },
+		{ role: 'user', content: userPrompt },
+	];
+}
+
+
+
+
+// --- Model Provider Abstraction ---------------------------------------------
+
+
+
+
+type ModelProviderName = 'openai' | 'mistral' | 'mock';
+type ModelResponseStream = AsyncIterable<unknown>;
+
+interface ModelProvider {
+	get providerName(): ModelProviderName;
+	get streaming(): boolean;
+
+	getResponse(userInput: string, translationInstructions: string): Promise<ModelResponseStream>;
+	cleanModelOutput(chunk: unknown): string;
+}
+
+const modelProviderBuilders: Record<ModelProviderName, (streaming: boolean) => ModelProvider> = {
+	openai: (streaming) => new OpenAIModelProvider(streaming),
+	mistral: () => new MistralModelProvider(),
+	mock: () => new MockModelProvider(),
+};
+
+function normalizeProvider(providerName: string): ModelProviderName {
+	if (providerName === 'mistral' || providerName === 'mock' || providerName === 'openai') {
+		return providerName;
+	}
+
+	return 'openai';
+}
+
+function getModelProvider(streaming: boolean, providerName: string) {
+	const normalizedProvider = normalizeProvider(providerName);
+	const buildProvider = modelProviderBuilders[normalizedProvider];
+	return buildProvider(streaming);
+}
+
+
+
+
+// --- Model Provider Implementations -----------------------------------------
+
+
+
+
+class OpenAIModelProvider implements ModelProvider {
+	constructor(private readonly _streaming: boolean) { }
+
+	get providerName(): ModelProviderName {
+		return 'openai';
+	}
+
+	get streaming(): boolean {
+		return this._streaming;
+	}
+
+	async getResponse(userInput: string, translationInstructions: string): Promise<ModelResponseStream> {
+		const client = createOpenAIClient();
+		const { systemPrompt, userPrompt } = await buildPrompts(userInput, translationInstructions);
+		const messages = buildChatMessages(systemPrompt, userPrompt);
+
+		if (this.streaming) {
+			return client.chat.completions.create({
+				messages,
+				temperature: 1.0,
+				max_tokens: 12000,
+				model: openAIModelName,
+				stream: true,
+			});
+		}
+
+		const response = await client.chat.completions.create({
+			messages,
+			temperature: 1.0,
+			max_tokens: 12000,
+			model: openAIModelName,
+		});
+
+		return this.toSingleChunkStream(response.choices[0].message.content);
+	}
+
+	cleanModelOutput(chunk: unknown): string {
+		return parseOpenAIChunkContent(chunk);
+	}
+
+	private toSingleChunkStream(content: string | null | undefined): ModelResponseStream {
+		const chunk = {
+			choices: [
+				{
+					delta: {
+						content,
+					},
+				},
+			],
+		};
+
+		return Readable.from([chunk]);
+	}
+}
+
+class MistralModelProvider implements ModelProvider {
+	get providerName(): ModelProviderName {
+		return 'mistral';
+	}
+
+	get streaming(): boolean {
+		return true;
+	}
+
+	async getResponse(userInput: string, translationInstructions: string): Promise<ModelResponseStream> {
+		const client = createMistralClient();
+		const { systemPrompt, userPrompt } = await buildPrompts(userInput, translationInstructions);
+
+		return client.chat.stream({
+			messages: [
+				{ role: "system", content: systemPrompt },
+				{ role: "user", content: userPrompt },
+			],
+			temperature: 1.0,
+			model: mistralModelName,
+			stream: true,
+		});
+	}
+
+	cleanModelOutput(chunk: unknown): string {
+		return parseMistralChunkContent(chunk);
+	}
+}
+
+class MockModelProvider implements ModelProvider {
+	get providerName(): ModelProviderName {
+		return 'mock';
+	}
+
+	get streaming(): boolean {
+		return true;
+	}
+
+	async getResponse(userInput: string, _translationInstructions: string): Promise<ModelResponseStream> {
+		const mockChunks = [
+			'<observation-1>Here is the first observation about the text.</observation-1>',
+			'<version-1>Here is the first simplified version of the text.</version-1>',
+			'<observation-2>Here is the second observation about the text.</observation-2>',
+			`<version-2>This is a mock version of the text: ${userInput}</version-2>`,
+		];
+
+		async function* generate() {
+			for (const content of mockChunks) {
+				yield { choices: [{ delta: { content } }] };
+				await sleep(500);
+			}
+		}
+
+		return generate();
+	}
+
+	cleanModelOutput(chunk: unknown): string {
+		return parseOpenAIChunkContent(chunk);
+	}
+}
+
+type OpenAIChunk = {
+	choices?: Array<{
+		delta?: {
+			content?: string;
+		};
+	}>;
+};
+
+function parseOpenAIChunkContent(chunk: unknown) {
+	const openAIChunk = chunk as OpenAIChunk;
+	const sanitized = openAIChunk.choices?.[0]?.delta?.content;
+	return typeof sanitized === 'string' ? sanitized : '';
+}
+
+type MistralStreamChunk = {
+	data?: {
+		choices?: Array<{
+			delta?: {
+				content?: string;
+			};
+		}>;
+	};
+};
+
+function parseMistralChunkContent(chunk: unknown) {
+	const mistralChunk = chunk as MistralStreamChunk;
+	const sanitized = mistralChunk.data?.choices?.[0]?.delta?.content;
+	return typeof sanitized === 'string' ? sanitized : '';
+}
+
+
+
+
+
+// --- Configuration and Client Creation ---------------------------------------
+
+
+
+
+
+const openAIToken = process.env.GITHUB_TOKEN;
+const openAIEndpoint = 'https://models.github.ai/inference';
+const openAIModelName = 'openai/gpt-4o-mini';
+
+function createOpenAIClient() {
+	return new OpenAI({ baseURL: openAIEndpoint, apiKey: openAIToken });
 }
 
 const mistralApiKey = process.env["MISTRAL_API_KEY"];
 const mistralModelName = 'ministral-3b-latest';
 
-async function getModelResponse_Mistral(userInput: string, translationInstructions: string) {
-	const client = new Mistral({ apiKey: mistralApiKey });
-
-	let systemPrompt = await systemPromptPromise;
-	systemPrompt = systemPrompt.replaceAll("{0}", translationInstructions);
-
-	let userPrompt = await userPromptPromise;
-	userPrompt = userPrompt.replaceAll("{0}", userInput);
-
-	const stream = await client.chat.stream({
-		messages: [
-			{ role: "system", content: systemPrompt },
-			{ role: "user", content: userPrompt },
-		],
-		temperature: 1.0,
-		model: mistralModelName,
-		stream: true
-	});
-
-	return stream;
+function createMistralClient() {
+	return new Mistral({ apiKey: mistralApiKey });
 }
+
+
+
+
+
+// --- Utility Functions -----------------------------------------------------
+
+
+
+
+
 
 function buildTranslationInstructions(language: string | null) {
 	switch (language) {
@@ -244,16 +377,6 @@ function buildTranslationInstructions(language: string | null) {
 		default:
 			return 'Write the new version in the same language as the original text.';
 	}
-}
-
-function cleanModelOutput_OpenAI(chunk: OpenAI.Chat.Completions.ChatCompletionChunk) {
-	const sanitized = chunk.choices[0]?.delta?.content || '';
-	return sanitized;
-}
-
-function cleanModelOutput_Mistral(chunk: any) {
-	const sanitized = chunk.data.choices[0]?.delta?.content || '';
-	return sanitized;
 }
 
 async function readResource(fileName: string) {
