@@ -76,9 +76,10 @@ jobs:
             includeRootFolder: false
             archiveType: 'zip'
             archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-        - task: AzureFunctionApp@1
+        - task: AzureFunctionApp@2
           inputs:
-            azureSubscription: '$(azureSubscription)'
+            connectedServiceNameARM: '$(azureSubscription)'
             appType: functionAppLinux
-            appName: $(functionAppName)
+            isFlexConsumption: true
+            appName: '$(functionAppName)'
             package: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
